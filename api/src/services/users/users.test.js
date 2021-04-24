@@ -1,0 +1,22 @@
+import { users, user, deleteUser } from './users'
+
+describe('users', () => {
+  scenario('returns all users', async (scenario) => {
+    const result = await users()
+
+    expect(result.length).toEqual(Object.keys(scenario.user).length)
+  })
+
+  scenario('returns a single user', async (scenario) => {
+    const result = await user({ id: scenario.user.one.id })
+
+    expect(result).toEqual(scenario.user.one)
+  })
+
+  scenario('deletes a user', async (scenario) => {
+    const original = await deleteUser({ id: scenario.user.one.id })
+    const result = await user({ id: original.id })
+
+    expect(result).toEqual(null)
+  })
+})
