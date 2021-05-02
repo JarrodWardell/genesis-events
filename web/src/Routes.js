@@ -9,6 +9,7 @@ const Routes = () => {
         <Route path="/" page={HomePage} name="home" />
         <Route path="/login" page={LoginPage} name="login" />
         <Route path="/signup" page={SignupPage} name="signup" />
+        <Route path="/signup/{step}" page={SignupPage} name="signup" />
         <Route path="/forgot-password" page={ForgotPasswordPage} name="forgotPassword" />
         <Private unauthenticated="login">
           <Route path="/settings" page={SettingsPage} name="settings" />

@@ -21,6 +21,7 @@ model Provider {
 model User {
   id                String                  @id @default(uuid())
   nickname          String                  @unique
+  email             String                  @unique
   matches           PlayerMatchScore[]
   tournamentsPlayed PlayerTournamentScore[]
   Tournament        Tournament[] //Not sure why needed
@@ -33,6 +34,7 @@ model User {
   photo             UserPicture?            @relation(fields: [userPictureId], references: [id])
   userPictureId     Int?
   gender            String?
+  dob               String?
   phone             String?
   city              String?
   state             String?
@@ -57,12 +59,11 @@ model Store {
   owner       User         @relation(fields: [ownerId], references: [id])
   ownerId     String
   email       String
-  countryCode String
   phone       String
   lat         Float?
   lng         Float?
   street1     String
-  street2     String
+  street2     String?
   city        String
   country     String
   state       String

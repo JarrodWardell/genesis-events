@@ -1,6 +1,6 @@
 export const schema = gql`
   type User {
-    id: Int!
+    id: String!
     firstname: String
     lastname: String
     gender: String
@@ -38,12 +38,15 @@ export const schema = gql`
   type Query {
     users: [User!]!
     user(id: Int!): User
+    checkNickname(nickname: String): Boolean!
   }
 
   input CreateUserInput {
     role: String!
-    firstname: String
-    lastname: String
+    email: String!
+    nickname: String!
+    firstname: String!
+    lastname: String!
     gender: String
     phone: String
     city: String
@@ -51,6 +54,20 @@ export const schema = gql`
     country: String
     zip: String
     howHeard: String
+  }
+
+  input CreateStoreInput {
+    name: String!
+    email: String!
+    phone: String!
+    lat: Float!
+    lng: Float!
+    street1: String!
+    city: String!
+    country: String!
+    state: String!
+    zip: String!
+    distributor: String!
   }
 
   input UpdateUserInput {
@@ -72,7 +89,7 @@ export const schema = gql`
   }
 
   type Mutation {
-    createUser(input: CreateUserInput!): User!
+    createUser(input: CreateUserInput!, storeInput: CreateStoreInput): User!
     updateUser(id: Int!, input: UpdateUserInput!): User!
     deleteUser(id: Int!): User!
   }
