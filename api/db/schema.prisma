@@ -8,7 +8,174 @@ generator client {
   binaryTargets = "native"
 }
 
+model Provider {
+  id        Int      @id @default(autoincrement())
+  uid       String   @unique
+  type      String
+  user      User?    @relation(fields: [userId], references: [id])
+  userId    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+}
+
+model User {
+  id                String                  @id @default(uuid())
+  nickname          String                  @unique
+  email             String                  @unique
+  matches           PlayerMatchScore[]
+  tournamentsPlayed PlayerTournamentScore[]
+  Tournament        Tournament[] //Not sure why needed
+  tournamentsOwned  Tournament[]            @relation(name: "TournamentOwner")
+  tournamentsWon    Tournament[]            @relation("TournamentWinner")
+  Store             Store[]
+  Contact           Contact[]
+  firstname         String?
+  lastname          String?
+  photo             UserPicture?            @relation(fields: [userPictureId], references: [id])
+  userPictureId     Int?
+  gender            String?
+  dob               String?
+  phone             String?
+  city              String?
+  state             String?
+  country           String?
+  zip               String?
+  howHeard          String? //Optional field for Players
+  flags             Int                     @default(0)
+  adminComments     String?
+  disabled          Boolean                 @default(false)
+  disabledOn        DateTime?
+  disabledBy        String?
+  createdAt         DateTime                @default(now())
+  updatedAt         DateTime                @default(now())
+  userRoles         UserRole[]
+  providers         Provider[]
+}
+
+model Store {
+  id          String       @id @default(uuid())
+  name        String
+  tournaments Tournament[]
+  owner       User         @relation(fields: [ownerId], references: [id])
+  ownerId     String
+  email       String
+  phone       String
+  lat         Float?
+  lng         Float?
+  street1     String
+  street2     String?
+  city        String
+  country     String
+  state       String
+  zip         String
+  distributor String
+  approved    Boolean?
+  approvedOn  DateTime?
+}
+
+model UserRole {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  user      User?    @relation(fields: [userId], references: [id])
+  userId    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+}
+
+model UserPicture {
+  id        Int      @id @default(autoincrement())
+  name      String?
+  url       String
+  user      User[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+}
+
 model Tournament {
-  id   Int    @id @default(autoincrement())
-  name String
+  id                Int                     @id @default(autoincrement())
+  name              String
+  tournamentUrl     String                  @unique //Autogenerate
+  startDate         DateTime
+  dateStarted       DateTime?
+  dateEnded         DateTime?
+  maxPlayers        Int
+  timeLeftInSeconds Int?
+  locationName      String
+  infoUrl           String?
+  street1           String?
+  street2           String
+  city              String
+  country           String
+  state             String
+  zip               String
+  lat               Float?
+  lng               Float?
+  players           PlayerTournamentScore[]
+  winner            User?                   @relation(name: "TournamentWinner", fields: [winnerId], references: [id])
+  winnerId          String
+  Store             Store?                  @relation(fields: [storeId], references: [id])
+  storeId           String?
+  owner             User?                   @relation(name: "TournamentOwner", fields: [ownerId], references: [id])
+  ownerId           String?
+  createdAt         DateTime                @default(now())
+  updatedAt         DateTime                @default(now())
+  User              User?                   @relation(fields: [userId], references: [id])
+  userId            String?
+}
+
+model Round {
+  id                Int      @id @default(autoincrement())
+  matches           Match[]
+  timer             Int
+  timeLeftInSeconds Int?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @default(now())
+}
+
+model PlayerTournamentScore {
+  id           Int          @id @default(autoincrement())
+  wins         Int          @default(0)
+  losses       Int          @default(0)
+  score        Int          @default(0)
+  playerId     String
+  players      User[]       @relation(fields: [playerId], references: [id])
+  tournamentId Int
+  tournaments  Tournament[] @relation(fields: [tournamentId], references: [id])
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @default(now())
+
+  @@unique([playerId, tournamentId])
+}
+
+model Match {
+  id        Int                @id @default(autoincrement())
+  players   PlayerMatchScore[]
+  round     Round              @relation(fields: [roundId], references: [id])
+  roundId   Int
+  createdAt DateTime           @default(now())
+  updatedAt DateTime           @default(now())
+}
+
+model PlayerMatchScore {
+  id        Int      @id @default(autoincrement())
+  score     Int?
+  User      User?    @relation(fields: [userId], references: [id])
+  userId    String?
+  Match     Match?   @relation(fields: [matchId], references: [id])
+  matchId   Int?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  @@unique([userId, matchId])
+}
+
+model Contact {
+  id          Int      @id @default(autoincrement())
+  name        String
+  email       String
+  text        String
+  userContact User     @relation(fields: [userId], references: [id])
+  userId      String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now())
 }

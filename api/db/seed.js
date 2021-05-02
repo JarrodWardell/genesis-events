@@ -36,7 +36,12 @@ async function main() {
     }
   */
 
-  console.info('No data to seed. See api/db/seed.js for info.')
+  //Create User Roles
+  const result = await db.userRole.createMany({
+    data: [{ name: 'ADMIN' }, { name: 'EO' }, { name: 'PLAYER' }],
+    skipDuplicates: true, // Supported with Postgres database
+  })
+  console.log(`Created ${result.count} User Roles!`)
 }
 
 main()
