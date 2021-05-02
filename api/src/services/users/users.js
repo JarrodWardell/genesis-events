@@ -1,3 +1,5 @@
+import newStorePending from 'src/emails/newStorePending'
+import { sendEmail } from 'src/helpers/sendEmail'
 import { db } from 'src/lib/db'
 
 export const users = () => {
@@ -33,11 +35,19 @@ export const createUser = async ({ input, storeInput }) => {
 
   //Create store
   if (storeInput) {
-    await db.store.create({
+    let store = await db.store.create({
       data: {
         ...storeInput,
         owner: { connect: { id: user.id } },
       },
+    })
+
+    let html = `${newStorePending({ store }).html}`
+    sendEmail({
+      to: process.env.ADMIN_EMAILS,
+      subject: `GEO: New Pending Store: ${store.name}`,
+      html,
+      text: `New Pending Store: ${store.name}`,
     })
   }
 

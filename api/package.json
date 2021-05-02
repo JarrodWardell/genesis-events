@@ -5,6 +5,9 @@
   "dependencies": {
     "@redwoodjs/api": "^0.30.0",
     "@redwoodjs/api-server": "^0.30.0",
-    "firebase-admin": "^9.6.0"
+    "bad-words": "^3.0.4",
+    "firebase-admin": "^9.6.0",
+    "mailgun-js": "^0.22.0",
+    "mjml": "^4.9.3"
   }
 }
