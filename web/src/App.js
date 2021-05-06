@@ -1,5 +1,6 @@
 import { AuthProvider } from '@redwoodjs/auth'
 import firebase from 'firebase/app'
+import 'firebase/analytics'
 import 'firebase/auth'
 import { FatalErrorBoundary } from '@redwoodjs/web'
 import { RedwoodApolloProvider } from '@redwoodjs/web/apollo'
@@ -16,6 +17,7 @@ const firebaseClientConfig = {
   storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
   messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
   appId: process.env.FIREBASE_APP_ID,
+  measurementId: process.env.FIREBASE_MEASUREMENT_ID,
 }
 
 const firebaseClient = ((config) => {

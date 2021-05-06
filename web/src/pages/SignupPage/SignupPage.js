@@ -20,6 +20,7 @@ import { Redirect } from '@redwoodjs/router'
 
 import NicknameCheckField from 'src/components/NicknameCheckField/NicknameCheckField'
 import { getAddress } from 'src/helpers/formatAddress'
+import { logEvent } from 'firebase/analytics'
 
 const CREATE_USER = gql`
   mutation CreateUserMutation(
@@ -53,8 +54,9 @@ const SignupPage = () => {
   const [step, setStep] = React.useState(1)
   const [form, setForm] = React.useState({})
   const [nicknameValid, setNicknameValid] = React.useState(null)
-  const { signUp, loading, currentUser } = useAuth()
+  const { signUp, loading, currentUser, client } = useAuth()
   const [createUser, { loading: createUserLoading }] = useMutation(CREATE_USER)
+  const analytics = client.analytics()
   const formMethods = useForm()
   const password = useRef()
   password.current = formMethods.watch('password', '')
@@ -193,7 +195,9 @@ const SignupPage = () => {
     formMethods.setValue('store-state', addr.administrative_area_level_1)
   }
 
-  useEffect(() => {})
+  useEffect(() => {
+    analytics.logEvent('User entered Signup page')
+  })
 
   const renderStep = () => {
     if (step === 1) {
@@ -630,11 +634,7 @@ const SignupPage = () => {
     return (
       <div className="min-h-screen flex flex-col justify-center">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
-          <img
-            className="mx-auto h-12 w-auto"
-            src="https://tailwindui.com/img/logos/workflow-mark-indigo-600.svg"
-            alt="Workflow"
-          />
+          <img className="mx-auto h-12 w-auto" src="/Logo.png" alt="Workflow" />
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
             Sign up
           </h2>

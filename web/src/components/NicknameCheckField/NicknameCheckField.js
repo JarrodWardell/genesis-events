@@ -1,4 +1,7 @@
 import { useLazyQuery } from '@apollo/client'
+import Filter from 'bad-words'
+
+const filter = new Filter()
 
 const CHECK_NICKNAME = gql`
   query CheckNicknameQuery($nickname: String!) {
@@ -8,24 +11,31 @@ const CHECK_NICKNAME = gql`
 
 const NicknameCheckField = ({ onChange, setNicknameValid }) => {
   const [valid, setValid] = React.useState(null)
-  const [checkNickname, { called, loading, data }] = useLazyQuery(
-    CHECK_NICKNAME,
-    {
-      onCompleted: (res) => {
-        setValid(res.checkNickname)
-        setNicknameValid(res.checkNickname)
-      },
-    }
-  )
+  const [errors, setErrors] = React.useState('')
+  const [checkNickname, { called, loading }] = useLazyQuery(CHECK_NICKNAME, {
+    onCompleted: (res) => {
+      setValid(res.checkNickname)
+      setNicknameValid(res.checkNickname)
+    },
+  })
 
   let nicknameClass = ''
 
   const onNicknameUpdate = (input) => {
     var nickname = input.target.value
     if (nickname.length > 2) {
-      checkNickname({ variables: { nickname } })
-      onChange({ nickname })
+      if (filter.isProfane(nickname)) {
+        setErrors(
+          'Please ensure your nickname does not contain any profane words'
+        )
+        setValid(false)
+        setNicknameValid(false)
+      } else {
+        checkNickname({ variables: { nickname } })
+        onChange({ nickname })
+      }
     } else {
+      setErrors('')
       setValid(null)
       setNicknameValid(null)
     }
@@ -95,17 +105,20 @@ const NicknameCheckField = ({ onChange, setNicknameValid }) => {
   }
 
   return (
-    <div className="relative w-full flex">
-      <input
-        name="nickname"
-        placeholder="Unique Nickname"
-        className={
-          'border-2 p-2 mt-2 w-full flex focus:outline-none' + nicknameClass
-        }
-        onChange={onNicknameUpdate}
-      />
-      {called && <div className="absolute right-8 top-5">{renderIcon()}</div>}
-    </div>
+    <>
+      <div className="relative w-full flex">
+        <input
+          name="nickname"
+          placeholder="Unique Nickname"
+          className={
+            'border-2 p-2 mt-2 w-full flex focus:outline-none' + nicknameClass
+          }
+          onChange={onNicknameUpdate}
+        />
+        {called && <div className="absolute right-8 top-5">{renderIcon()}</div>}
+      </div>
+      {errors && <div className="text-red-500">{errors}</div>}
+    </>
   )
 }
 
