@@ -20,6 +20,7 @@ import { Redirect } from '@redwoodjs/router'
 
 import NicknameCheckField from 'src/components/NicknameCheckField/NicknameCheckField'
 import { getAddress } from 'src/helpers/formatAddress'
+import { logEvent } from 'firebase/analytics'
 
 const CREATE_USER = gql`
   mutation CreateUserMutation(
@@ -53,8 +54,9 @@ const SignupPage = () => {
   const [step, setStep] = React.useState(1)
   const [form, setForm] = React.useState({})
   const [nicknameValid, setNicknameValid] = React.useState(null)
-  const { signUp, loading, currentUser } = useAuth()
+  const { signUp, loading, currentUser, client } = useAuth()
   const [createUser, { loading: createUserLoading }] = useMutation(CREATE_USER)
+  const analytics = client.analytics()
   const formMethods = useForm()
   const password = useRef()
   password.current = formMethods.watch('password', '')
@@ -193,7 +195,9 @@ const SignupPage = () => {
     formMethods.setValue('store-state', addr.administrative_area_level_1)
   }
 
-  useEffect(() => {})
+  useEffect(() => {
+    analytics.logEvent('User entered Signup page')
+  })
 
   const renderStep = () => {
     if (step === 1) {
