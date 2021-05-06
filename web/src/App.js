@@ -25,6 +25,8 @@ const firebaseClient = ((config) => {
   return firebase
 })(firebaseClientConfig)
 
+export const analytics = firebaseClient.analytics()
+
 const App = () => (
   <FatalErrorBoundary page={FatalErrorPage}>
     <AuthProvider client={firebaseClient} type="firebase">

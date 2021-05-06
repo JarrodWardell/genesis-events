@@ -16,11 +16,11 @@ import { useForm } from 'react-hook-form'
 
 import { useAuth } from '@redwoodjs/auth'
 import { useMutation } from '@redwoodjs/web'
-import { Redirect } from '@redwoodjs/router'
+import { navigate, routes, Redirect } from '@redwoodjs/router'
 
 import NicknameCheckField from 'src/components/NicknameCheckField/NicknameCheckField'
 import { getAddress } from 'src/helpers/formatAddress'
-import { logEvent } from 'firebase/analytics'
+import { analytics } from 'src/App'
 
 const CREATE_USER = gql`
   mutation CreateUserMutation(
@@ -56,7 +56,6 @@ const SignupPage = () => {
   const [nicknameValid, setNicknameValid] = React.useState(null)
   const { signUp, loading, currentUser, client } = useAuth()
   const [createUser, { loading: createUserLoading }] = useMutation(CREATE_USER)
-  const analytics = client.analytics()
   const formMethods = useForm()
   const password = useRef()
   password.current = formMethods.watch('password', '')
@@ -113,10 +112,11 @@ const SignupPage = () => {
       }
     }
 
-    createUser({
+    await createUser({
       variables,
     })
     setError(null)
+    if (role === 'EO') navigate(routes.storePending())
   }
 
   const onProviderClick = async (provider) => {
