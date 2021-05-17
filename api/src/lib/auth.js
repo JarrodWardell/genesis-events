@@ -1,10 +1,3 @@
-// Define what you want `currentUser` to return throughout your app. For example,
-// to return a real user from your database, you could do something like:
-//
-//   export const getCurrentUser = async ({ email }) => {
-//     return await db.user.findUnique({ where: { email } })
-//   }
-
 import { AuthenticationError } from '@redwoodjs/api'
 import admin from 'firebase-admin'
 
@@ -37,9 +30,16 @@ export const getCurrentUser = async (decoded, { token, type }) => {
       },
     })
   }
+
   let user = provider.userId
     ? await db.user.findUnique({
         where: { id: provider.userId },
+      })
+    : {}
+
+  let stores = provider.userId
+    ? await db.store.findMany({
+        where: { ownerId: user.id },
       })
     : {}
 
@@ -54,7 +54,7 @@ export const getCurrentUser = async (decoded, { token, type }) => {
     return role.name
   })
 
-  return { email, uid, user, roles }
+  return { email, uid, user, roles, stores }
 }
 
 export const requireAuth = () => {

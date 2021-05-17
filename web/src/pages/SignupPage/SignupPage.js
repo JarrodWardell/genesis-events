@@ -25,7 +25,7 @@ import { analytics } from 'src/App'
 const CREATE_USER = gql`
   mutation CreateUserMutation(
     $input: CreateUserInput!
-    $storeInput: CreateStoreInput
+    $storeInput: CreateUserStoreInput
   ) {
     createUser(input: $input, storeInput: $storeInput) {
       id
@@ -54,11 +54,12 @@ const SignupPage = () => {
   const [step, setStep] = React.useState(1)
   const [form, setForm] = React.useState({})
   const [nicknameValid, setNicknameValid] = React.useState(null)
-  const { signUp, loading, currentUser, client } = useAuth()
+  const { signUp, loading, currentUser } = useAuth()
   const [createUser, { loading: createUserLoading }] = useMutation(CREATE_USER)
   const formMethods = useForm()
   const password = useRef()
   password.current = formMethods.watch('password', '')
+
   const onSubmit = async (data) => {
     let newData = { ...data, ...form }
     await signUp({ password: newData.password, email: newData.email })
@@ -117,6 +118,7 @@ const SignupPage = () => {
     })
     setError(null)
     if (role === 'EO') navigate(routes.storePending())
+    window.location.reload()
   }
 
   const onProviderClick = async (provider) => {
