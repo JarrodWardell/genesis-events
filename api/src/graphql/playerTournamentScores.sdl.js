@@ -2,9 +2,10 @@ export const schema = gql`
   type PlayerTournamentScore {
     id: Int!
     wins: Int!
+    byes: Int!
     draws: Int!
     losses: Int!
-    score: Int!
+    score: Float!
     playerId: String!
     player: User!
     tournamentId: Int!
@@ -21,7 +22,8 @@ export const schema = gql`
     wins: Int!
     draws: Int!
     losses: Int!
-    score: Int!
+    byes: Int!
+    score: Float!
     playerId: String!
     tournamentId: Int!
   }
@@ -30,7 +32,8 @@ export const schema = gql`
     wins: Int
     draws: Int
     losses: Int
-    score: Int
+    byes: Int
+    score: Float
     playerId: String
     tournamentId: Int
   }

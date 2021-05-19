@@ -32,6 +32,12 @@ export const TOURNAMENT_BY_URL = gql`
         name
       }
       players {
+        id
+        score
+        wins
+        byes
+        draws
+        losses
         player {
           id
           nickname
@@ -40,7 +46,9 @@ export const TOURNAMENT_BY_URL = gql`
       round {
         roundNumber
         matches {
+          id
           players {
+            id
             user {
               id
               nickname

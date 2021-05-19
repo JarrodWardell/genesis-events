@@ -82,12 +82,31 @@ export const schema = gql`
     userId: String
   }
 
+  input TournamentMatchScoreInput {
+    matchId: Int!
+    matches: [MatchScore]!
+  }
+
+  input MatchScore {
+    userId: String!
+    playerMatchScore: Int!
+    score: Int!
+    result: MatchResult!
+  }
+
+  enum MatchResult {
+    WIN
+    TIED
+    LOSS
+  }
+
   type Mutation {
     createTournament(input: CreateTournamentInput!): Tournament!
     updateTournament(id: Int!, input: UpdateTournamentInput!): Tournament!
     deleteTournament(id: Int!): Tournament!
     registerForTournament(id: Int!): String!
     startTournament(id: Int!): Tournament!
+    addMatchScore(input: TournamentMatchScoreInput!): Match!
   }
 
   type Subscription {

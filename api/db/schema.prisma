@@ -48,10 +48,10 @@ model User {
   disabledBy        String?
   createdAt         DateTime                @default(now())
   updatedAt         DateTime                @default(now())
-  userRoles         UserRole[]
   providers         Provider[]
   //User disabled field
   active            Boolean                 @default(true)
+  UserUserRole      UserUserRole[]
 }
 
 model Store {
@@ -76,13 +76,26 @@ model Store {
   active      Boolean      @default(true)
 }
 
+model UserUserRole {
+  id         Int      @id @default(autoincrement())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  userRoleId Int
+  userRole   UserRole @relation(fields: [userRoleId], references: [id])
+  active     Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now())
+
+  @@unique([userId, userRoleId])
+}
+
 model UserRole {
-  id        Int      @id @default(autoincrement())
-  name      String   @unique
-  user      User?    @relation(fields: [userId], references: [id])
-  userId    String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+  id           Int            @id @default(autoincrement())
+  name         String         @unique
+  UserUserRole UserUserRole[]
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @default(now())
+
 }
 
 model UserPicture {
@@ -156,7 +169,7 @@ model PlayerTournamentScore {
   wins         Int        @default(0)
   draws        Int        @default(0)
   losses       Int        @default(0)
-  score        Int        @default(0)
+  score        Float      @default(0)
   byes         Int        @default(0)
   randomizer   String?
   playerId     String

@@ -30,13 +30,10 @@ const TournamentSignupTab = ({ tournament }) => {
 
   //Check if applicable to register
   const isInTournament = () => {
-    console.log(tournament.players)
     var playerList = {}
     tournament.players?.forEach(
       ({ player }) => (playerList[player.id] = { ...player })
     )
-
-    console.log(playerList)
 
     if (playerList && currentUser.user.id in playerList) {
       return false

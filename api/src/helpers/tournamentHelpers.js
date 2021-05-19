@@ -38,6 +38,7 @@ export const generateMatches = async ({ roundNumber = 1, db, id }) => {
   let playerList = players.map((player) => player.playerId)
   let playersNotGivenMatches = players.map((player) => player.playerId)
   let generatedMatches = []
+  let scoreObj = {}
 
   if (roundNumber > 1) {
     players.map((player) => {
@@ -67,6 +68,7 @@ export const generateMatches = async ({ roundNumber = 1, db, id }) => {
         }
       } else if (playersNotGivenMatches.length === 1) {
         match.push(player)
+        playersNotGivenMatches.splice(0, 1)
         generatedMatches.push(match)
       }
     })

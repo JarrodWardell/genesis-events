@@ -2,6 +2,7 @@ import { useAuth } from '@redwoodjs/auth'
 import { useMutation } from '@redwoodjs/web'
 import toast from 'react-hot-toast'
 import { TOURNAMENT_BY_URL } from 'src/pages/ViewTournamentPage/ViewTournamentPage'
+import MatchDetails from '../MatchDetails/MatchDetails'
 import TournamentNotStarted from '../TournamentNotStarted/TournamentNotStarted'
 
 const TournamentRoundsTab = ({ tournament }) => {
@@ -23,23 +24,7 @@ const TournamentRoundsTab = ({ tournament }) => {
 
     round.matches.map((match, index) => {
       matches.push(
-        <div className="flex w-full">
-          <div>{index + 1}.</div>
-          <div className="flex flex-col w-1/3">
-            <div>{match.players[0].user?.nickname}</div>
-            <div>
-              {match.players[0].score ? match.players[0].score : <input />}
-            </div>
-          </div>
-          <div className="w-1/3">vs</div>
-
-          <div className="flex flex-col w-1/3">
-            <div>{match.players[1].user?.nickname}</div>
-            <div>
-              {match.players[1].score ? match.players[1].score : <input />}
-            </div>
-          </div>
-        </div>
+        <MatchDetails match={match} index={index} tournament={tournament} />
       )
     })
 
@@ -53,6 +38,7 @@ const TournamentRoundsTab = ({ tournament }) => {
         {tournament.round?.map((round) => {
           return (
             <div
+              key={round.id}
               className={
                 'py-4 px-8 w-20 border-gray-100 border-2 cursor-pointer hover:bg-blue-500' +
                 (round.roundNumber === selectedRound ? ' bg-blue-300' : '')

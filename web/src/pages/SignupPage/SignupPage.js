@@ -604,6 +604,7 @@ const SignupPage = () => {
           onSubmit={onSubmit}
           className="flex flex-col"
           validation={{ mode: 'onBlur' }}
+          formMethods={formMethods}
         >
           <Label name="password" errorClassName="text-red-500">
             Password

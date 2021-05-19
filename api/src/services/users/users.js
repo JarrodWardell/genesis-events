@@ -28,8 +28,22 @@ export const createUser = async ({ input, storeInput }) => {
   const user = await db.user.create({
     data: {
       ...newData,
-      userRoles: { connect: [{ id: role.id }] },
       providers: { connect: [{ id: provider.id }] },
+    },
+  })
+
+  await db.userUserRole.create({
+    data: {
+      user: {
+        connect: {
+          id: user.id,
+        },
+      },
+      userRole: {
+        connect: {
+          id: role.id,
+        },
+      },
     },
   })
 
