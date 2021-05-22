@@ -42,7 +42,7 @@ const LoginPage = () => {
               <div className="text-sm my-4 text-center">
                 <Link
                   to={routes.forgotPassword()}
-                  class="font-medium text-indigo-600 hover:text-indigo-500 "
+                  className="font-medium text-indigo-600 hover:text-indigo-500 "
                 >
                   Forgot your password?
                 </Link>

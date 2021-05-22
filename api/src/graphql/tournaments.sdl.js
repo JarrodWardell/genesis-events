@@ -107,6 +107,7 @@ export const schema = gql`
     registerForTournament(id: Int!): String!
     startTournament(id: Int!): Tournament!
     addMatchScore(input: TournamentMatchScoreInput!): Match!
+    advanceRound(id: Int!, roundNumber: Int!): Tournament
   }
 
   type Subscription {

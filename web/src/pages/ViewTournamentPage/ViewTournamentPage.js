@@ -6,6 +6,7 @@ import TournamentLeaderboardTab from 'src/components/TournamentLeaderboardTab/To
 import TournamentMatchesTab from 'src/components/TournamentMatchesTab/TournamentMatchesTab'
 import TournamentRoundsTab from 'src/components/TournamentRoundsTab/TournamentRoundsTab'
 import TournamentSignupTab from 'src/components/TournamentSignupTab/TournamentSignupTab'
+import { calcNumRounds } from 'src/helpers/tournamentHelper'
 
 export const TOURNAMENT_BY_URL = gql`
   query tournamentByUrl($url: String!) {
@@ -130,6 +131,7 @@ const ViewTournamentPage = ({ url, tab }) => {
         </h1>
         <h1>{new Date(startDate).toString()}</h1>
         {timeToTournament(tournament)}
+        <h1>Estimated Rounds: {calcNumRounds(tournament.players.length)}</h1>
         <div
           className="overflow-hidden truncate overflow-ellipsis"
           dangerouslySetInnerHTML={{ __html: desc }}

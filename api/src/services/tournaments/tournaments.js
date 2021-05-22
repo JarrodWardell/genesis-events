@@ -26,7 +26,7 @@ export const myTournaments = () => {
         },
         {
           startDate: {
-            gte: new Date().toISOString(),
+            gte: new Date(),
           },
         },
       ],
@@ -45,21 +45,11 @@ export const tournamentByUrl = ({ url }) => {
     where: { tournamentUrl: url },
     include: {
       players: {
-        orderBy: [
-          {
-            score: 'desc',
-          },
-          {
-            wins: 'desc',
-          },
-          {
-            byes: 'desc',
-          },
-        ],
+        orderBy: {
+          score: 'desc',
+        },
         select: {
           score: true,
-          wins: true,
-          byes: true,
         },
       },
     },
@@ -166,6 +156,125 @@ export const startTournament = async ({ id }) => {
     },
   })
 
+  await createMatches({ proposedMatches, round, id })
+
+  //Add tournament started date
+  await db.tournament.update({
+    data: {
+      dateStarted: new Date(),
+    },
+    where: {
+      id,
+    },
+  })
+
+  //Return tournament
+  return tournament
+}
+
+export const advanceRound = async ({ id, roundNumber }) => {
+  const tournament = await db.tournament.findUnique({ where: { id } })
+
+  //Grab list of players and generate match ups
+  const proposedMatches = await generateMatches({ roundNumber, id, db })
+
+  const round = await db.round.create({
+    data: {
+      roundNumber,
+      tournament: {
+        connect: {
+          id,
+        },
+      },
+    },
+  })
+
+  await createMatches({ proposedMatches, round, id })
+
+  //Add tournament started date
+  await db.tournament.update({
+    data: {
+      updatedAt: new Date(),
+    },
+    where: {
+      id,
+    },
+  })
+
+  //Return tournament
+  return tournament
+}
+
+export const reshuffleRound = async ({ id }) => {}
+
+export const endTournament = async ({ id }) => {}
+
+export const cancelTournament = async ({ id }) => {}
+
+export const deleteTournament = ({ id }) => {
+  return db.tournament.delete({
+    where: { id },
+  })
+}
+
+export const addMatchScore = async ({ input }) => {
+  const match = await db.match.findUnique({ where: { id: input.matchId } })
+
+  try {
+    await input.matches.map(async (playerMatch) => {
+      await db.playerMatchScore.update({
+        data: {
+          score: playerMatch.score,
+          wonMatch: playerMatch.result === 'WIN',
+          updatedAt: new Date(),
+        },
+        where: {
+          id: playerMatch.playerMatchScore,
+        },
+      })
+
+      let playerTourneyScore = await db.playerTournamentScore.findFirst({
+        where: {
+          playerId: playerMatch.userId,
+          tournamentId: match.tournamentId,
+        },
+      })
+
+      let updateData = {}
+      switch (playerMatch.result) {
+        case 'WIN':
+          updateData.wins = playerTourneyScore.wins + 1
+          updateData.score = playerTourneyScore.score += 1
+          break
+        case 'TIED':
+          updateData.draws = playerTourneyScore.draws + 1
+          updateData.score = playerTourneyScore.score += 0.5
+          break
+        case 'LOSS':
+          updateData.losses = playerTourneyScore.losses + 1
+          break
+      }
+
+      await db.playerTournamentScore.update({
+        data: {
+          ...updateData,
+          updatedAt: new Date(),
+        },
+        where: {
+          id: playerTourneyScore.id,
+        },
+      })
+    })
+  } catch (err) {
+    console.log(err)
+  }
+
+  return match
+}
+
+export const getTournamentLeaderboard = async ({ id }) => {}
+
+const createMatches = async ({ proposedMatches, id, round }) => {
   //Create all matches
   proposedMatches.forEach(async (proposedMatch) => {
     const match = await db.match.create({
@@ -201,105 +310,37 @@ export const startTournament = async ({ id }) => {
       })
 
       if (proposedMatch.length === 1) {
+        let playerTourneyScore = await db.playerTournamentScore.findFirst({
+          where: {
+            playerId: proposedPlayer,
+            tournamentId: id,
+          },
+        })
+
         await db.playerTournamentScore.update({
           data: {
-            byes: 1,
-            score: 1,
+            byes: playerTourneyScore.byes + 1,
+            score: playerTourneyScore.score + 1,
           },
           where: {
-            userId: proposedPlayer,
+            id: playerTourneyScore.id,
           },
         })
       }
     })
   })
-
-  //Add tournament started date
-  await db.tournament.update({
-    data: {
-      dateStarted: new Date(),
-    },
-    where: {
-      id,
-    },
-  })
-
-  //Return tournament
-  return tournament
 }
-
-export const advanceRound = async ({ id }) => {}
-
-export const reshuffleRound = async ({ id }) => {}
-
-export const endTournament = async ({ id }) => {}
-
-export const cancelTournament = async ({ id }) => {}
-
-export const deleteTournament = ({ id }) => {
-  return db.tournament.delete({
-    where: { id },
-  })
-}
-
-export const addMatchScore = async ({ input }) => {
-  const match = await db.match.findUnique({ where: { id: input.matchId } })
-  console.log(match)
-  try {
-    await input.matches.map(async (playerMatch) => {
-      await db.playerMatchScore.update({
-        data: {
-          score: playerMatch.score,
-          wonMatch: playerMatch.result === 'WIN',
-        },
-        where: {
-          id: playerMatch.playerMatchScore,
-        },
-      })
-
-      let playerTourneyScore = await db.playerTournamentScore.findFirst({
-        where: {
-          playerId: playerMatch.userId,
-          tournamentId: match.tournamentId,
-        },
-      })
-
-      let updateData = {}
-      switch (playerMatch.result) {
-        case 'WIN':
-          updateData.wins = playerTourneyScore.wins + 1
-          updateData.score = playerTourneyScore.score += 1
-          break
-        case 'TIED':
-          updateData.draws = playerTourneyScore.draws + 1
-          updateData.score = playerTourneyScore.score += 0.5
-          break
-        case 'LOSS':
-          updateData.losses = playerTourneyScore.losses + 1
-          break
-      }
-
-      await db.playerTournamentScore.update({
-        data: {
-          ...updateData,
-        },
-        where: {
-          id: playerTourneyScore.id,
-        },
-      })
-    })
-  } catch (err) {
-    console.log(err)
-  }
-
-  return match
-}
-
-export const getTournamentLeaderboard = async ({ id }) => {}
 
 export const Tournament = {
   players: (_obj, { root }) =>
-    db.tournament.findUnique({ where: { id: root.id } }).players(),
+    db.tournament.findUnique({ where: { id: root.id } }).players({
+      orderBy: [
+        { score: 'desc' },
+        { wins: 'desc' },
+        { byes: 'desc' },
+        { draws: 'desc' },
+      ],
+    }),
   round: (_obj, { root }) =>
     db.tournament.findUnique({ where: { id: root.id } }).round(),
   matches: (_obj, { root }) =>

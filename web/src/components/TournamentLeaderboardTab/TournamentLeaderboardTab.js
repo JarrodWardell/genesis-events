@@ -2,13 +2,28 @@ const TournamentLeaderboardTab = ({ tournament }) => {
   return (
     <div>
       <h2>{'Tournament Leaderboard'}</h2>
-      {tournament.players.map((playerScore, index) => (
-        <div key={playerScore.player.id}>
-          {index + 1}. {playerScore.player.nickname} - WINS: {playerScore.wins}{' '}
-          - DRAWS: {playerScore.draws} - BYES: {playerScore.byes} - SCORE:{' '}
-          {playerScore.score}
-        </div>
-      ))}
+      <table>
+        <tr>
+          <th>Rank</th>
+          <th>Nickname</th>
+          <th>Score</th>
+          <th>Wins</th>
+          <th>Losses</th>
+          <th>Draws</th>
+          <th>Byes</th>
+        </tr>
+        {tournament.players.map((playerScore, index) => (
+          <tr key={playerScore.player.id}>
+            <td>{index + 1}</td>
+            <td>{playerScore.player.nickname}</td>
+            <td>{playerScore.score}</td>
+            <td>{playerScore.wins}</td>
+            <td>{playerScore.losses}</td>
+            <td>{playerScore.draws}</td>
+            <td>{playerScore.byes}</td>
+          </tr>
+        ))}
+      </table>
     </div>
   )
 }
