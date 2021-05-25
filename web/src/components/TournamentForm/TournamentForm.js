@@ -127,22 +127,6 @@ const TournamentForm = (props) => {
         <FieldError name="maxPlayers" className="rw-field-error" />
 
         <Label
-          name="timeLeftInSeconds"
-          className="rw-label"
-          errorClassName="rw-label rw-label-error"
-        >
-          Time left in seconds
-        </Label>
-        <NumberField
-          name="timeLeftInSeconds"
-          defaultValue={props.tournament?.timeLeftInSeconds}
-          className="rw-input"
-          errorClassName="rw-input rw-input-error"
-          validation={{ required: true }}
-        />
-        <FieldError name="timeLeftInSeconds" className="rw-field-error" />
-
-        <Label
           name="locationName"
           className="rw-label"
           errorClassName="rw-label rw-label-error"
@@ -305,22 +289,6 @@ const TournamentForm = (props) => {
         <FieldError name="lng" className="rw-field-error" />
 
         <Label
-          name="winnerId"
-          className="rw-label"
-          errorClassName="rw-label rw-label-error"
-        >
-          Winner id
-        </Label>
-        <TextField
-          name="winnerId"
-          defaultValue={props.tournament?.winnerId}
-          className="rw-input"
-          errorClassName="rw-input rw-input-error"
-          validation={{ required: true }}
-        />
-        <FieldError name="winnerId" className="rw-field-error" />
-
-        <Label
           name="storeId"
           className="rw-label"
           errorClassName="rw-label rw-label-error"
@@ -351,22 +319,6 @@ const TournamentForm = (props) => {
           validation={{ required: true }}
         />
         <FieldError name="ownerId" className="rw-field-error" />
-
-        <Label
-          name="userId"
-          className="rw-label"
-          errorClassName="rw-label rw-label-error"
-        >
-          User id
-        </Label>
-        <TextField
-          name="userId"
-          defaultValue={props.tournament?.userId}
-          className="rw-input"
-          errorClassName="rw-input rw-input-error"
-          validation={{ required: true }}
-        />
-        <FieldError name="userId" className="rw-field-error" />
 
         <div className="rw-button-group">
           <Submit disabled={props.loading} className="rw-button rw-button-blue">

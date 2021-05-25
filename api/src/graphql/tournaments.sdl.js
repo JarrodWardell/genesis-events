@@ -8,7 +8,10 @@ export const schema = gql`
     dateStarted: DateTime
     dateEnded: DateTime
     maxPlayers: Int!
-    timeLeftInSeconds: Int
+    startingTimerInSeconds: Int
+    timerLeftInSeconds: Int
+    timerStatus: TimerStatus
+    timerLastUpdated: DateTime
     locationName: String!
     infoUrl: String
     street1: String
@@ -21,16 +24,20 @@ export const schema = gql`
     lng: Float
     round: [Round]
     players: [PlayerTournamentScore]!
-    winner: User
-    winnerId: String!
+    winners: [PlayerTournamentScore]
     store: Store
     storeId: String
     owner: User
     ownerId: String
     createdAt: DateTime!
     updatedAt: DateTime!
-    User: User
-    userId: String
+  }
+
+  enum TimerStatus {
+    PENDING
+    INPROGRESS
+    PAUSED
+    STOPPED
   }
 
   type Query {
@@ -65,7 +72,10 @@ export const schema = gql`
     dateStarted: DateTime
     dateEnded: DateTime
     maxPlayers: Int
-    timeLeftInSeconds: Int
+    startingTimerInSeconds: Int
+    timerLeftInSeconds: Int
+    timerStatus: TimerStatus
+    timerLastUpdated: DateTime
     locationName: String
     infoUrl: String
     street1: String
@@ -76,10 +86,8 @@ export const schema = gql`
     zip: String
     lat: Float
     lng: Float
-    winnerId: String
     storeId: String
     ownerId: String
-    userId: String
   }
 
   input TournamentMatchScoreInput {
@@ -100,14 +108,28 @@ export const schema = gql`
     LOSS
   }
 
+  input TimerInput {
+    tournamentId: Int!
+    timerLeftInSeconds: Int!
+    timerStatus: TimerStatus!
+    startingTimerInSeconds: Int!
+  }
+
   type Mutation {
     createTournament(input: CreateTournamentInput!): Tournament!
     updateTournament(id: Int!, input: UpdateTournamentInput!): Tournament!
     deleteTournament(id: Int!): Tournament!
     registerForTournament(id: Int!): String!
     startTournament(id: Int!): Tournament!
+    updateTimer(input: TimerInput!): Tournament!
     addMatchScore(input: TournamentMatchScoreInput!): Match!
-    advanceRound(id: Int!, roundNumber: Int!): Tournament
+    advanceRound(
+      id: Int!
+      roundNumber: Int!
+      startingTimerInSeconds: Int
+      roundTimerLeftInSeconds: Int
+    ): Tournament
+    endTournament(id: Int!): Tournament!
   }
 
   type Subscription {

@@ -32,7 +32,6 @@ describe('tournaments', () => {
         country: 'String',
         state: 'String',
         zip: 'String',
-        winnerId: 'scenario.tournament.two.winnerId',
       },
     })
 
@@ -46,7 +45,6 @@ describe('tournaments', () => {
     expect(result.country).toEqual('String')
     expect(result.state).toEqual('String')
     expect(result.zip).toEqual('String')
-    expect(result.winnerId).toEqual('scenario.tournament.two.winnerId')
   })
 
   scenario('updates a tournament', async (scenario) => {

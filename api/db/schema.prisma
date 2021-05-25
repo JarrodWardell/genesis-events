@@ -4,8 +4,9 @@ datasource DS {
 }
 
 generator client {
-  provider      = "prisma-client-js"
-  binaryTargets = "native"
+  provider        = "prisma-client-js"
+  binaryTargets   = "native"
+  previewFeatures = ["orderByAggregateGroup"]
 }
 
 model Provider {
@@ -26,7 +27,6 @@ model User {
   tournamentsPlayed PlayerTournamentScore[]
   Tournament        Tournament[] //Not sure why needed
   tournamentsOwned  Tournament[]            @relation(name: "TournamentOwner")
-  tournamentsWon    Tournament[]            @relation("TournamentWinner")
   Store             Store[]
   Contact           Contact[]
   firstname         String?
@@ -108,53 +108,40 @@ model UserPicture {
 }
 
 model Tournament {
-  id                Int                     @id @default(autoincrement())
-  name              String
-  tournamentUrl     String                  @unique //Autogenerate
-  startDate         DateTime
-  dateStarted       DateTime?
-  dateEnded         DateTime?
-  maxPlayers        Int
-  timeLeftInSeconds Int?
-  locationName      String
-  infoUrl           String?
-  street1           String?
-  street2           String?
-  city              String?
-  country           String?
-  state             String?
-  zip               String?
-  lat               Float?
-  lng               Float?
-  desc              String?
-  round             Round[]
-  matches           Match[]
-  players           PlayerTournamentScore[]
-  winner            User?                   @relation(name: "TournamentWinner", fields: [winnerId], references: [id])
-  winnerId          String?
-  store             Store?                  @relation(fields: [storeId], references: [id])
-  storeId           String?
-  owner             User?                   @relation(name: "TournamentOwner", fields: [ownerId], references: [id])
-  ownerId           String?
-  user              User?                   @relation(fields: [userId], references: [id])
-  userId            String?
-  active            Boolean                 @default(true)
-  createdAt         DateTime                @default(now())
-  updatedAt         DateTime                @default(now())
-}
-
-model Round {
-  id                    Int          @id @default(autoincrement())
-  roundNumber           Int
-  matches               Match[]
-  tournament            Tournament   @relation(fields: [tournamentId], references: [id])
-  startingTimeInSeconds Int?
-  timeLeftInSeconds     Int?
-  timeStatus            TimerStatus?
-  active                Boolean      @default(true)
-  createdAt             DateTime     @default(now())
-  updatedAt             DateTime     @default(now())
-  tournamentId          Int
+  id                     Int                     @id @default(autoincrement())
+  name                   String
+  tournamentUrl          String                  @unique //Autogenerate
+  startDate              DateTime
+  dateStarted            DateTime?
+  dateEnded              DateTime?
+  maxPlayers             Int
+  startingTimerInSeconds Int?
+  timerLeftInSeconds     Int?
+  timerStatus            TimerStatus?
+  timerLastUpdated       DateTime?
+  locationName           String
+  infoUrl                String?
+  street1                String?
+  street2                String?
+  city                   String?
+  country                String?
+  state                  String?
+  zip                    String?
+  lat                    Float?
+  lng                    Float?
+  desc                   String?
+  round                  Round[]
+  matches                Match[]
+  players                PlayerTournamentScore[]
+  store                  Store?                  @relation(fields: [storeId], references: [id])
+  storeId                String?
+  owner                  User?                   @relation(name: "TournamentOwner", fields: [ownerId], references: [id])
+  ownerId                String?
+  user                   User?                   @relation(fields: [userId], references: [id])
+  userId                 String?
+  active                 Boolean                 @default(true)
+  createdAt              DateTime                @default(now())
+  updatedAt              DateTime                @default(now())
 }
 
 enum TimerStatus {
@@ -164,21 +151,35 @@ enum TimerStatus {
   STOPPED
 }
 
+model Round {
+  id                      Int        @id @default(autoincrement())
+  roundNumber             Int
+  matches                 Match[]
+  tournament              Tournament @relation(fields: [tournamentId], references: [id])
+  startingTimerInSeconds  Int?
+  roundTimerLeftInSeconds Int?
+  active                  Boolean    @default(true)
+  createdAt               DateTime   @default(now())
+  updatedAt               DateTime   @default(now())
+  tournamentId            Int
+}
+
 model PlayerTournamentScore {
-  id           Int        @id @default(autoincrement())
-  wins         Int        @default(0)
-  draws        Int        @default(0)
-  losses       Int        @default(0)
-  score        Float      @default(0)
-  byes         Int        @default(0)
-  randomizer   String?
-  playerId     String
-  player       User       @relation(fields: [playerId], references: [id])
-  tournamentId Int
-  tournament   Tournament @relation(fields: [tournamentId], references: [id])
-  active       Boolean    @default(true)
-  createdAt    DateTime   @default(now())
-  updatedAt    DateTime   @default(now())
+  id            Int        @id @default(autoincrement())
+  wins          Int        @default(0)
+  draws         Int        @default(0)
+  losses        Int        @default(0)
+  score         Float      @default(0)
+  byes          Int        @default(0)
+  wonTournament Boolean    @default(false)
+  randomizer    String?
+  playerId      String
+  player        User       @relation(fields: [playerId], references: [id])
+  tournamentId  Int
+  tournament    Tournament @relation(fields: [tournamentId], references: [id])
+  active        Boolean    @default(true)
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @default(now())
 
   @@unique([playerId, tournamentId])
 }

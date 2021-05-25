@@ -1,5 +1,5 @@
 import { useAuth } from '@redwoodjs/auth'
-import { Link, routes } from '@redwoodjs/router'
+import { Link, NavLink, routes } from '@redwoodjs/router'
 
 const Header = () => {
   const { isAuthenticated, logOut, currentUser, hasRole } = useAuth()
@@ -55,18 +55,20 @@ const Header = () => {
               <Link to={routes.home()}>{'Genesis Event Organizer'}</Link>
             </div>
             <div className="hidden md:ml-6 md:flex md:space-x-8">
-              <a
-                href="#"
-                className="border-indigo-500 text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+              <NavLink
+                to={routes.home()}
+                className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+                activeClassName="border-indigo-500 text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
               >
                 Tournaments
-              </a>
-              <a
-                href="#"
+              </NavLink>
+              <NavLink
+                to={routes.leaderboard()}
                 className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+                activeClassName="border-indigo-500 text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
               >
                 Leaderboard
-              </a>
+              </NavLink>
             </div>
           </div>
           {isAuthenticated ? (

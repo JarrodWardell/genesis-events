@@ -6,6 +6,11 @@ export const schema = gql`
     draws: Int!
     losses: Int!
     score: Float!
+    rank: Int
+    totalScore: Float
+    totalPoints: Float
+    totalTournamentsPlayed: Int
+    wonTournament: Boolean!
     playerId: String!
     player: User!
     tournamentId: Int!
@@ -15,7 +20,11 @@ export const schema = gql`
   }
 
   type Query {
-    playerTournamentScores: [PlayerTournamentScore!]!
+    playerLeaderboard(
+      nicknameSearch: String
+      skip: Int
+      take: Int
+    ): [PlayerTournamentScore!]!
   }
 
   input CreatePlayerTournamentScoreInput {
@@ -24,6 +33,7 @@ export const schema = gql`
     losses: Int!
     byes: Int!
     score: Float!
+    wonTournament: Boolean!
     playerId: String!
     tournamentId: Int!
   }
@@ -34,6 +44,7 @@ export const schema = gql`
     losses: Int
     byes: Int
     score: Float
+    wonTournament: Boolean!
     playerId: String
     tournamentId: Int
   }

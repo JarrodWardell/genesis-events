@@ -85,10 +85,6 @@ const Tournament = ({ tournament }) => {
               <td>{tournament.maxPlayers}</td>
             </tr>
             <tr>
-              <th>Time left in seconds</th>
-              <td>{tournament.timeLeftInSeconds}</td>
-            </tr>
-            <tr>
               <th>Location name</th>
               <td>{tournament.locationName}</td>
             </tr>
@@ -129,10 +125,6 @@ const Tournament = ({ tournament }) => {
               <td>{tournament.lng}</td>
             </tr>
             <tr>
-              <th>Winner id</th>
-              <td>{tournament.winnerId}</td>
-            </tr>
-            <tr>
               <th>Store id</th>
               <td>{tournament.storeId}</td>
             </tr>
@@ -147,10 +139,6 @@ const Tournament = ({ tournament }) => {
             <tr>
               <th>Updated at</th>
               <td>{timeTag(tournament.updatedAt)}</td>
-            </tr>
-            <tr>
-              <th>User id</th>
-              <td>{tournament.userId}</td>
             </tr>
           </tbody>
         </table>

@@ -130,9 +130,15 @@ export const generateMatches = async ({ roundNumber = 1, db, id }) => {
     }
   })
 
-  console.log(generatedMatches)
-
   return generatedMatches
+}
+
+export const calcNumRounds = (numPlayers, power = 1) => {
+  if (2 ** power >= numPlayers) {
+    return power
+  } else {
+    return calcNumRounds(numPlayers, power + 1)
+  }
 }
 
 const randomizedArray = (arr) =>

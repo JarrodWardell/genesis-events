@@ -68,7 +68,7 @@ const MatchDetails = ({ index, match, tournament }) => {
 
   return (
     <Form onSubmit={onSubmit} formMethods={formMethods}>
-      <div className="flex w-full my-4">
+      <div className="flex w-full my-4" id={`match-${match.id}`}>
         <div>{index + 1}.</div>
         <div className="flex flex-col w-1/4">
           <div>{match.players[0].user?.nickname}</div>

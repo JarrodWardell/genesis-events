@@ -25,9 +25,27 @@ export const myTournaments = () => {
           ],
         },
         {
-          startDate: {
-            gte: new Date(),
-          },
+          OR: [
+            {
+              startDate: {
+                gte: new Date(),
+              },
+            },
+            {
+              AND: [
+                {
+                  dateEnded: {
+                    equals: null,
+                  },
+                },
+                {
+                  dateStarted: {
+                    lte: new Date(),
+                  },
+                },
+              ],
+            },
+          ],
         },
       ],
     },
@@ -172,11 +190,30 @@ export const startTournament = async ({ id }) => {
   return tournament
 }
 
-export const advanceRound = async ({ id, roundNumber }) => {
+export const advanceRound = async ({
+  id,
+  roundNumber,
+  startingTimerInSeconds,
+  roundTimerLeftInSeconds,
+}) => {
   const tournament = await db.tournament.findUnique({ where: { id } })
 
   //Grab list of players and generate match ups
   const proposedMatches = await generateMatches({ roundNumber, id, db })
+
+  const lastRound = await db.round.findFirst({
+    orderBy: { roundNumber: 'desc' },
+  })
+
+  await db.round.update({
+    data: {
+      startingTimerInSeconds,
+      roundTimerLeftInSeconds,
+    },
+    where: {
+      id: lastRound.id,
+    },
+  })
 
   const round = await db.round.create({
     data: {
@@ -207,7 +244,71 @@ export const advanceRound = async ({ id, roundNumber }) => {
 
 export const reshuffleRound = async ({ id }) => {}
 
-export const endTournament = async ({ id }) => {}
+export const endTournament = async ({
+  id,
+  startingTimerInSeconds,
+  roundTimerLeftInSeconds,
+}) => {
+  const tournament = await db.tournament.findUnique({ where: { id } })
+  const players = await db.tournament.findUnique({ where: { id } }).players({
+    orderBy: [
+      { score: 'desc' },
+      { wins: 'desc' },
+      { byes: 'desc' },
+      { draws: 'desc' },
+      { losses: 'asc' },
+    ],
+  })
+
+  const winners = [players[0]]
+  players.map((player) => {
+    if (
+      player.score === players[0].score &&
+      player.wins === players[0].wins &&
+      player.draws === players[0].draws
+    ) {
+      winners.push(player)
+    }
+  })
+
+  const lastRound = await db.round.findFirst({
+    orderBy: { roundNumber: 'desc' },
+  })
+
+  await db.round.update({
+    data: {
+      startingTimerInSeconds,
+      roundTimerLeftInSeconds,
+    },
+    where: {
+      id: lastRound.id,
+    },
+  })
+
+  //Put tournament end date and assign winner
+  await db.tournament.update({
+    data: {
+      updatedAt: new Date(),
+      dateEnded: new Date(),
+    },
+    where: {
+      id,
+    },
+  })
+
+  await winners.map(async (winner) => {
+    await db.playerTournamentScore.update({
+      data: {
+        wonTournament: true,
+      },
+      where: {
+        id: winner.id,
+      },
+    })
+  })
+
+  return tournament
+}
 
 export const cancelTournament = async ({ id }) => {}
 
@@ -264,6 +365,15 @@ export const addMatchScore = async ({ input }) => {
           id: playerTourneyScore.id,
         },
       })
+
+      await db.match.update({
+        data: {
+          updatedAt: new Date(),
+        },
+        where: {
+          id: input.matchId,
+        },
+      })
     })
   } catch (err) {
     console.log(err)
@@ -272,7 +382,26 @@ export const addMatchScore = async ({ input }) => {
   return match
 }
 
-export const getTournamentLeaderboard = async ({ id }) => {}
+export const updateTimer = async ({ input }) => {
+  const {
+    tournamentId: id,
+    timerLeftInSeconds,
+    timerStatus,
+    startingTimerInSeconds,
+  } = input
+
+  return db.tournament.update({
+    data: {
+      timerLeftInSeconds,
+      timerStatus,
+      startingTimerInSeconds,
+      timerLastUpdated: new Date(),
+    },
+    where: {
+      id,
+    },
+  })
+}
 
 const createMatches = async ({ proposedMatches, id, round }) => {
   //Create all matches
@@ -345,12 +474,14 @@ export const Tournament = {
     db.tournament.findUnique({ where: { id: root.id } }).round(),
   matches: (_obj, { root }) =>
     db.tournament.findUnique({ where: { id: root.id } }).matches(),
-  winner: (_obj, { root }) =>
-    db.tournament.findUnique({ where: { id: root.id } }).winner(),
+  winners: (_obj, { root }) =>
+    db.tournament.findUnique({ where: { id: root.id } }).players({
+      where: {
+        wonTournament: true,
+      },
+    }),
   store: (_obj, { root }) =>
     db.tournament.findUnique({ where: { id: root.id } }).store(),
   owner: (_obj, { root }) =>
     db.tournament.findUnique({ where: { id: root.id } }).owner(),
-  User: (_obj, { root }) =>
-    db.tournament.findUnique({ where: { id: root.id } }).User(),
 }

@@ -9,6 +9,8 @@ const Routes = () => {
         <Route path="/" page={HomePage} name="home" />
         <Route path="/tournament/{url}" page={ViewTournamentPage} name="viewTournament" />
         <Route path="/tournament/{url}/{tab}" page={ViewTournamentPage} name="viewTournament" />
+        <Route path="/tournament/{url}/{tab}/{tabOptions:Int}" page={ViewTournamentPage} name="viewTournament" />
+        <Route path="/leaderboard" page={LeaderboardPage} name="leaderboard" />
         <Route path="/login" page={LoginPage} name="login" />
         <Route path="/signup" page={SignupPage} name="signup" />
         <Route path="/signup/{step}" page={SignupPage} name="signup" />

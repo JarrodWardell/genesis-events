@@ -5,18 +5,11 @@ export const schema = gql`
     matches: [Match]!
     tournament: Tournament!
     timer: Int!
-    timeStatus: TimerStatus
-    timeLeftInSeconds: Int
+    startingTimerInSeconds: Int
+    roundTimerLeftInSeconds: Int
     createdAt: DateTime!
     updatedAt: DateTime!
     tournamentId: Int!
-  }
-
-  enum TimerStatus {
-    PENDING
-    INPROGRESS
-    PAUSED
-    STOPPED
   }
 
   type Query {
@@ -25,13 +18,15 @@ export const schema = gql`
 
   input CreateRoundInput {
     timer: Int!
-    timeLeftInSeconds: Int
+    startingTimerInSeconds: Int
+    roundTimerLeftInSeconds: Int
     tournamentId: Int!
   }
 
   input UpdateRoundInput {
     timer: Int
-    timeLeftInSeconds: Int
+    startingTimerInSeconds: Int
+    roundTimerLeftInSeconds: Int
     tournamentId: Int
   }
 `

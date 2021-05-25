@@ -84,7 +84,6 @@ const TournamentsList = ({ tournaments }) => {
             <th>Owner id</th>
             <th>Created at</th>
             <th>Updated at</th>
-            <th>User id</th>
             <th>&nbsp;</th>
           </tr>
         </thead>
@@ -98,7 +97,6 @@ const TournamentsList = ({ tournaments }) => {
               <td>{timeTag(tournament.dateStarted)}</td>
               <td>{timeTag(tournament.dateEnded)}</td>
               <td>{truncate(tournament.maxPlayers)}</td>
-              <td>{truncate(tournament.timeLeftInSeconds)}</td>
               <td>{truncate(tournament.locationName)}</td>
               <td>{truncate(tournament.infoUrl)}</td>
               <td>{truncate(tournament.street1)}</td>
@@ -109,12 +107,10 @@ const TournamentsList = ({ tournaments }) => {
               <td>{truncate(tournament.zip)}</td>
               <td>{truncate(tournament.lat)}</td>
               <td>{truncate(tournament.lng)}</td>
-              <td>{truncate(tournament.winnerId)}</td>
               <td>{truncate(tournament.storeId)}</td>
               <td>{truncate(tournament.ownerId)}</td>
               <td>{timeTag(tournament.createdAt)}</td>
               <td>{timeTag(tournament.updatedAt)}</td>
-              <td>{truncate(tournament.userId)}</td>
               <td>
                 <nav className="rw-table-actions">
                   <Link

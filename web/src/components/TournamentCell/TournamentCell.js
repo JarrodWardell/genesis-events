@@ -10,7 +10,6 @@ export const QUERY = gql`
       dateStarted
       dateEnded
       maxPlayers
-      timeLeftInSeconds
       locationName
       infoUrl
       street1
@@ -21,12 +20,10 @@ export const QUERY = gql`
       zip
       lat
       lng
-      winnerId
       storeId
       ownerId
       createdAt
       updatedAt
-      userId
     }
   }
 `
