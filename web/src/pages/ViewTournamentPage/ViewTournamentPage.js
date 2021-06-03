@@ -1,6 +1,5 @@
 import { Link, navigate, Redirect, routes } from '@redwoodjs/router'
 import { useQuery } from '@redwoodjs/web'
-import { object } from 'prop-types'
 import { Toaster } from 'react-hot-toast'
 import TournamentLeaderboardTab from 'src/components/TournamentLeaderboardTab/TournamentLeaderboardTab'
 import TournamentMatchesTab from 'src/components/TournamentMatchesTab/TournamentMatchesTab'
@@ -11,6 +10,7 @@ import {
   calcNumRounds,
   timeUntilTournament,
 } from 'src/helpers/tournamentHelper'
+import EOEditTournamentPage from '../EoEditTournamentPage/EoEditTournamentPage'
 
 export const TOURNAMENT_BY_URL = gql`
   query tournamentByUrl($url: String!) {
@@ -85,6 +85,7 @@ export const TOURNAMENT_BY_URL = gql`
         }
         createdAt
       }
+      active
     }
   }
 `
@@ -177,15 +178,28 @@ const ViewTournamentPage = ({ url, tab, tabOptions }) => {
           )}
         </div>
         <div className="w-1/4 ml-auto">
-          {tournament.dateStarted && !tournament.dateEnded && (
-            <TournamentTimer
-              tournament={tournament}
-              startingTimerInSeconds={startingTimerInSeconds}
-              setStartingTimerInSeconds={setStartingTimerInSeconds}
-              timerInSeconds={timerInSeconds}
-              setTimerSeconds={setTimerSeconds}
-            />
+          {tournament.active &&
+            tournament.dateStarted &&
+            !tournament.dateEnded && (
+              <TournamentTimer
+                tournament={tournament}
+                startingTimerInSeconds={startingTimerInSeconds}
+                setStartingTimerInSeconds={setStartingTimerInSeconds}
+                timerInSeconds={timerInSeconds}
+                setTimerSeconds={setTimerSeconds}
+              />
+            )}
+          {tournament.active && !tournament.dateEnded && (
+            <Link
+              className="p-4 bg-green-400 hover:bg-green-600"
+              to={routes.eoEditTournament({
+                url: tournament.tournamentUrl,
+              })}
+            >
+              Edit Tournament
+            </Link>
           )}
+          {!tournament.active && <p>Tournament Cancelled</p>}
         </div>
       </div>
       <div className="flex w-full my-4">{renderTabNav()}</div>

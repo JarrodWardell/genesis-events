@@ -23,6 +23,7 @@ const Routes = () => {
         </Private>
         <Private unauthenticated="login" role={['EO', 'ADMIN']}>
           <Route path="/create-tournament" page={CreateTournamentPage} name="createTournament" />
+          <Route path="/edit-tournament/{url}" page={EoEditTournamentPage} name="eoEditTournament" />
         </Private>
         <Private unauthenticated="login" role="ADMIN">
           <Route path="/admin/tournaments/new" page={NewTournamentPage} name="newTournament" />

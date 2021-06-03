@@ -31,6 +31,7 @@ export const schema = gql`
     ownerId: String
     createdAt: DateTime!
     updatedAt: DateTime!
+    active: Boolean
   }
 
   enum TimerStatus {
@@ -67,6 +68,7 @@ export const schema = gql`
 
   input UpdateTournamentInput {
     name: String
+    desc: String
     tournamentUrl: String
     startDate: DateTime
     dateStarted: DateTime
@@ -130,6 +132,7 @@ export const schema = gql`
       roundTimerLeftInSeconds: Int
     ): Tournament
     endTournament(id: Int!): Tournament!
+    cancelTournament(id: Int!): Tournament!
   }
 
   type Subscription {

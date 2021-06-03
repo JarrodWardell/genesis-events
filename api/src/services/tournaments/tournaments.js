@@ -1,4 +1,5 @@
 import newPlayerRegistered from 'src/emails/newPlayerRegistered'
+import tournamentCancelledPlayer from 'src/emails/tournamentCancelledPlayer'
 import { sendEmail } from 'src/helpers/sendEmail'
 import {
   generateMatches,
@@ -6,7 +7,6 @@ import {
   randomWordGenerator,
 } from 'src/helpers/tournamentHelpers'
 import { db } from 'src/lib/db'
-import { format } from 'date-fns'
 
 export const tournaments = () => {
   return db.tournament.findMany()
@@ -98,7 +98,7 @@ export const createTournament = async ({ input }) => {
 
 export const updateTournament = ({ id, input }) => {
   return db.tournament.update({
-    data: input,
+    data: { ...input, updatedAt: new Date() },
     where: { id },
   })
 }
@@ -310,7 +310,34 @@ export const endTournament = async ({
   return tournament
 }
 
-export const cancelTournament = async ({ id }) => {}
+export const cancelTournament = async ({ id }) => {
+  const players = await db.tournament.findUnique({ where: { id } }).players({})
+
+  //Update tournament correctly
+  const tournament = await db.tournament.update({
+    data: {
+      active: false,
+    },
+    where: {
+      id,
+    },
+  })
+
+  //Send emails to all players
+  players.forEach(async (player) => {
+    let html = `${tournamentCancelledPlayer({ tournament, player }).html}`
+    let playerAccount = await db.user({ where: { id: player.playerId } })
+
+    sendEmail({
+      to: playerAccount.email,
+      subject: `GEO: Tournament ${tournament.name} has been cancelled`,
+      html,
+      text: `Tournament ${tournament.name} has been cancelled`,
+    })
+  })
+
+  return tournament
+}
 
 export const deleteTournament = ({ id }) => {
   return db.tournament.delete({

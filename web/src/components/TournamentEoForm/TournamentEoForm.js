@@ -15,11 +15,13 @@ import { useForm, Controller } from 'react-hook-form'
 import GooglePlacesAutocomplete from 'react-google-places-autocomplete'
 import CreatableSelect from 'react-select/creatable'
 import { getAddress } from 'src/helpers/formatAddress'
-import { EditorState, convertToRaw } from 'draft-js'
+import { EditorState } from 'draft-js'
 import { Editor } from 'react-draft-wysiwyg'
-import draftToHtml from 'draftjs-to-html'
 import { navigate } from '@redwoodjs/router'
 import toast from 'react-hot-toast'
+import { stateFromHTML } from 'draft-js-import-html'
+import { stateToHTML } from 'draft-js-export-html'
+import { TOURNAMENT_BY_URL } from 'src/pages/ViewTournamentPage/ViewTournamentPage'
 
 const CREATE_TOURNAMENT = gql`
   mutation CreateTournamentMutation($input: CreateTournamentInput!) {
@@ -31,15 +33,58 @@ const CREATE_TOURNAMENT = gql`
   }
 `
 
+const UPDATE_TOURNAMENT = gql`
+  mutation updateTournament($id: Int!, $input: UpdateTournamentInput!) {
+    updateTournament(id: $id, input: $input) {
+      id
+      name
+      tournamentUrl
+    }
+  }
+`
+
+const CANCEL_TOURNAMENT = gql`
+  mutation cancelTournament($id: Int!) {
+    cancelTournament(id: $id) {
+      id
+      tournamentUrl
+    }
+  }
+`
+
 const formatDatetime = (value) => {
   if (value) {
     return value.replace(/:\d{2}\.\d{3}\w/, '')
   }
 }
 
-const TournamentEOForm = (props) => {
+const TournamentEOForm = ({ tournament }) => {
   const { currentUser } = useAuth()
   const formMethods = useForm()
+  const [locationName, setLocationName] = React.useState('')
+  const [street1, setStreet1] = React.useState('')
+  const [desc, setDesc] = React.useState(EditorState.createEmpty())
+  const [confirmCancel, setConfirmCancel] = React.useState(false)
+
+  React.useEffect(() => {
+    if (tournament?.desc) {
+      let contentState = stateFromHTML(tournament?.desc)
+      setDesc(EditorState.createWithContent(contentState))
+    }
+    formMethods.setValue('locationName', tournament?.locationName)
+    formMethods.setValue('storeId', tournament?.storeId)
+    formMethods.setValue('country', tournament?.country)
+    formMethods.setValue('zip', tournament?.zip)
+    formMethods.setValue('city', tournament?.city)
+    formMethods.setValue('state', tournament?.state)
+    formMethods.setValue('lat', tournament?.lat)
+    formMethods.setValue('lng', tournament?.lng)
+    formMethods.setValue('storeId', tournament?.id)
+
+    setLocationName(tournament?.locationName)
+    setStreet1(tournament?.street1)
+  }, [tournament])
+
   const [createTournament, { loading: createTournamentLoading }] = useMutation(
     CREATE_TOURNAMENT,
     {
@@ -49,13 +94,41 @@ const TournamentEOForm = (props) => {
       },
     }
   )
-  const [locationName, setLocationName] = React.useState('')
-  const [street1, setStreet1] = React.useState('')
-  const [desc, setDesc] = React.useState(EditorState.createEmpty())
+
+  const [updateTournament, { loading: updateTournamentLoading }] = useMutation(
+    UPDATE_TOURNAMENT,
+    {
+      onCompleted: ({ updateTournament }) => {
+        toast(`Successfully updated ${updateTournament.name} Tournament`)
+        navigate(`/tournament/${updateTournament.tournamentUrl}/rounds`)
+      },
+      refetchQueries: [
+        {
+          query: TOURNAMENT_BY_URL,
+          variables: { url: tournament?.tournamentUrl },
+        },
+      ],
+    }
+  )
+
+  const [cancelTournament, { loading: cancelTournamentLoading }] = useMutation(
+    CANCEL_TOURNAMENT,
+    {
+      onCompleted: ({ cancelTournament }) => {
+        toast(`Successfully cancelled ${cancelTournament.name} Tournament`)
+        navigate(`/tournament/${cancelTournament.tournamentUrl}/rounds`)
+      },
+      refetchQueries: [
+        {
+          query: TOURNAMENT_BY_URL,
+          variables: { url: tournament?.tournamentUrl },
+        },
+      ],
+    }
+  )
 
   const onSubmit = (data) => {
-    const rawContentState = convertToRaw(desc.getCurrentContent())
-    const markup = draftToHtml(rawContentState)
+    let markup = stateToHTML(desc.getCurrentContent())
     var input = {
       ...data,
       street1,
@@ -67,11 +140,21 @@ const TournamentEOForm = (props) => {
 
     input['name'] = data.tournamentName
     delete input.tournamentName
-    createTournament({
-      variables: {
-        input,
-      },
-    })
+
+    if (tournament) {
+      updateTournament({
+        variables: {
+          id: tournament.id,
+          input,
+        },
+      })
+    } else {
+      createTournament({
+        variables: {
+          input,
+        },
+      })
+    }
   }
 
   const onDescChange = (editorState) => setDesc(editorState)
@@ -114,6 +197,34 @@ const TournamentEOForm = (props) => {
     formMethods.setValue('lng', addr.lng)
   }
 
+  if (confirmCancel) {
+    return (
+      <div className="min-h-screen flex flex-col justify-center">
+        <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-3xl">
+          Are you sure you would like to cancel this tournament. This cannot be
+          undone.
+          <div className="rw-button-group">
+            <button
+              className="rw-button rw-button-green"
+              onClick={() => setConfirmCancel(false)}
+            >
+              Nevermind
+            </button>
+            <Submit
+              disabled={cancelTournamentLoading}
+              className="rw-button rw-button-red"
+              onClick={() =>
+                cancelTournament({ variables: { id: tournament.id } })
+              }
+            >
+              Cancel Tournament
+            </Submit>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="min-h-screen flex flex-col justify-center">
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-3xl">
@@ -133,7 +244,7 @@ const TournamentEOForm = (props) => {
           </Label>
           <TextField
             name="tournamentName"
-            defaultValue={props.tournament?.name}
+            defaultValue={tournament?.name}
             className="rw-input"
             errorClassName="rw-input rw-input-error"
             validation={{ required: true }}
@@ -149,7 +260,7 @@ const TournamentEOForm = (props) => {
           </Label>
           <DatetimeLocalField
             name="startDate"
-            defaultValue={formatDatetime(props.tournament?.startDate)}
+            defaultValue={formatDatetime(tournament?.startDate)}
             className="rw-input"
             min={new Date().toISOString().split('T')[0]}
             errorClassName="rw-input rw-input-error"
@@ -166,7 +277,7 @@ const TournamentEOForm = (props) => {
           </Label>
           <NumberField
             name="maxPlayers"
-            defaultValue={props.tournament?.maxPlayers}
+            defaultValue={tournament?.maxPlayers}
             className="rw-input"
             errorClassName="rw-input rw-input-error"
             min={0}
@@ -183,7 +294,7 @@ const TournamentEOForm = (props) => {
           </Label>
           <Controller
             control={formMethods.control}
-            defaultValue={props.tournament?.locationName}
+            defaultValue={tournament?.locationName}
             name="locationName"
             rules={{
               required: true,
@@ -191,7 +302,7 @@ const TournamentEOForm = (props) => {
             render={() => (
               <CreatableSelect
                 onCreateOption={onCreateLocation}
-                isOptionSelected={onStoreSelect}
+                onChange={onStoreSelect}
                 value={{
                   value: locationName,
                   label: locationName,
@@ -230,7 +341,7 @@ const TournamentEOForm = (props) => {
           </Label>
           <TextField
             name="city"
-            defaultValue={props.tournament?.city}
+            defaultValue={tournament?.city}
             className="rw-input"
             errorClassName="rw-input rw-input-error"
           />
@@ -245,7 +356,7 @@ const TournamentEOForm = (props) => {
           </Label>
           <TextField
             name="country"
-            defaultValue={props.tournament?.country}
+            defaultValue={tournament?.country}
             className="rw-input"
             errorClassName="rw-input rw-input-error"
           />
@@ -260,6 +371,7 @@ const TournamentEOForm = (props) => {
           </Label>
           <TextField
             name="state"
+            defaultValue={tournament?.state}
             className="rw-input"
             errorClassName="rw-input rw-input-error"
           />
@@ -274,6 +386,7 @@ const TournamentEOForm = (props) => {
           </Label>
           <TextField
             name="zip"
+            defaultValue={tournament?.zip}
             className="rw-input"
             errorClassName="rw-input rw-input-error"
           />
@@ -288,7 +401,7 @@ const TournamentEOForm = (props) => {
           </Label>
           <TextField
             name="infoUrl"
-            defaultValue={props.tournament?.infoUrl}
+            defaultValue={tournament?.infoUrl}
             className="rw-input"
             errorClassName="rw-input rw-input-error"
           />
@@ -303,6 +416,7 @@ const TournamentEOForm = (props) => {
           </Label>
           <Editor
             editorState={desc}
+            defaultValue={tournament?.desc}
             onEditorStateChange={onDescChange}
             toolbar={{
               inline: { inDropdown: true },
@@ -313,13 +427,21 @@ const TournamentEOForm = (props) => {
             }}
             wrapperClassName="border-gray-50 border-2 rounded"
           />
-          <HiddenField name="lat" />
-          <HiddenField name="lng" />
-          <HiddenField name="storeId" />
+          <HiddenField name="lat" defaultValue={tournament?.lat} />
+          <HiddenField name="lng" defaultValue={tournament?.lng} />
+          <HiddenField name="storeId" defaultValue={tournament?.storeId} />
 
           <div className="rw-button-group">
+            {tournament && (
+              <div
+                className="rw-button rw-button-red"
+                onClick={() => setConfirmCancel(true)}
+              >
+                Cancel Tournament
+              </div>
+            )}
             <Submit
-              disabled={props.loading}
+              disabled={createTournamentLoading || updateTournamentLoading}
               className="rw-button rw-button-blue"
             >
               Save

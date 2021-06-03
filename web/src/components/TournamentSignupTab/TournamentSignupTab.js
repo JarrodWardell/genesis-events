@@ -44,40 +44,50 @@ const TournamentSignupTab = ({ tournament }) => {
 
   return (
     <div className="w-full py-10 flex flex-col items-center justify-center">
-      <h2 className="text-center text-2xl">
-        Sign Up For <strong>{tournament.name}</strong> Tournament
-      </h2>
-      {hasRole('PLAYER') ? (
-        tournament.dateStarted ? (
-          <h1 className="text-center text-lg">
-            This tournament has already started
-          </h1>
-        ) : tournament.players.length >= tournament.maxPlayers ? (
-          <h1 className="text-center text-lg">
-            Sorry this tournament is full! Please contact the Event Organizer if
-            you would like to participate
-          </h1>
-        ) : isInTournament() ? (
-          <>
-            <button
-              className="border-green-100 border-2 py-5 px-10 text-center hover:bg-blue-400 cursor-pointer"
-              onClick={() =>
-                registerForTournament({ variables: { id: tournament.id } })
-              }
-              disabled={loading}
-            >
-              <h2 className="text-center text-lg">Register now!</h2>
-            </button>
-          </>
-        ) : (
-          <h1 className="text-center text-lg">
-            You have already signed up for this tournament!
-          </h1>
-        )
+      {tournament.active ? (
+        <>
+          <h2 className="text-center text-2xl">
+            Sign Up For <strong>{tournament.name}</strong> Tournament
+          </h2>
+          {hasRole('PLAYER') ? (
+            tournament.dateStarted ? (
+              <h1 className="text-center text-lg">
+                This tournament has already started
+              </h1>
+            ) : tournament.players.length >= tournament.maxPlayers ? (
+              <h1 className="text-center text-lg">
+                Sorry this tournament is full! Please contact the Event
+                Organizer if you would like to participate
+              </h1>
+            ) : isInTournament() ? (
+              <>
+                <button
+                  className="border-green-100 border-2 py-5 px-10 text-center hover:bg-blue-400 cursor-pointer"
+                  onClick={() =>
+                    registerForTournament({ variables: { id: tournament.id } })
+                  }
+                  disabled={loading}
+                >
+                  <h2 className="text-center text-lg">Register now!</h2>
+                </button>
+              </>
+            ) : (
+              <h1 className="text-center text-lg">
+                You have already signed up for this tournament!
+              </h1>
+            )
+          ) : (
+            <h1 className="text-center text-lg">
+              Only players may register to sign up for tournaments
+            </h1>
+          )}
+        </>
       ) : (
-        <h1 className="text-center text-lg">
-          Only players may register to sign up for tournaments
-        </h1>
+        <>
+          <h2 className="text-center text-2xl">
+            Tournament <strong>{tournament.name}</strong> has been cancelled
+          </h2>
+        </>
       )}
     </div>
   )
