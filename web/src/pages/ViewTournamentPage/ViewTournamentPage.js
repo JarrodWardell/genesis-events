@@ -1,3 +1,4 @@
+import { useAuth } from '@redwoodjs/auth'
 import { Link, navigate, Redirect, routes } from '@redwoodjs/router'
 import { useQuery } from '@redwoodjs/web'
 import { Toaster } from 'react-hot-toast'
@@ -96,6 +97,7 @@ const ViewTournamentPage = ({ url, tab, tabOptions }) => {
     null
   )
   const [timerInSeconds, setTimerSeconds] = React.useState(null)
+  const { currentUser, hasRole } = useAuth()
 
   if (!tab || tab === '' || TABS.indexOf(tab) === -1) {
     return <Redirect to={`/tournament/${url}/${TABS[0]}`} />
@@ -155,7 +157,6 @@ const ViewTournamentPage = ({ url, tab, tabOptions }) => {
 
   return (
     <div>
-      <Toaster />
       <div className="w-full px-10 flex">
         <div className="w-3/4">
           <h1>{name}</h1>
@@ -189,16 +190,19 @@ const ViewTournamentPage = ({ url, tab, tabOptions }) => {
                 setTimerSeconds={setTimerSeconds}
               />
             )}
-          {tournament.active && !tournament.dateEnded && (
-            <Link
-              className="p-4 bg-green-400 hover:bg-green-600"
-              to={routes.eoEditTournament({
-                url: tournament.tournamentUrl,
-              })}
-            >
-              Edit Tournament
-            </Link>
-          )}
+          {tournament.active &&
+            !tournament.dateEnded &&
+            (tournament.ownerId === currentUser?.user?.id ||
+              hasRole('ADMIN')) && (
+              <Link
+                className="p-4 bg-green-400 hover:bg-green-600 my-4"
+                to={routes.eoEditTournament({
+                  url: tournament.tournamentUrl,
+                })}
+              >
+                Edit Tournament
+              </Link>
+            )}
           {!tournament.active && <p>Tournament Cancelled</p>}
         </div>
       </div>

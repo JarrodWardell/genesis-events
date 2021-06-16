@@ -1,13 +1,15 @@
-import { useAuth } from '@redwoodjs/auth'
-import MyTournamentsCell from 'src/components/MyTournamentsCell/MyTournamentsCell'
+import Header from 'src/components/Header/Header'
+import HomeBannersCell from 'src/components/HomeBannersCell/HomeBannersCell'
+import HomePageCell from 'src/components/HomePageCell/HomePageCell'
 
 const HomePage = () => {
-  const { loading, isAuthenticated, logIn, logOut } = useAuth()
-
   return (
     <>
-      <h1>HomePage</h1>
-      <MyTournamentsCell />
+      <Header />
+      <HomeBannersCell />
+      <div className="flex flex-col container mx-auto w-full">
+        <HomePageCell />
+      </div>
     </>
   )
 }

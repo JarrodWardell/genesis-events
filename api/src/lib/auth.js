@@ -34,6 +34,9 @@ export const getCurrentUser = async (decoded, { token, type }) => {
   let user = provider.userId
     ? await db.user.findUnique({
         where: { id: provider.userId },
+        include: {
+          photo: true,
+        },
       })
     : {}
 

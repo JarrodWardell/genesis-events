@@ -21,6 +21,7 @@ import { navigate, routes, Redirect } from '@redwoodjs/router'
 import NicknameCheckField from 'src/components/NicknameCheckField/NicknameCheckField'
 import { getAddress } from 'src/helpers/formatAddress'
 import { analytics } from 'src/App'
+import UserPictureSelector from 'src/components/UserPictureSelector/UserPictureSelector'
 
 const CREATE_USER = gql`
   mutation CreateUserMutation(
@@ -54,6 +55,7 @@ const SignupPage = () => {
   const [step, setStep] = React.useState(1)
   const [form, setForm] = React.useState({})
   const [nicknameValid, setNicknameValid] = React.useState(null)
+  const [userPicture, setUserPicture] = React.useState({ url: null })
   const { signUp, loading, currentUser } = useAuth()
   const [createUser, { loading: createUserLoading }] = useMutation(CREATE_USER)
   const formMethods = useForm()
@@ -94,6 +96,7 @@ const SignupPage = () => {
         country,
         zip,
         howHeard,
+        imageId: userPicture?.id,
       },
     }
 
@@ -102,8 +105,8 @@ const SignupPage = () => {
         name: newData['store-name'],
         email: newData['store-email'],
         phone: newData['store-phone'],
-        lat: newData.lng,
-        lng: newData.lat,
+        lat: newData.lat,
+        lng: newData.lng,
         street1: newData['formatted_address'],
         city: newData['store-city'],
         country: newData['store-country'],
@@ -232,6 +235,10 @@ const SignupPage = () => {
           >
             <FormError error={error} className="col-span-2" />
             <div className="flex flex-col col-span-2">
+              <UserPictureSelector
+                userPicture={userPicture}
+                selectImage={(image) => setUserPicture({ ...image })}
+              />
               <span name="firstname">Nickname</span>
               <NicknameCheckField
                 onChange={(data) => {

@@ -42,10 +42,14 @@ const TournamentTimer = ({
     ) {
       let timeElapsed = 0
 
-      if (tournament.startingTimerInSeconds === 'INPROGRESS') {
+      if (tournament.timerStatus === 'INPROGRESS') {
         timeElapsed = Math.floor(
           (new Date() - new Date(tournament.timerLastUpdated)) / 1000
         )
+      }
+
+      if (timeElapsed > tournament.timerLeftInSeconds) {
+        timeElapsed = tournament.timerLeftInSeconds
       }
 
       setTimerSeconds(tournament.timerLeftInSeconds - timeElapsed)
@@ -123,14 +127,18 @@ const TournamentTimer = ({
   }
 
   const formatTime = (timerInSeconds) => {
-    let minutes = Math.floor(timerInSeconds / 60)
-    let seconds = timerInSeconds - minutes * 60
+    if (timerInSeconds > 0) {
+      let minutes = Math.floor(timerInSeconds / 60)
+      let seconds = timerInSeconds - minutes * 60
 
-    if (seconds < 10) {
-      seconds = '0' + seconds
+      if (seconds < 10) {
+        seconds = '0' + seconds
+      }
+
+      return `${minutes}:${seconds}`
     }
 
-    return `${minutes}:${seconds}`
+    return `00:00`
   }
 
   const renderButtons = () => {

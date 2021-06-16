@@ -4,6 +4,8 @@ export const schema = gql`
     name: String!
     desc: String
     tournamentUrl: String!
+    distance: Float
+    playerCount: Int
     startDate: DateTime!
     dateStarted: DateTime
     dateEnded: DateTime
@@ -34,18 +36,41 @@ export const schema = gql`
     active: Boolean
   }
 
+  fragment CoreTournamentFields on Tournament {
+    id
+    name
+    tournamentUrl
+    startDate
+    dateEnded
+    maxPlayers
+    players {
+      playerId
+    }
+    store {
+      name
+      street1
+    }
+    winners {
+      player {
+        nickname
+      }
+    }
+    locationName
+    lat
+    lng
+    street1
+    street2
+    city
+    country
+    state
+    zip
+  }
+
   enum TimerStatus {
     PENDING
     INPROGRESS
     PAUSED
     STOPPED
-  }
-
-  type Query {
-    tournaments: [Tournament!]!
-    tournament(id: Int!): Tournament
-    tournamentByUrl(url: String): Tournament
-    myTournaments: [Tournament!]!
   }
 
   input CreateTournamentInput {
@@ -117,6 +142,30 @@ export const schema = gql`
     startingTimerInSeconds: Int!
   }
 
+  input SearchTournamentInput {
+    name: String
+    location: String
+    lat: Float
+    lng: Float
+    country: String
+    state: String
+    city: String
+    openSpotsOnly: Boolean!
+    dateStart: Date
+    dateEnd: Date
+    distance: Int
+  }
+
+  type Query {
+    tournaments: [Tournament!]!
+    searchTournaments(input: SearchTournamentInput!): [Tournament!]!
+    tournament(id: Int!): Tournament
+    tournamentByUrl(url: String): Tournament
+    myTournaments: [Tournament!]!
+    upcomingTournaments(input: SearchTournamentInput): [Tournament!]!
+    finishedTournaments(input: SearchTournamentInput): [Tournament!]!
+  }
+
   type Mutation {
     createTournament(input: CreateTournamentInput!): Tournament!
     updateTournament(id: Int!, input: UpdateTournamentInput!): Tournament!
@@ -133,9 +182,5 @@ export const schema = gql`
     ): Tournament
     endTournament(id: Int!): Tournament!
     cancelTournament(id: Int!): Tournament!
-  }
-
-  type Subscription {
-    tournamentByUrl(url: String): Tournament
   }
 `

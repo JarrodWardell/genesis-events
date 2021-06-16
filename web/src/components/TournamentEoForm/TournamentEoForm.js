@@ -79,7 +79,6 @@ const TournamentEOForm = ({ tournament }) => {
     formMethods.setValue('state', tournament?.state)
     formMethods.setValue('lat', tournament?.lat)
     formMethods.setValue('lng', tournament?.lng)
-    formMethods.setValue('storeId', tournament?.id)
 
     setLocationName(tournament?.locationName)
     setStreet1(tournament?.street1)
@@ -129,6 +128,7 @@ const TournamentEOForm = ({ tournament }) => {
 
   const onSubmit = (data) => {
     let markup = stateToHTML(desc.getCurrentContent())
+    console.log(data)
     var input = {
       ...data,
       street1,
@@ -140,8 +140,11 @@ const TournamentEOForm = ({ tournament }) => {
 
     input['name'] = data.tournamentName
     delete input.tournamentName
+    if (input.storeId === '') {
+      delete input.storeId
+    }
 
-    if (tournament) {
+    if (tournament?.id) {
       updateTournament({
         variables: {
           id: tournament.id,
@@ -163,7 +166,7 @@ const TournamentEOForm = ({ tournament }) => {
     var addr = data.value
     setLocationName(addr.name)
     setStreet1(addr.street1)
-
+    console.log(addr)
     formMethods.setValue('locationName', addr.name)
     formMethods.setValue('country', addr.country)
     formMethods.setValue('zip', addr.zip)
@@ -326,7 +329,10 @@ const TournamentEOForm = ({ tournament }) => {
           <GooglePlacesAutocomplete
             apiKey={process.env.GOOGLE_API_KEY}
             selectProps={{
-              value: { label: street1, value: street1 },
+              value: {
+                label: street1,
+                value: { description: street1, place_id: '' },
+              },
               onChange: onSelectAddress,
             }}
             className="border-2 p-2 mt-2 w-full"
@@ -427,9 +433,9 @@ const TournamentEOForm = ({ tournament }) => {
             }}
             wrapperClassName="border-gray-50 border-2 rounded"
           />
-          <HiddenField name="lat" defaultValue={tournament?.lat} />
-          <HiddenField name="lng" defaultValue={tournament?.lng} />
-          <HiddenField name="storeId" defaultValue={tournament?.storeId} />
+          <HiddenField name="lat" />
+          <HiddenField name="lng" />
+          <HiddenField name="storeId" />
 
           <div className="rw-button-group">
             {tournament && (

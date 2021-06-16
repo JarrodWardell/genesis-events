@@ -25,6 +25,11 @@ export const createUser = async ({ input, storeInput }) => {
   var newData = { ...input }
   delete newData.role
 
+  if (input.imageId) {
+    newData.photo = { connect: { id: input.imageId } }
+    delete newData.imageId
+  }
+
   const user = await db.user.create({
     data: {
       ...newData,
@@ -87,8 +92,22 @@ export const deleteUser = ({ id }) => {
 }
 
 export const User = {
-  userRoles: (_obj, { root }) =>
-    db.user.findUnique({ where: { id: root.id } }).userRoles(),
+  photo: (_obj, { root }) =>
+    db.user.findUnique({ where: { id: root.id } }).photo(),
+  Contact: (_obj, { root }) =>
+    db.user.findUnique({ where: { id: root.id } }).Contact(),
+  matches: (_obj, { root }) =>
+    db.user.findUnique({ where: { id: root.id } }).matches(),
+  tournamentsPlayed: (_obj, { root }) =>
+    db.user.findUnique({ where: { id: root.id } }).tournamentsPlayed(),
   providers: (_obj, { root }) =>
     db.user.findUnique({ where: { id: root.id } }).providers(),
+  Store: (_obj, { root }) =>
+    db.user.findUnique({ where: { id: root.id } }).Store(),
+  tournamentsOwned: (_obj, { root }) =>
+    db.user.findUnique({ where: { id: root.id } }).tournamentsOwned(),
+  Tournament: (_obj, { root }) =>
+    db.user.findUnique({ where: { id: root.id } }).Tournament(),
+  UserUserRole: (_obj, { root }) =>
+    db.user.findUnique({ where: { id: root.id } }).UserUserRole(),
 }

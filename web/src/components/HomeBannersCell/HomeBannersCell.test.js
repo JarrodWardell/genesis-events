@@ -1,8 +1,8 @@
 import { render, screen } from '@redwoodjs/testing'
-import { Loading, Empty, Failure, Success } from './MyTournamentsCell'
-import { standard } from './MyTournamentsCell.mock'
+import { Loading, Empty, Failure, Success } from './HomeBannersCell'
+import { standard } from './HomeBannersCell.mock'
 
-describe('MyTournamentsCell', () => {
+describe('HomeBannersCell', () => {
   it('renders Loading successfully', () => {
     expect(() => {
       render(<Loading />)
@@ -28,7 +28,7 @@ describe('MyTournamentsCell', () => {
 
   it('renders Success successfully', async () => {
     expect(() => {
-      render(<Success myTournaments={standard().myTournaments} />)
+      render(<Success homeBanners={standard().homeBanners} />)
     }).not.toThrow()
   })
 })

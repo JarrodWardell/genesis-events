@@ -8,6 +8,12 @@ import {
 } from 'src/helpers/tournamentHelpers'
 import { db } from 'src/lib/db'
 
+export const tournament = ({ id }) => {
+  return db.tournament.findUnique({
+    where: { id },
+  })
+}
+
 export const tournaments = () => {
   return db.tournament.findMany()
 }
@@ -52,10 +58,109 @@ export const myTournaments = () => {
   })
 }
 
-export const tournament = ({ id }) => {
-  return db.tournament.findUnique({
-    where: { id },
+export const upcomingTournaments = ({ input }) => {
+  return db.tournament.findMany({
+    where: {
+      AND: [
+        {
+          OR: [
+            {
+              startDate: {
+                gte: new Date(),
+              },
+            },
+            {
+              dateEnded: {
+                equals: null,
+              },
+            },
+          ],
+        },
+      ],
+    },
+    orderBy: [
+      {
+        startDate: 'desc',
+      },
+      {
+        createdAt: 'desc',
+      },
+    ],
   })
+}
+
+export const finishedTournaments = ({ input }) => {
+  return db.tournament.findMany({
+    where: {
+      AND: [
+        {
+          OR: [
+            {
+              dateEnded: {
+                lte: new Date(),
+              },
+            },
+          ],
+        },
+      ],
+    },
+    orderBy: {
+      dateEnded: 'desc',
+    },
+  })
+}
+
+export const searchTournaments = async ({ input }) => {
+  let earthsRadius = 6371
+
+  let distanceQuery = `111.111 *
+  DEGREES(ACOS(LEAST(1.0, COS(RADIANS("Tournament".lat))
+       * COS(RADIANS(${input.lat}))
+       * COS(RADIANS("Tournament".lng - ${input.lng}))
+       + SIN(RADIANS("Tournament".lat))
+       * SIN(RADIANS(${input.lat}))))) AS distance`
+
+  let sqlQuery = `
+    SELECT "Tournament".id, "Tournament"."name", "Tournament"."desc", "tournamentUrl", "city", "Tournament"."maxPlayers", "Tournament"."locationName", "Tournament".lat, "Tournament".lng, "dateStarted", "startDate", "dateEnded", "Tournament"."createdAt", "Tournament"."updatedAt", "street1", "street2",  "country", "state", "zip", "timerLeftInSeconds", "timerStatus", "Tournament".active,
+    COUNT("PlayerTournamentScore"."tournamentId") AS "playerCount",
+    ${distanceQuery}
+    FROM "Tournament"
+    LEFT JOIN "PlayerTournamentScore" ON "Tournament".id="PlayerTournamentScore"."tournamentId"
+    WHERE "Tournament".active = true ${
+      input.name
+        ? `AND LOWER("Tournament".name) LIKE LOWER('%${input.name}%')`
+        : ``
+    }
+    ${
+      input.dateStart
+        ? `AND "Tournament"."startDate" >= '${
+            new Date(input.dateStart).toISOString().split('T')[0]
+          }'`
+        : ``
+    }
+    ${
+      input.dateEnd
+        ? `AND "Tournament"."startDate" <= '${
+            new Date(input.dateEnd).toISOString().split('T')[0]
+          }'`
+        : ``
+    }
+    GROUP BY "Tournament".id
+    ${
+      input.openSpotsOnly
+        ? `HAVING COUNT("PlayerTournamentScore"."tournamentId") < "Tournament"."maxPlayers"`
+        : ``
+    }
+    ${
+      input.lat && input.lng
+        ? `ORDER BY acos(sin(${input.lat}) * sin("Tournament".lat) + cos(${input.lat}) * cos("Tournament".lat) * cos("Tournament".lng - (${input.lng}))) * ${earthsRadius} ASC;`
+        : `;`
+    }
+  `
+
+  const tournamentIds = await db.$queryRaw(sqlQuery)
+
+  return tournamentIds
 }
 
 export const tournamentByUrl = ({ url }) => {

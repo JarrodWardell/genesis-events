@@ -1,5 +1,6 @@
 import { useAuth } from '@redwoodjs/auth'
 import { Link, NavLink, routes } from '@redwoodjs/router'
+import ProfilePicture from '../ProfilePicture/ProfilePicture'
 
 const Header = () => {
   const { isAuthenticated, logOut, currentUser, hasRole } = useAuth()
@@ -56,7 +57,7 @@ const Header = () => {
             </div>
             <div className="hidden md:ml-6 md:flex md:space-x-8">
               <NavLink
-                to={routes.home()}
+                to={routes.tournamentSearch()}
                 className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
                 activeClassName="border-indigo-500 text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
               >
@@ -68,6 +69,13 @@ const Header = () => {
                 activeClassName="border-indigo-500 text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
               >
                 Leaderboard
+              </NavLink>
+              <NavLink
+                to={routes.userContact()}
+                className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+                activeClassName="border-indigo-500 text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+              >
+                Contact Us
               </NavLink>
             </div>
           </div>
@@ -111,28 +119,15 @@ const Header = () => {
                       onClick={() => setMenuOpen(!menuOpen)}
                     >
                       <span className="sr-only">Open user menu</span>
-                      <span className="inline-block h-10 w-10 rounded-full overflow-hidden bg-gray-100">
-                        <svg
-                          className="h-full w-full text-gray-300"
-                          fill="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" />
-                        </svg>
-                      </span>
-                      {/*
-                        User image
-                        <img
-                            className="h-8 w-8 rounded-full"
-                            src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixqx=EMz39Y1YIM&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                            alt=""
-                          />
-                        */}
+                      <ProfilePicture
+                        pic={currentUser?.user?.photo}
+                        size={14}
+                      />
                     </button>
                   </div>
                   {menuOpen && (
                     <div
-                      className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
+                      className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-20"
                       role="menu"
                       aria-orientation="vertical"
                       aria-labelledby="user-menu-button"
@@ -145,7 +140,7 @@ const Header = () => {
                         to={routes.settings()}
                         className="block px-4 py-2 text-sm text-gray-700"
                         role="menuitem"
-                        tabindex="-1"
+                        tabIndex="-1"
                         id="user-menu-item-1"
                       >
                         Settings
@@ -192,18 +187,14 @@ const Header = () => {
           <div className="pt-4 pb-3 border-t border-gray-200">
             <div className="flex items-center px-4 sm:px-6">
               <div className="flex-shrink-0">
-                <img
-                  className="h-10 w-10 rounded-full"
-                  src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixqx=EMz39Y1YIM&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                  alt=""
-                />
+                <ProfilePicture pic={currentUser?.user?.photo} size={10} />
               </div>
               <div className="ml-3">
                 <div className="text-base font-medium text-gray-800">
                   {currentUser?.user?.firstName}
                 </div>
                 <div className="text-sm font-medium text-gray-500">
-                  tom@example.com
+                  {currentUser?.user?.email}
                 </div>
               </div>
             </div>

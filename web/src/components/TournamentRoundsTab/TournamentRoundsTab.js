@@ -91,11 +91,13 @@ const TournamentRoundsTab = ({ tournament, roundNumber }) => {
     let round = grabRound()
     let matches = []
 
-    round.matches.map((match, index) => {
-      matches.push(
-        <MatchDetails match={match} index={index} tournament={tournament} />
-      )
-    })
+    if (round?.matches) {
+      round.matches.map((match, index) => {
+        matches.push(
+          <MatchDetails match={match} index={index} tournament={tournament} />
+        )
+      })
+    }
 
     return matches
   }
