@@ -66,16 +66,23 @@ export const schema = gql`
     country: String
     zip: String
     howHeard: String
-    flags: Int!
+    flags: Int
     adminComments: String
-    disabled: Boolean!
+    disabled: Boolean
     disabledOn: DateTime
     nickname: String!
     userPictureId: Int
     disabledBy: String
     email: String!
     dob: String
-    active: Boolean!
+    active: Boolean
+    role: Role
+    imageId: Int
+  }
+
+  enum Role {
+    PLAYER
+    EO
   }
 
   input UpdateUserInput {
@@ -98,8 +105,9 @@ export const schema = gql`
     email: String
     dob: String
     active: Boolean
+    imageId: Int
   }
-  input CreateStoreInput {
+  input CreateUserStoreInput {
     name: String!
     email: String!
     phone: String!
@@ -114,7 +122,7 @@ export const schema = gql`
   }
 
   type Mutation {
-    createUser(input: CreateUserInput!, storeInput: CreateStoreInput): User!
+    createUser(input: CreateUserInput!, storeInput: CreateUserStoreInput): User!
     updateUser(id: String!, input: UpdateUserInput!): User!
     deleteUser(id: String!): User!
   }

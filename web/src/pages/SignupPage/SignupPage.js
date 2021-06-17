@@ -22,6 +22,7 @@ import NicknameCheckField from 'src/components/NicknameCheckField/NicknameCheckF
 import { getAddress } from 'src/helpers/formatAddress'
 import { analytics } from 'src/App'
 import UserPictureSelector from 'src/components/UserPictureSelector/UserPictureSelector'
+import PasswordCheck from 'src/components/PasswordCheck/PasswordCheck'
 
 const CREATE_USER = gql`
   mutation CreateUserMutation(
@@ -607,35 +608,11 @@ const SignupPage = () => {
       }
     } else if (step === 3) {
       return (
-        <Form
+        <PasswordCheck
+          loading={loading || createUserLoading}
           onSubmit={onSubmit}
-          className="flex flex-col"
-          validation={{ mode: 'onBlur' }}
-          formMethods={formMethods}
-        >
-          <Label name="password" errorClassName="text-red-500">
-            Password
-          </Label>
-          <PasswordField
-            name="password"
-            placeholder="Password"
-            className="border-2 p-2 mt-2 mb-4"
-            errorClassName="border-2 p-2 mt-2 w-full border-red-500 mb-4"
-            validation={{
-              required: true,
-              minLength: {
-                value: 8,
-                message: 'Password must have at least 8 characters',
-              },
-            }}
-          />
-          <Submit
-            disabled={loading || createUserLoading}
-            className="my-8 w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-          >
-            Sign Up
-          </Submit>
-        </Form>
+          submitText={'Sign Up'}
+        />
       )
     }
   }

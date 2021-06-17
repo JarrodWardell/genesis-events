@@ -1,10 +1,4 @@
-import {
-  Form,
-  TextField,
-  PasswordField,
-  Submit,
-  SelectField,
-} from '@redwoodjs/forms'
+import { Form, TextField, Submit } from '@redwoodjs/forms'
 import { useAuth } from '@redwoodjs/auth'
 import { Link, Redirect, routes } from '@redwoodjs/router'
 

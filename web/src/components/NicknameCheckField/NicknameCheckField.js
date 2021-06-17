@@ -9,9 +9,15 @@ const CHECK_NICKNAME = gql`
   }
 `
 
-const NicknameCheckField = ({ onChange, setNicknameValid }) => {
+const NicknameCheckField = ({
+  onChange,
+  setNicknameValid,
+  value = null,
+  defaultValue = null,
+}) => {
   const [valid, setValid] = React.useState(null)
   const [errors, setErrors] = React.useState('')
+
   const [checkNickname, { called, loading }] = useLazyQuery(CHECK_NICKNAME, {
     onCompleted: (res) => {
       setValid(res.checkNickname)
@@ -23,21 +29,28 @@ const NicknameCheckField = ({ onChange, setNicknameValid }) => {
 
   const onNicknameUpdate = (input) => {
     var nickname = input.target.value
-    if (nickname.length > 2) {
-      if (filter.isProfane(nickname)) {
-        setErrors(
-          'Please ensure your nickname does not contain any profane words'
-        )
-        setValid(false)
-        setNicknameValid(false)
-      } else {
-        checkNickname({ variables: { nickname } })
-        onChange({ nickname })
-      }
-    } else {
+    if (defaultValue && nickname === defaultValue) {
       setErrors('')
       setValid(null)
       setNicknameValid(null)
+      onChange({ nickname })
+    } else {
+      if (nickname.length > 2) {
+        if (filter.isProfane(nickname)) {
+          setErrors(
+            'Please ensure your nickname does not contain any profane words'
+          )
+          setValid(false)
+          setNicknameValid(false)
+        } else {
+          checkNickname({ variables: { nickname } })
+          onChange({ nickname })
+        }
+      } else {
+        setErrors('')
+        setValid(null)
+        setNicknameValid(null)
+      }
     }
   }
 
@@ -110,6 +123,7 @@ const NicknameCheckField = ({ onChange, setNicknameValid }) => {
         <input
           name="nickname"
           placeholder="Unique Nickname"
+          value={value}
           className={
             'border-2 p-2 mt-2 w-full flex focus:outline-none' + nicknameClass
           }

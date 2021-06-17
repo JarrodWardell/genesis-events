@@ -6,42 +6,69 @@ import UserSettingsTab from 'src/components/UserSettingsTab/UserSettingsTab'
 
 const SettingsPage = ({ tab }) => {
   const { currentUser, hasRole } = useAuth()
-  const TABS = ['user', 'password', 'store']
-
-  if (!tab || tab === '' || TABS.indexOf(tab) === -1) {
-    return <Redirect to={`/settings/${TABS[0]}`} />
+  const TABS = {
+    user: {
+      text: hasRole('Player')
+        ? 'Edit Player Profile'
+        : 'Edit Event Organizer Profile',
+      icon: '',
+      permissions: currentUser.user.id !== '',
+      path: 'user',
+    },
+    password: {
+      text: 'Password and Security',
+      icon: '',
+      permissions: currentUser.user.id !== '',
+      path: 'password',
+    },
+    store: {
+      text: 'Edit Store Profile',
+      icon: '',
+      permissions: hasRole(['EO']),
+      path: 'store',
+    },
+  }
+  if (!tab || tab === '' || !(tab in TABS)) {
+    return <Redirect to={`/settings/${TABS.user.path}`} />
   }
 
   const renderTabNav = () => {
-    return TABS.map((tabOption) => (
-      <div
-        className={
-          'border-gray-50 border-2 hover:bg-green-400 cursor-pointer uppercase py-4 px-8 w-full text-center' +
-          (tab === tabOption ? ' bg-green-600' : '')
-        }
-        key={`tab-${tabOption}`}
-        onClick={() => navigate(`/settings/${tabOption}`)}
-      >
-        {tabOption}
-      </div>
-    ))
+    return Object.keys(TABS).map((tabKey) => {
+      let tabOption = TABS[tabKey]
+      console.log(tabOption)
+
+      if (tabOption.permissions) {
+        return (
+          <div
+            className={
+              'border-gray-50 border-2 hover:bg-green-400 cursor-pointer py-4 px-8 w-full text-center' +
+              (tab === tabOption.path ? ' bg-green-600' : '')
+            }
+            key={`tab-${tabOption.path}`}
+            onClick={() => navigate(`/settings/${tabOption.path}`)}
+          >
+            {tabOption.text}
+          </div>
+        )
+      }
+    })
   }
 
   const renderTab = () => {
     switch (tab) {
-      case TABS[0]:
+      case TABS.user.path:
         return <UserSettingsTab />
-      case TABS[1]:
+      case TABS.password.path:
         return <PasswordSettingsTab />
-      case TABS[2]:
+      case TABS.store.path:
         return <StoreSettingsTab />
     }
   }
 
   return (
-    <div className="flex container mx-auto my-12">
-      <div className="flex flex-col w-1/4">{renderTabNav()}</div>
-      <div className="flex flex-col w-3/4 p-8">{renderTab()}</div>
+    <div className="flex container mx-auto">
+      <div className="flex flex-col w-1/5">{renderTabNav()}</div>
+      <div className="flex flex-col w-4/5 p-8">{renderTab()}</div>
     </div>
   )
 }

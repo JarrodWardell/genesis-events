@@ -79,8 +79,15 @@ export const checkNickname = async ({ nickname }) => {
 }
 
 export const updateUser = ({ id, input }) => {
+  var newData = { ...input }
+
+  if (input.imageId) {
+    newData.photo = { connect: { id: input.imageId } }
+    delete newData.imageId
+  }
+
   return db.user.update({
-    data: input,
+    data: { ...newData },
     where: { id },
   })
 }
