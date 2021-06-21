@@ -35,7 +35,6 @@ const SettingsPage = ({ tab }) => {
   const renderTabNav = () => {
     return Object.keys(TABS).map((tabKey) => {
       let tabOption = TABS[tabKey]
-      console.log(tabOption)
 
       if (tabOption.permissions) {
         return (

@@ -6,7 +6,9 @@ import {
   TextField,
   DatetimeLocalField,
   NumberField,
+  CheckboxField,
   Submit,
+  SelectField,
 } from '@redwoodjs/forms'
 
 const formatDatetime = (value) => {
@@ -90,7 +92,6 @@ const TournamentForm = (props) => {
           defaultValue={formatDatetime(props.tournament?.dateStarted)}
           className="rw-input"
           errorClassName="rw-input rw-input-error"
-          validation={{ required: true }}
         />
         <FieldError name="dateStarted" className="rw-field-error" />
 
@@ -106,7 +107,6 @@ const TournamentForm = (props) => {
           defaultValue={formatDatetime(props.tournament?.dateEnded)}
           className="rw-input"
           errorClassName="rw-input rw-input-error"
-          validation={{ required: true }}
         />
         <FieldError name="dateEnded" className="rw-field-error" />
 
@@ -154,7 +154,6 @@ const TournamentForm = (props) => {
           defaultValue={props.tournament?.infoUrl}
           className="rw-input"
           errorClassName="rw-input rw-input-error"
-          validation={{ required: true }}
         />
         <FieldError name="infoUrl" className="rw-field-error" />
 
@@ -170,7 +169,6 @@ const TournamentForm = (props) => {
           defaultValue={props.tournament?.street1}
           className="rw-input"
           errorClassName="rw-input rw-input-error"
-          validation={{ required: true }}
         />
         <FieldError name="street1" className="rw-field-error" />
 
@@ -186,7 +184,6 @@ const TournamentForm = (props) => {
           defaultValue={props.tournament?.street2}
           className="rw-input"
           errorClassName="rw-input rw-input-error"
-          validation={{ required: true }}
         />
         <FieldError name="street2" className="rw-field-error" />
 
@@ -202,7 +199,6 @@ const TournamentForm = (props) => {
           defaultValue={props.tournament?.city}
           className="rw-input"
           errorClassName="rw-input rw-input-error"
-          validation={{ required: true }}
         />
         <FieldError name="city" className="rw-field-error" />
 
@@ -218,7 +214,6 @@ const TournamentForm = (props) => {
           defaultValue={props.tournament?.country}
           className="rw-input"
           errorClassName="rw-input rw-input-error"
-          validation={{ required: true }}
         />
         <FieldError name="country" className="rw-field-error" />
 
@@ -234,7 +229,6 @@ const TournamentForm = (props) => {
           defaultValue={props.tournament?.state}
           className="rw-input"
           errorClassName="rw-input rw-input-error"
-          validation={{ required: true }}
         />
         <FieldError name="state" className="rw-field-error" />
 
@@ -250,7 +244,6 @@ const TournamentForm = (props) => {
           defaultValue={props.tournament?.zip}
           className="rw-input"
           errorClassName="rw-input rw-input-error"
-          validation={{ required: true }}
         />
         <FieldError name="zip" className="rw-field-error" />
 
@@ -266,7 +259,6 @@ const TournamentForm = (props) => {
           defaultValue={props.tournament?.lat}
           className="rw-input"
           errorClassName="rw-input rw-input-error"
-          validation={{ required: true }}
           dataType="Float"
         />
         <FieldError name="lat" className="rw-field-error" />
@@ -283,7 +275,6 @@ const TournamentForm = (props) => {
           defaultValue={props.tournament?.lng}
           className="rw-input"
           errorClassName="rw-input rw-input-error"
-          validation={{ required: true }}
           dataType="Float"
         />
         <FieldError name="lng" className="rw-field-error" />
@@ -300,7 +291,6 @@ const TournamentForm = (props) => {
           defaultValue={props.tournament?.storeId}
           className="rw-input"
           errorClassName="rw-input rw-input-error"
-          validation={{ required: true }}
         />
         <FieldError name="storeId" className="rw-field-error" />
 
@@ -319,6 +309,103 @@ const TournamentForm = (props) => {
           validation={{ required: true }}
         />
         <FieldError name="ownerId" className="rw-field-error" />
+
+        <Label
+          name="desc"
+          className="rw-label"
+          errorClassName="rw-label rw-label-error"
+        >
+          Desc
+        </Label>
+        <TextField
+          name="desc"
+          defaultValue={props.tournament?.desc}
+          className="rw-input"
+          errorClassName="rw-input rw-input-error"
+        />
+        <FieldError name="desc" className="rw-field-error" />
+
+        <Label
+          name="active"
+          className="rw-label"
+          errorClassName="rw-label rw-label-error"
+        >
+          Active
+        </Label>
+        <CheckboxField
+          name="active"
+          defaultChecked={props.tournament?.active}
+          className="rw-input"
+          errorClassName="rw-input rw-input-error"
+        />
+        <FieldError name="active" className="rw-field-error" />
+
+        <Label
+          name="startingTimerInSeconds"
+          className="rw-label"
+          errorClassName="rw-label rw-label-error"
+        >
+          Starting timer in seconds
+        </Label>
+        <NumberField
+          name="startingTimerInSeconds"
+          defaultValue={props.tournament?.startingTimerInSeconds}
+          className="rw-input"
+          errorClassName="rw-input rw-input-error"
+        />
+        <FieldError name="startingTimerInSeconds" className="rw-field-error" />
+
+        <Label
+          name="timerLeftInSeconds"
+          className="rw-label"
+          errorClassName="rw-label rw-label-error"
+        >
+          Timer left in seconds
+        </Label>
+        <NumberField
+          name="timerLeftInSeconds"
+          defaultValue={props.tournament?.timerLeftInSeconds}
+          className="rw-input"
+          errorClassName="rw-input rw-input-error"
+        />
+        <FieldError name="timerLeftInSeconds" className="rw-field-error" />
+
+        <Label
+          name="timerStatus"
+          className="rw-label"
+          errorClassName="rw-label rw-label-error"
+        >
+          Timer status
+        </Label>
+        <SelectField
+          name="timerStatus"
+          defaultValue={props.tournament?.timerStatus}
+          className="rw-input"
+          errorClassName="rw-input rw-input-error"
+          validation={{ required: true }}
+        >
+          {['PENDING', 'INPROGRESS', 'PAUSED', 'STOPPED'].map((opt) => (
+            <option value={opt} key={opt}>
+              {opt}
+            </option>
+          ))}
+        </SelectField>
+        <FieldError name="timerStatus" className="rw-field-error" />
+
+        <Label
+          name="timerLastUpdated"
+          className="rw-label"
+          errorClassName="rw-label rw-label-error"
+        >
+          Timer last updated
+        </Label>
+        <DatetimeLocalField
+          name="timerLastUpdated"
+          defaultValue={formatDatetime(props.tournament?.timerLastUpdated)}
+          className="rw-input"
+          errorClassName="rw-input rw-input-error"
+        />
+        <FieldError name="timerLastUpdated" className="rw-field-error" />
 
         <div className="rw-button-group">
           <Submit disabled={props.loading} className="rw-button rw-button-blue">

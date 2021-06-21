@@ -202,8 +202,14 @@ export const createTournament = async ({ input }) => {
 }
 
 export const updateTournament = ({ id, input }) => {
+  let newData = { ...input }
+
+  if (newData.storeId === '') {
+    delete newData.storeId
+  }
+
   return db.tournament.update({
-    data: { ...input, updatedAt: new Date() },
+    data: { ...newData, updatedAt: new Date() },
     where: { id },
   })
 }
@@ -593,6 +599,14 @@ const createMatches = async ({ proposedMatches, id, round }) => {
 }
 
 export const Tournament = {
+  owner: (_obj, { root }) =>
+    db.tournament.findUnique({ where: { id: root.id } }).owner(),
+  store: (_obj, { root }) =>
+    db.tournament.findUnique({ where: { id: root.id } }).store(),
+  user: (_obj, { root }) =>
+    db.tournament.findUnique({ where: { id: root.id } }).user(),
+  matches: (_obj, { root }) =>
+    db.tournament.findUnique({ where: { id: root.id } }).matches(),
   players: (_obj, { root }) =>
     db.tournament.findUnique({ where: { id: root.id } }).players({
       orderBy: [
@@ -602,18 +616,12 @@ export const Tournament = {
         { draws: 'desc' },
       ],
     }),
-  round: (_obj, { root }) =>
-    db.tournament.findUnique({ where: { id: root.id } }).round(),
-  matches: (_obj, { root }) =>
-    db.tournament.findUnique({ where: { id: root.id } }).matches(),
   winners: (_obj, { root }) =>
     db.tournament.findUnique({ where: { id: root.id } }).players({
       where: {
         wonTournament: true,
       },
     }),
-  store: (_obj, { root }) =>
-    db.tournament.findUnique({ where: { id: root.id } }).store(),
-  owner: (_obj, { root }) =>
-    db.tournament.findUnique({ where: { id: root.id } }).owner(),
+  round: (_obj, { root }) =>
+    db.tournament.findUnique({ where: { id: root.id } }).round(),
 }

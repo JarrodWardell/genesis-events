@@ -10,6 +10,10 @@ const PLAYER_LEADERBOARD = gql`
       id
       player {
         nickname
+        photo {
+          url
+          name
+        }
         country
       }
       rank
@@ -34,28 +38,33 @@ const LeaderboardPage = () => {
   })
 
   return (
-    <div>
-      <h1>LeaderboardPage</h1>
+    <div className="flex flex-col container max-w-7xl mx-auto">
+      <h1 className="text-xl mb-24 border-b-2 border-gray-100 pb-4">
+        Leaderboard
+      </h1>
       <input
         placeholder="Search Nickname"
         onChange={(e) => setNicknameSearch(e.target.value)}
         value={nicknameSearch}
       />
-      <table>
-        <tr>
-          <th>Rank</th>
-          <th>Nickname</th>
-          <th>Country</th>
-          <th>Score</th>
+      <table className="border-gray-200 border-2 rounded-md p-4 border-collapse">
+        <tr className="text-center text-gray-500 text-xs bg-gray-100 uppercase">
+          <th className="py-2">Rank</th>
+          <th className="py-2">Nickname</th>
+          <th className="py-2">Country</th>
+          <th className="py-2">Score</th>
         </tr>
         {!loading &&
           leaderboard &&
           leaderboard.map((player) => (
-            <tr key={`leaderboard-player-${player.id}`}>
-              <td>{player.rank}</td>
-              <td>{player.player?.nickname}</td>
-              <td>{player.player?.country}</td>
-              <td>{player.totalScore}</td>
+            <tr
+              key={`leaderboard-player-${player.id}`}
+              className="text-center border-b-2 border-black py-4 text-sm"
+            >
+              <td className="py-2">{player.rank}</td>
+              <td className="py-2">{player.player?.nickname}</td>
+              <td className="py-2">{player.player?.country}</td>
+              <td className="py-2">{player.totalScore}</td>
             </tr>
           ))}
       </table>

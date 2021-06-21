@@ -29,7 +29,7 @@ const jsonTruncate = (obj) => {
 const timeTag = (datetime) => {
   return (
     <time dateTime={datetime} title={datetime}>
-      {new Date(datetime).toUTCString()}
+      {datetime ? new Date(datetime).toUTCString() : ''}
     </time>
   )
 }
@@ -68,7 +68,6 @@ const TournamentsList = ({ tournaments }) => {
             <th>Date started</th>
             <th>Date ended</th>
             <th>Max players</th>
-            <th>Time left in seconds</th>
             <th>Location name</th>
             <th>Info url</th>
             <th>Street1</th>
@@ -79,11 +78,17 @@ const TournamentsList = ({ tournaments }) => {
             <th>Zip</th>
             <th>Lat</th>
             <th>Lng</th>
-            <th>Winner id</th>
             <th>Store id</th>
             <th>Owner id</th>
             <th>Created at</th>
             <th>Updated at</th>
+            <th>User id</th>
+            <th>Desc</th>
+            <th>Active</th>
+            <th>Starting timer in seconds</th>
+            <th>Timer left in seconds</th>
+            <th>Timer status</th>
+            <th>Timer last updated</th>
             <th>&nbsp;</th>
           </tr>
         </thead>
@@ -111,6 +116,13 @@ const TournamentsList = ({ tournaments }) => {
               <td>{truncate(tournament.ownerId)}</td>
               <td>{timeTag(tournament.createdAt)}</td>
               <td>{timeTag(tournament.updatedAt)}</td>
+              <td>{truncate(tournament.userId)}</td>
+              <td>{truncate(tournament.desc)}</td>
+              <td>{checkboxInputTag(tournament.active)}</td>
+              <td>{truncate(tournament.startingTimerInSeconds)}</td>
+              <td>{truncate(tournament.timerLeftInSeconds)}</td>
+              <td>{truncate(tournament.timerStatus)}</td>
+              <td>{timeTag(tournament.timerLastUpdated)}</td>
               <td>
                 <nav className="rw-table-actions">
                   <Link

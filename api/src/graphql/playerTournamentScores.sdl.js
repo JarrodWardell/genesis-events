@@ -2,21 +2,23 @@ export const schema = gql`
   type PlayerTournamentScore {
     id: Int!
     wins: Int!
-    byes: Int!
-    draws: Int!
     losses: Int!
     score: Float!
     rank: Int
     totalScore: Float
     totalPoints: Float
     totalTournamentsPlayed: Int
-    wonTournament: Boolean!
     playerId: String!
-    player: User!
     tournamentId: Int!
-    tournament: Tournament!
     createdAt: DateTime!
     updatedAt: DateTime!
+    draws: Int!
+    byes: Int!
+    randomizer: String
+    active: Boolean!
+    wonTournament: Boolean!
+    player: User!
+    tournament: Tournament!
   }
 
   type Query {
@@ -25,27 +27,44 @@ export const schema = gql`
       skip: Int
       take: Int
     ): [PlayerTournamentScore!]!
+    playerTournamentScores: [PlayerTournamentScore!]!
+    playerTournamentScore(id: Int!): PlayerTournamentScore
   }
 
   input CreatePlayerTournamentScoreInput {
     wins: Int!
-    draws: Int!
     losses: Int!
-    byes: Int!
     score: Float!
-    wonTournament: Boolean!
     playerId: String!
     tournamentId: Int!
+    draws: Int!
+    byes: Int!
+    randomizer: String
+    active: Boolean!
+    wonTournament: Boolean!
   }
 
   input UpdatePlayerTournamentScoreInput {
     wins: Int
-    draws: Int
     losses: Int
-    byes: Int
     score: Float
-    wonTournament: Boolean!
     playerId: String
     tournamentId: Int
+    draws: Int
+    byes: Int
+    randomizer: String
+    active: Boolean
+    wonTournament: Boolean
+  }
+
+  type Mutation {
+    createPlayerTournamentScore(
+      input: CreatePlayerTournamentScoreInput!
+    ): PlayerTournamentScore!
+    updatePlayerTournamentScore(
+      id: Int!
+      input: UpdatePlayerTournamentScoreInput!
+    ): PlayerTournamentScore!
+    deletePlayerTournamentScore(id: Int!): PlayerTournamentScore!
   }
 `

@@ -1,32 +1,41 @@
 export const schema = gql`
   type Round {
     id: Int!
-    roundNumber: Int!
-    matches: [Match]!
-    tournament: Tournament!
-    timer: Int!
-    startingTimerInSeconds: Int
-    roundTimerLeftInSeconds: Int
     createdAt: DateTime!
     updatedAt: DateTime!
     tournamentId: Int!
+    roundNumber: Int!
+    active: Boolean!
+    startingTimerInSeconds: Int
+    roundTimerLeftInSeconds: Int
+    tournament: Tournament!
+    matches: [Match]!
   }
 
   type Query {
     rounds: [Round!]!
+    round(id: Int!): Round
   }
 
   input CreateRoundInput {
-    timer: Int!
+    tournamentId: Int!
+    roundNumber: Int!
+    active: Boolean!
     startingTimerInSeconds: Int
     roundTimerLeftInSeconds: Int
-    tournamentId: Int!
   }
 
   input UpdateRoundInput {
-    timer: Int
+    tournamentId: Int
+    roundNumber: Int
+    active: Boolean
     startingTimerInSeconds: Int
     roundTimerLeftInSeconds: Int
-    tournamentId: Int
+  }
+
+  type Mutation {
+    createRound(input: CreateRoundInput!): Round!
+    updateRound(id: Int!, input: UpdateRoundInput!): Round!
+    deleteRound(id: Int!): Round!
   }
 `

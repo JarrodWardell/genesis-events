@@ -24,6 +24,13 @@ export const QUERY = gql`
       ownerId
       createdAt
       updatedAt
+      userId
+      desc
+      active
+      startingTimerInSeconds
+      timerLeftInSeconds
+      timerStatus
+      timerLastUpdated
     }
   }
 `

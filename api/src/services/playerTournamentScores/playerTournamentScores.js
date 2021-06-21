@@ -1,4 +1,14 @@
 import { db } from 'src/lib/db'
+import { requireAuth } from 'src/lib/auth'
+
+// Used when the environment variable REDWOOD_SECURE_SERVICES=1
+export const beforeResolver = (rules) => {
+  rules.add(requireAuth)
+}
+
+export const playerTournamentScores = () => {
+  return db.playerTournamentScore.findMany()
+}
 
 export const playerLeaderboard = async ({ nicknameSearch, skip, take }) => {
   let playerSums = await db.playerTournamentScore.groupBy({
@@ -17,11 +27,6 @@ export const playerLeaderboard = async ({ nicknameSearch, skip, take }) => {
     },
     count: {
       score: true,
-    },
-    orderBy: {
-      _sum: {
-        score: 'desc',
-      },
     },
   })
 
@@ -78,6 +83,31 @@ export const playerLeaderboard = async ({ nicknameSearch, skip, take }) => {
   playersWithScore = playersWithScore.slice(maxSkip, maxTake)
 
   return playersWithScore
+}
+
+export const playerTournamentScore = ({ id }) => {
+  return db.playerTournamentScore.findUnique({
+    where: { id },
+  })
+}
+
+export const createPlayerTournamentScore = ({ input }) => {
+  return db.playerTournamentScore.create({
+    data: input,
+  })
+}
+
+export const updatePlayerTournamentScore = ({ id, input }) => {
+  return db.playerTournamentScore.update({
+    data: input,
+    where: { id },
+  })
+}
+
+export const deletePlayerTournamentScore = ({ id }) => {
+  return db.playerTournamentScore.delete({
+    where: { id },
+  })
 }
 
 export const PlayerTournamentScore = {

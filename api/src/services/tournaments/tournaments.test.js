@@ -23,28 +23,18 @@ describe('tournaments', () => {
     const result = await createTournament({
       input: {
         name: 'String',
-        tournamentUrl: 'String2659314',
-        startDate: '2021-05-06T22:46:52Z',
-        maxPlayers: 4888500,
+        tournamentUrl: 'String1351484',
+        startDate: '2021-06-18T14:47:23Z',
+        maxPlayers: 4458760,
         locationName: 'String',
-        street2: 'String',
-        city: 'String',
-        country: 'String',
-        state: 'String',
-        zip: 'String',
       },
     })
 
     expect(result.name).toEqual('String')
-    expect(result.tournamentUrl).toEqual('String2659314')
-    expect(result.startDate).toEqual('2021-05-06T22:46:52Z')
-    expect(result.maxPlayers).toEqual(4888500)
+    expect(result.tournamentUrl).toEqual('String1351484')
+    expect(result.startDate).toEqual('2021-06-18T14:47:23Z')
+    expect(result.maxPlayers).toEqual(4458760)
     expect(result.locationName).toEqual('String')
-    expect(result.street2).toEqual('String')
-    expect(result.city).toEqual('String')
-    expect(result.country).toEqual('String')
-    expect(result.state).toEqual('String')
-    expect(result.zip).toEqual('String')
   })
 
   scenario('updates a tournament', async (scenario) => {

@@ -140,6 +140,34 @@ const Tournament = ({ tournament }) => {
               <th>Updated at</th>
               <td>{timeTag(tournament.updatedAt)}</td>
             </tr>
+            <tr>
+              <th>User id</th>
+              <td>{tournament.userId}</td>
+            </tr>
+            <tr>
+              <th>Desc</th>
+              <td>{tournament.desc}</td>
+            </tr>
+            <tr>
+              <th>Active</th>
+              <td>{checkboxInputTag(tournament.active)}</td>
+            </tr>
+            <tr>
+              <th>Starting timer in seconds</th>
+              <td>{tournament.startingTimerInSeconds}</td>
+            </tr>
+            <tr>
+              <th>Timer left in seconds</th>
+              <td>{tournament.timerLeftInSeconds}</td>
+            </tr>
+            <tr>
+              <th>Timer status</th>
+              <td>{tournament.timerStatus}</td>
+            </tr>
+            <tr>
+              <th>Timer last updated</th>
+              <td>{timeTag(tournament.timerLastUpdated)}</td>
+            </tr>
           </tbody>
         </table>
       </div>

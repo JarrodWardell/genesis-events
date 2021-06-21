@@ -1,26 +1,26 @@
 export const standard = defineScenario({
   round: {
     one: {
-      timer: 1033841,
+      roundNumber: 491769,
       tournament: {
         create: {
           name: 'String',
-          tournamentUrl: 'String7047888',
-          startDate: '2021-05-07T00:23:31Z',
-          maxPlayers: 1447928,
+          tournamentUrl: 'String1773911',
+          startDate: '2021-06-18T15:39:40Z',
+          maxPlayers: 6806692,
           locationName: 'String',
         },
       },
     },
 
     two: {
-      timer: 108542,
+      roundNumber: 7057760,
       tournament: {
         create: {
           name: 'String',
-          tournamentUrl: 'String6717461',
-          startDate: '2021-05-07T00:23:31Z',
-          maxPlayers: 8142884,
+          tournamentUrl: 'String1697890',
+          startDate: '2021-06-18T15:39:40Z',
+          maxPlayers: 2521379,
           locationName: 'String',
         },
       },

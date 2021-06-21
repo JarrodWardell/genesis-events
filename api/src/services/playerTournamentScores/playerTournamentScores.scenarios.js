@@ -1,32 +1,26 @@
 export const standard = defineScenario({
   playerTournamentScore: {
     one: {
-      players: {
-        create: { nickname: 'String4866325', email: 'String7300677' },
-      },
-
-      tournaments: {
+      player: { create: { nickname: 'String7571464', email: 'String3806360' } },
+      tournament: {
         create: {
           name: 'String',
-          tournamentUrl: 'String6248172',
-          startDate: '2021-05-16T04:16:13Z',
-          maxPlayers: 7547844,
+          tournamentUrl: 'String199399',
+          startDate: '2021-06-18T20:05:56Z',
+          maxPlayers: 5512874,
           locationName: 'String',
         },
       },
     },
 
     two: {
-      players: {
-        create: { nickname: 'String7867489', email: 'String1162549' },
-      },
-
-      tournaments: {
+      player: { create: { nickname: 'String4184813', email: 'String9781355' } },
+      tournament: {
         create: {
           name: 'String',
-          tournamentUrl: 'String5767190',
-          startDate: '2021-05-16T04:16:13Z',
-          maxPlayers: 9390055,
+          tournamentUrl: 'String4334714',
+          startDate: '2021-06-18T20:05:56Z',
+          maxPlayers: 329297,
           locationName: 'String',
         },
       },

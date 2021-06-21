@@ -74,8 +74,8 @@ export const createUser = async ({ input, storeInput }) => {
 }
 
 export const checkNickname = async ({ nickname }) => {
-  let numUsers = await db.user.count({ where: { nickname } })
-  return numUsers > 0 ? false : true
+  let numUsers = await db.user.findMany({ where: { nickname } })
+  return numUsers.length > 0 ? false : true
 }
 
 export const updateUser = ({ id, input }) => {

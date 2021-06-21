@@ -10,30 +10,33 @@ export const schema = gql`
     dateStarted: DateTime
     dateEnded: DateTime
     maxPlayers: Int!
-    startingTimerInSeconds: Int
-    timerLeftInSeconds: Int
-    timerStatus: TimerStatus
-    timerLastUpdated: DateTime
     locationName: String!
     infoUrl: String
     street1: String
     street2: String
-    city: String!
+    city: String
     country: String
     state: String
     zip: String
     lat: Float
     lng: Float
-    round: [Round]
-    players: [PlayerTournamentScore]!
-    winners: [PlayerTournamentScore]
-    store: Store
+    userId: String
+    startingTimerInSeconds: Int
+    timerLeftInSeconds: Int
+    timerStatus: TimerStatus
+    timerLastUpdated: DateTime
     storeId: String
-    owner: User
     ownerId: String
     createdAt: DateTime!
     updatedAt: DateTime!
-    active: Boolean
+    owner: User
+    store: Store
+    user: User
+    matches: [Match]!
+    players: [PlayerTournamentScore]!
+    winners: [PlayerTournamentScore]
+    round: [Round]!
+    active: Boolean!
   }
 
   fragment CoreTournamentFields on Tournament {
@@ -73,13 +76,25 @@ export const schema = gql`
     STOPPED
   }
 
+  type Query {
+    tournaments: [Tournament!]!
+    searchTournaments(input: SearchTournamentInput!): [Tournament!]!
+    tournament(id: Int!): Tournament
+    tournamentByUrl(url: String): Tournament
+    myTournaments: [Tournament!]!
+    upcomingTournaments(input: SearchTournamentInput): [Tournament!]!
+    finishedTournaments(input: SearchTournamentInput): [Tournament!]!
+  }
+
   input CreateTournamentInput {
     name: String!
+    tournamentUrl: String
     startDate: DateTime!
+    dateStarted: DateTime
+    dateEnded: DateTime
     maxPlayers: Int!
     locationName: String!
     infoUrl: String
-    desc: String
     street1: String
     street2: String
     city: String
@@ -89,20 +104,23 @@ export const schema = gql`
     lat: Float
     lng: Float
     storeId: String
+    ownerId: String
+    userId: String
+    desc: String
+    active: Boolean
+    startingTimerInSeconds: Int
+    timerLeftInSeconds: Int
+    timerStatus: TimerStatus
+    timerLastUpdated: DateTime
   }
 
   input UpdateTournamentInput {
     name: String
-    desc: String
     tournamentUrl: String
     startDate: DateTime
     dateStarted: DateTime
     dateEnded: DateTime
     maxPlayers: Int
-    startingTimerInSeconds: Int
-    timerLeftInSeconds: Int
-    timerStatus: TimerStatus
-    timerLastUpdated: DateTime
     locationName: String
     infoUrl: String
     street1: String
@@ -115,6 +133,13 @@ export const schema = gql`
     lng: Float
     storeId: String
     ownerId: String
+    userId: String
+    desc: String
+    active: Boolean
+    startingTimerInSeconds: Int
+    timerLeftInSeconds: Int
+    timerStatus: TimerStatus
+    timerLastUpdated: DateTime
   }
 
   input TournamentMatchScoreInput {
@@ -154,16 +179,6 @@ export const schema = gql`
     dateStart: Date
     dateEnd: Date
     distance: Int
-  }
-
-  type Query {
-    tournaments: [Tournament!]!
-    searchTournaments(input: SearchTournamentInput!): [Tournament!]!
-    tournament(id: Int!): Tournament
-    tournamentByUrl(url: String): Tournament
-    myTournaments: [Tournament!]!
-    upcomingTournaments(input: SearchTournamentInput): [Tournament!]!
-    finishedTournaments(input: SearchTournamentInput): [Tournament!]!
   }
 
   type Mutation {

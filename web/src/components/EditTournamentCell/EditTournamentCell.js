@@ -27,6 +27,13 @@ export const QUERY = gql`
       ownerId
       createdAt
       updatedAt
+      userId
+      desc
+      active
+      startingTimerInSeconds
+      timerLeftInSeconds
+      timerStatus
+      timerLastUpdated
     }
   }
 `
@@ -54,6 +61,13 @@ const UPDATE_TOURNAMENT_MUTATION = gql`
       ownerId
       createdAt
       updatedAt
+      userId
+      desc
+      active
+      startingTimerInSeconds
+      timerLeftInSeconds
+      timerStatus
+      timerLastUpdated
     }
   }
 `
