@@ -55,7 +55,13 @@ const Header = () => {
               </button>
             </div>
             <div className="flex-shrink-0 flex items-center hidden md:flex">
-              <Link to={routes.home()}>{'Genesis Event Organizer'}</Link>
+              <Link to={routes.home()}>
+                <img
+                  className="mx-auto h-12 w-auto"
+                  src="/Logo.png"
+                  alt="Workflow"
+                />
+              </Link>
             </div>
             <div className="hidden md:ml-6 md:flex md:space-x-8">
               <NavLink

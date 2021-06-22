@@ -122,8 +122,8 @@ const NicknameCheckField = ({
       <div className="relative w-full flex">
         <input
           name="nickname"
-          placeholder="Unique Nickname"
           value={value}
+          defaultValue={defaultValue}
           className={
             'border-2 p-2 mt-2 w-full flex focus:outline-none' + nicknameClass
           }

@@ -6,7 +6,9 @@ const MainLayout = ({ children }) => {
     <>
       <Header />
       <Toaster />
-      <div className="flex flex-col container mx-auto my-12">{children}</div>
+      <div className="flex flex-col container mx-auto my-0 sm:my-12 font-inter">
+        {children}
+      </div>
     </>
   )
 }

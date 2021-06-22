@@ -3,7 +3,6 @@ import {
   TextField,
   Submit,
   Label,
-  DateField,
   TextAreaField,
   FormError,
   SelectField,
@@ -27,6 +26,8 @@ import { FacebookIcon } from 'src/components/Icons/Facebook'
 import { TwitterIcon } from 'src/components/Icons/Twitter'
 import toast from 'react-hot-toast'
 import DatePicker from 'react-datepicker'
+
+import 'react-datepicker/dist/react-datepicker.css'
 
 const CREATE_USER = gql`
   mutation CreateUserMutation(
@@ -55,7 +56,7 @@ const distributors = [
   'ABC Blackfire Distribution',
 ]
 
-const SignupPage = () => {
+const SignupPage = ({ stepRoute }) => {
   const [error, setError] = React.useState(null)
   const [step, setStep] = React.useState(1)
   const [form, setForm] = React.useState({})
@@ -219,18 +220,48 @@ const SignupPage = () => {
   const renderStep = () => {
     if (step === 1) {
       return (
-        <div className="flex justify-between">
+        <div className="grid gap-8 grid-cols-1 sm:grid-cols-2">
           <button
-            className="w-full py-2 px-4 border rounded-md text-white bg-green-400 hover:bg-green-600"
-            onClick={() => selectType('PLAYER')}
-          >
-            PLAYER
-          </button>
-          <button
-            className="w-full py-2 px-4 border rounded-md text-white bg-green-400 hover:bg-green-600"
+            className="w-full max-w-sm py-4 px-4 h-24 sm:h-auto border rounded-md text-white bg-green-700 hover:bg-green-800 justify-center items-center flex flex-col sm:flex-row"
             onClick={() => selectType('EO')}
           >
-            EVENT ORGANIZER
+            <div className="mr-0 sm:mr-4">EVENT ORGANIZER</div>
+
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+              />
+            </svg>
+          </button>
+
+          <button
+            className="w-full max-w-sm py-2 px-4 h-24 sm:h-auto border rounded-md text-white bg-green-700 hover:bg-green-800 justify-center items-center flex flex-col sm:flex-row"
+            onClick={() => selectType('PLAYER')}
+          >
+            <div className="mr-0 sm:mr-4">PLAYER</div>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+              />
+            </svg>
           </button>
         </div>
       )
@@ -247,11 +278,14 @@ const SignupPage = () => {
           >
             <FormError error={error} className="col-span-2" />
             <div className="flex flex-col col-span-2">
+              <span name="image" className="text-center">
+                User Image
+              </span>
               <UserPictureSelector
                 userPicture={userPicture}
                 selectImage={(image) => setUserPicture({ ...image })}
               />
-              <span name="firstname">Nickname</span>
+              <span name="firstname">Unique Nickname</span>
               <NicknameCheckField
                 onChange={(data) => {
                   setForm({
@@ -260,6 +294,7 @@ const SignupPage = () => {
                   })
                 }}
                 setNicknameValid={setNicknameValid}
+                defaultValue={form['nickname']}
               />
             </div>
             <div className="flex flex-col w-full">
@@ -268,9 +303,9 @@ const SignupPage = () => {
               </Label>
               <TextField
                 name="firstname"
-                placeholder="First name"
                 className="border-2 p-2 mt-2 w-full"
                 errorClassName="border-2 p-2 mt-2 w-full border-red-500"
+                defaultValue={form['firstname']}
                 validation={{
                   required: true,
                 }}
@@ -282,9 +317,9 @@ const SignupPage = () => {
               </Label>
               <TextField
                 name="lastname"
-                placeholder="Last name"
                 className="border-2 p-2 mt-2 w-full"
                 errorClassName="border-2 p-2 mt-2 w-full border-red-500"
+                defaultValue={form['lastname']}
                 validation={{
                   required: true,
                 }}
@@ -298,6 +333,7 @@ const SignupPage = () => {
                 name="email"
                 className="border-2 p-2 mt-2 w-full"
                 errorClassName="border-2 p-2 mt-2 w-full border-red-500"
+                defaultValue={form['email']}
                 validation={{
                   required: true,
                   pattern: {
@@ -314,10 +350,16 @@ const SignupPage = () => {
                 name="phone"
                 className="border-2 p-2 mt-2 w-full"
                 errorClassName="border-2 p-2 mt-2 w-full border-red-500"
+                defaultValue={form['phone']}
                 validation={{
                   required: true,
                 }}
               />
+            </div>
+            <div className="flex flex-col w-full col-span-2 italic text-gray-500 text-sm">
+              Your email and phone number is collected for authentication and
+              tournament registration updates and will never be shared with
+              anyone.
             </div>
             <div className="flex flex-col w-full">
               <Label name="gender" errorClassName="text-red-500">
@@ -327,6 +369,7 @@ const SignupPage = () => {
                 name="gender"
                 className="border-2 p-2 mt-2 w-full"
                 errorClassName="border-2 p-2 mt-2 w-full border-red-500"
+                defaultValue={form['gender']}
                 validation={{
                   required: true,
                 }}
@@ -336,13 +379,28 @@ const SignupPage = () => {
               <Label name="dob" errorClassName="text-red-500">
                 Date of Birth
               </Label>
-              <DateField
+              <Controller
+                control={formMethods.control}
                 name="dob"
-                className="border-2 p-2 mt-2 w-full"
-                errorClassName="border-2 p-2 mt-2 w-full border-red-500"
-                validation={{
+                rules={{
                   required: true,
                 }}
+                render={({ name, value, onChange, ref, onBlur }) => (
+                  <DatePicker
+                    onChange={onChange}
+                    selected={value}
+                    name={name}
+                    customInputRef={ref}
+                    onBlur={onBlur}
+                    maxDate={new Date()}
+                    className="border-2 p-2 mt-2 w-full"
+                    errorClassName="border-2 p-2 mt-2 w-full border-red-500"
+                    peekNextMonth
+                    showMonthDropdown
+                    showYearDropdown
+                    dropdownMode="select"
+                  />
+                )}
               />
             </div>
             <div className="flex flex-col w-full">
@@ -353,6 +411,7 @@ const SignupPage = () => {
                 name="city"
                 className="border-2 p-2 mt-2 w-full"
                 errorClassName="border-2 p-2 mt-2 w-full border-red-500"
+                defaultValue={form['city']}
               />
             </div>
             <div className="flex flex-col w-full">
@@ -363,6 +422,7 @@ const SignupPage = () => {
                 name="state"
                 className="border-2 p-2 mt-2 w-full"
                 errorClassName="border-2 p-2 mt-2 w-full border-red-500"
+                defaultValue={form['state']}
               />
             </div>
             <div className="flex flex-col w-full">
@@ -373,6 +433,7 @@ const SignupPage = () => {
                 name="country"
                 className="border-2 p-2 mt-2 w-full"
                 errorClassName="border-2 p-2 mt-2 w-full border-red-500"
+                defaultValue={form['country']}
               />
             </div>
             <div className="flex flex-col w-full">
@@ -383,6 +444,7 @@ const SignupPage = () => {
                 name="zip"
                 className="border-2 p-2 mt-2 w-full"
                 errorClassName="border-2 p-2 mt-2 w-full border-red-500"
+                defaultValue={form['zip']}
               />
             </div>
             <div className="flex flex-col w-full col-span-2">
@@ -391,15 +453,17 @@ const SignupPage = () => {
                 name="howHeard"
                 className="border-2 p-2 mt-2 w-full"
                 errorClassName="border-2 p-2 mt-2 w-full border-red-500"
+                defaultValue={form['howHeard']}
               />
             </div>
-
-            <Submit
-              disabled={!nicknameValid}
-              className="col-span-2 my-8 w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-            >
-              Next
-            </Submit>
+            <div className="flex  col-span-2 w-full">
+              <Submit
+                disabled={!nicknameValid}
+                className="my-8 w-1/2 mx-auto justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-700 hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-400 disabled:bg-red-400"
+              >
+                Next
+              </Submit>
+            </div>
           </Form>
         )
       } else if (form.role === 'EO') {
@@ -417,7 +481,7 @@ const SignupPage = () => {
             </h3>
             <FormError error={error} className="col-span-2" />
             <div className="flex flex-col col-span-2">
-              <span name="firstname">Nickname</span>
+              <span name="firstname">Unique Nickname</span>
               <NicknameCheckField
                 onChange={(data) => {
                   setForm({
@@ -426,6 +490,7 @@ const SignupPage = () => {
                   })
                 }}
                 setNicknameValid={setNicknameValid}
+                defaultValue={form.nickname}
               />
             </div>
             <div className="flex flex-col w-full">
@@ -434,9 +499,9 @@ const SignupPage = () => {
               </Label>
               <TextField
                 name="firstname"
-                placeholder="First name"
                 className="border-2 p-2 mt-2 w-full"
                 errorClassName="border-2 p-2 mt-2 w-full border-red-500"
+                defaultValue={form.firstname}
                 validation={{
                   required: true,
                 }}
@@ -448,9 +513,9 @@ const SignupPage = () => {
               </Label>
               <TextField
                 name="lastname"
-                placeholder="Last name"
                 className="border-2 p-2 mt-2 w-full"
                 errorClassName="border-2 p-2 mt-2 w-full border-red-500"
+                defaultValue={form.lastname}
                 validation={{
                   required: true,
                 }}
@@ -464,6 +529,7 @@ const SignupPage = () => {
                 name="email"
                 className="border-2 p-2 mt-2 w-full"
                 errorClassName="border-2 p-2 mt-2 w-full border-red-500"
+                defaultValue={form.email}
                 validation={{
                   required: true,
                   pattern: {
@@ -480,6 +546,7 @@ const SignupPage = () => {
                 name="phone"
                 className="border-2 p-2 mt-2 w-full"
                 errorClassName="border-2 p-2 mt-2 w-full border-red-500"
+                defaultValue={form.phone}
                 validation={{
                   required: true,
                 }}
@@ -493,7 +560,7 @@ const SignupPage = () => {
                 name="distributor"
                 className="border-2 p-2 mt-2 w-full"
                 errorClassName="border-2 p-2 mt-2 w-full border-red-500"
-                defaultValue=""
+                defaultValue={form.distributor}
                 validation={{
                   required: true,
                   matchesInitialValue: (value) => {
@@ -523,6 +590,7 @@ const SignupPage = () => {
                 placeholder="Store Name"
                 className="border-2 p-2 mt-2 w-full"
                 errorClassName="border-2 p-2 mt-2 w-full border-red-500"
+                defaultValue={form['store-name']}
                 validation={{
                   required: true,
                 }}
@@ -623,6 +691,8 @@ const SignupPage = () => {
           loading={loading || createUserLoading}
           onSubmit={onSubmit}
           submitText={'Sign Up'}
+          onBack={() => setStep(2)}
+          backButtonText={'Back'}
         />
       )
     }
@@ -630,14 +700,11 @@ const SignupPage = () => {
 
   if (!currentUser?.user) {
     return (
-      <div className="min-h-screen flex flex-col justify-center">
+      <div className="min-h-screen container mx-auto flex flex-col justify-center bg-gray-200 border-sm py-4 text-sm text-gray-700 ">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
-          <img className="mx-auto h-12 w-auto" src="/Logo.png" alt="Workflow" />
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Sign up
-          </h2>
+          <h2 className="text-center text-2xl text-gray-900">Create Account</h2>
         </div>
-        <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-3xl">
+        <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-3xl p-4">
           {error && <p>{error}</p>}
           {renderStep()}
           {step === 3 && (
