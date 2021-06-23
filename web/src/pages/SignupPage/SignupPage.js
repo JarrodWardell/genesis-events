@@ -41,19 +41,19 @@ const CREATE_USER = gql`
 `
 
 const distributors = [
-  'Alliance Game Distributors',
-  'Prince Wholesalers',
-  'ACD Distribution',
-  'GTS Distribution',
-  'Publisher Services Inc',
-  'Lion Rampant',
-  'Hit Point Sales',
-  'Universal Distribution',
-  'Grosnor Distribution Inc',
-  'Asmodee',
-  'Luma Games',
-  'Golden Distribution',
   'ABC Blackfire Distribution',
+  'ACD Distribution',
+  'Alliance Game Distributors',
+  'Asmodee',
+  'Golden Distribution',
+  'Grosnor Distribution Inc',
+  'GTS Distribution',
+  'Hit Point Sales',
+  'Lion Rampant',
+  'Luma Games',
+  'Prince Wholesalers',
+  'Publisher Services Inc',
+  'Universal Distribution',
 ]
 
 const SignupPage = ({ stepRoute }) => {
@@ -62,7 +62,7 @@ const SignupPage = ({ stepRoute }) => {
   const [form, setForm] = React.useState({})
   const [nicknameValid, setNicknameValid] = React.useState(null)
   const [userPicture, setUserPicture] = React.useState({ url: null })
-  const { signUp, loading, currentUser } = useAuth()
+  const { signUp, loading, currentUser, client } = useAuth()
   const [createUser, { loading: createUserLoading }] = useMutation(CREATE_USER)
   const formMethods = useForm()
   const password = useRef()
@@ -73,107 +73,86 @@ const SignupPage = ({ stepRoute }) => {
     await signUp({ password: newData.password, email: newData.email }).then(
       async () => {
         delete newData.password
-        let {
-          role,
-          email,
-          nickname,
-          firstname,
-          lastname,
-          gender,
-          phone,
-          city,
-          state,
-          country,
-          zip,
-          howHeard,
-        } = newData
-
-        let variables = {
-          input: {
-            role,
-            nickname,
-            email,
-            firstname,
-            lastname,
-            gender,
-            phone,
-            city,
-            state,
-            country,
-            zip,
-            howHeard,
-            imageId: userPicture?.id,
-          },
-        }
-
-        if (role === 'EO') {
-          variables.storeInput = {
-            name: newData['store-name'],
-            email: newData['store-email'],
-            phone: newData['store-phone'],
-            lat: newData.lat,
-            lng: newData.lng,
-            street1: newData['formatted_address'],
-            city: newData['store-city'],
-            country: newData['store-country'],
-            state: newData['store-state'],
-            zip: newData['store-zip'],
-            distributor: newData.distributor,
-          }
-        }
-
-        await createUser({
-          variables,
-        }).then(() => {
-          setError(null)
-          if (role === 'EO') navigate(routes.storePending())
-          window.location.reload()
-        })
+        await callCreateUser(newData)
       }
     )
   }
 
   const onProviderClick = async (provider) => {
     await signUp(provider)
-      .then(() => {
-        let {
-          role,
-          email,
-          nickname,
-          firstname,
-          lastname,
-          gender,
-          phone,
-          city,
-          state,
-          country,
-          zip,
-          howHeard,
-        } = form
-
-        let variables = {
-          input: {
-            role,
-            nickname,
-            email,
-            firstname,
-            lastname,
-            gender,
-            phone,
-            city,
-            state,
-            country,
-            zip,
-            howHeard,
-          },
-        }
-
-        createUser({
-          variables,
-        })
+      .then(async () => {
+        await callCreateUser({ ...form })
       })
       .catch(() => {
         toast.error('There was an error in creating your account')
+      })
+  }
+
+  const callCreateUser = async (data) => {
+    let {
+      role,
+      email,
+      nickname,
+      firstname,
+      lastname,
+      gender,
+      phone,
+      city,
+      state,
+      country,
+      zip,
+      howHeard,
+    } = data
+
+    let variables = {
+      input: {
+        role,
+        nickname,
+        email,
+        firstname,
+        lastname,
+        gender,
+        phone,
+        city,
+        state,
+        country,
+        zip,
+        howHeard,
+        imageId: userPicture?.id,
+      },
+    }
+
+    if (role === 'EO') {
+      variables.storeInput = {
+        name: data['store-name'],
+        email: data['store-email'],
+        phone: data['store-phone'],
+        lat: data.lat,
+        lng: data.lng,
+        street1: data['formatted_address'],
+        city: data['store-city'],
+        country: data['store-country'],
+        state: data['store-state'],
+        zip: data['store-zip'],
+        distributor: data.distributor,
+      }
+    }
+
+    await createUser({
+      variables,
+    })
+      .then(() => {
+        setError(null)
+        if (role === 'EO') navigate(routes.storePending())
+        window.location.reload()
+      })
+      .catch((err) => {
+        var auth = client?.auth()?.currentUser
+        auth.delete().then(() => {
+          toast.error(
+            'There was an error in creating your account. Please try again.'
+          )
+        })
       })
   }
 
@@ -459,7 +438,7 @@ const SignupPage = ({ stepRoute }) => {
             <div className="flex  col-span-2 w-full">
               <Submit
                 disabled={!nicknameValid}
-                className="my-8 w-1/2 mx-auto justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-700 hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-400 disabled:bg-red-400"
+                className="my-8 w-1/2 mx-auto justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-700 hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-400 disabled:bg-red-400n"
               >
                 Next
               </Submit>
@@ -481,6 +460,13 @@ const SignupPage = ({ stepRoute }) => {
             </h3>
             <FormError error={error} className="col-span-2" />
             <div className="flex flex-col col-span-2">
+              <span name="image" className="text-center">
+                User Image
+              </span>
+              <UserPictureSelector
+                userPicture={userPicture}
+                selectImage={(image) => setUserPicture({ ...image })}
+              />
               <span name="firstname">Unique Nickname</span>
               <NicknameCheckField
                 onChange={(data) => {
@@ -552,31 +538,10 @@ const SignupPage = ({ stepRoute }) => {
                 }}
               />
             </div>
-            <div className="flex flex-col w-full col-span-2">
-              <Label name="distributor" errorClassName="text-red-500">
-                Distributor
-              </Label>
-              <SelectField
-                name="distributor"
-                className="border-2 p-2 mt-2 w-full"
-                errorClassName="border-2 p-2 mt-2 w-full border-red-500"
-                defaultValue={form.distributor}
-                validation={{
-                  required: true,
-                  matchesInitialValue: (value) => {
-                    return value !== '' || 'Select an Option'
-                  },
-                }}
-              >
-                <option disabled value="">
-                  Please select an option
-                </option>
-                {distributors.map((dist) => (
-                  <option value={dist} key={`dist-${dist}`}>
-                    {dist}
-                  </option>
-                ))}
-              </SelectField>
+            <div className="flex flex-col w-full col-span-2 italic text-gray-500 text-sm">
+              Your email and phone number is collected for authentication and
+              tournament registration updates and will never be shared with
+              anyone.
             </div>
             <h3 className="col-span-2 mb-4 font-bold underline text-xl">
               Store Information
@@ -587,7 +552,6 @@ const SignupPage = ({ stepRoute }) => {
               </Label>
               <TextField
                 name="store-name"
-                placeholder="Store Name"
                 className="border-2 p-2 mt-2 w-full"
                 errorClassName="border-2 p-2 mt-2 w-full border-red-500"
                 defaultValue={form['store-name']}
@@ -605,13 +569,14 @@ const SignupPage = ({ stepRoute }) => {
                 selectProps={{
                   value: form.address,
                   onChange: onSelectAddress,
+                  placeholder: '',
                 }}
                 className="border-2 p-2 mt-2 w-full"
               />
             </div>
             <div className="flex flex-col w-full">
               <Label name="store-email" errorClassName="text-red-500">
-                Email
+                Store Email Address
               </Label>
               <TextField
                 name="store-email"
@@ -627,7 +592,7 @@ const SignupPage = ({ stepRoute }) => {
             </div>
             <div className="flex flex-col w-full">
               <Label name="store-phone" errorClassName="text-red-500">
-                Phone Number
+                Store Phone Number
               </Label>
               <TextField
                 name="store-phone"
@@ -677,6 +642,32 @@ const SignupPage = ({ stepRoute }) => {
                 className="border-2 p-2 mt-2 w-full"
                 errorClassName="border-2 p-2 mt-2 w-full border-red-500"
               />
+            </div>
+            <div className="flex flex-col w-full col-span-2">
+              <Label name="distributor" errorClassName="text-red-500">
+                Distributor
+              </Label>
+              <SelectField
+                name="distributor"
+                className="border-2 p-2 mt-2 w-full"
+                errorClassName="border-2 p-2 mt-2 w-full border-red-500"
+                defaultValue={form.distributor ? form.distributor : ''}
+                validation={{
+                  required: true,
+                  matchesInitialValue: (value) => {
+                    return value !== '' || 'Select an Option'
+                  },
+                }}
+              >
+                <option disabled value="">
+                  Please select an option
+                </option>
+                {distributors.map((dist) => (
+                  <option value={dist} key={`dist-${dist}`}>
+                    {dist}
+                  </option>
+                ))}
+              </SelectField>
             </div>
 
             <Submit className="col-span-2 my-8 w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">

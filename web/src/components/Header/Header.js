@@ -179,11 +179,21 @@ const Header = () => {
               </div>
             </div>
           ) : (
-            <div className="hidden md:ml-4 md:flex-shrink-0 md:flex md:items-center">
-              <Link to={routes.login()} className="mr-4">
+            <div className="hiddenmd:ml-6 md:flex md:space-x-8">
+              <NavLink
+                to={routes.login()}
+                className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+                activeClassName="border-indigo-500 text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+              >
                 Login{' '}
-              </Link>
-              <Link to={routes.signup()}>Signup</Link>
+              </NavLink>
+              <NavLink
+                to={routes.signup()}
+                className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+                activeClassName="border-indigo-500 text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+              >
+                Signup
+              </NavLink>
             </div>
           )}
         </div>

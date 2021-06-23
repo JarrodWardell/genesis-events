@@ -1,4 +1,4 @@
-import { Form, TextField, PasswordField, Submit } from '@redwoodjs/forms'
+import { Form, TextField, PasswordField, Submit, Label } from '@redwoodjs/forms'
 import { useAuth } from '@redwoodjs/auth'
 import { Redirect, routes, Link } from '@redwoodjs/router'
 import { GoogleIcon } from 'src/components/Icons/Google'
@@ -20,9 +20,9 @@ const LoginPage = () => {
 
   if (!currentUser?.user) {
     return (
-      <div className="min-h-screen flex flex-col justify-center">
+      <div className="min-h-screen container mx-auto flex flex-col justify-center bg-gray-200 border-sm py-4 text-sm text-gray-700 ">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
-          <img className="mx-auto h-12 w-auto" src="/Logo.png" alt="Workflow" />
+          <img className="mx-auto h-20 w-auto" src="/Logo.png" alt="Workflow" />
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
             Sign in to your account
           </h2>
@@ -32,20 +32,32 @@ const LoginPage = () => {
           <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
             <Form onSubmit={onSubmit} className="flex flex-col">
               {error && <p>{error}</p>}
+              <Label errorClassName="text-red-500" name="email">
+                Email Address
+              </Label>
               <TextField
                 name="email"
-                placeholder="email"
-                className="border-2 p-2 mt-4"
+                className="border-2 p-2 mb-4"
+                errorClassName="border-2 p-2 mb-4 border-red-500"
+                validation={{
+                  required: true,
+                }}
               />
+              <Label errorClassName="text-red-500" name="password">
+                Password
+              </Label>
               <PasswordField
                 name="password"
-                placeholder="password"
-                className="border-2 p-2 mt-4"
+                className="border-2 p-2"
+                errorClassName="border-2 p-2 border-red-500"
+                validation={{
+                  required: true,
+                }}
               />
               <div className="text-sm my-4 text-center">
                 <Link
                   to={routes.forgotPassword()}
-                  className="font-medium text-indigo-600 hover:text-indigo-500 "
+                  className="text-sm text-green-700 hover:text-green-600"
                 >
                   Forgot your password?
                 </Link>
@@ -53,7 +65,7 @@ const LoginPage = () => {
 
               <Submit
                 disabled={loading}
-                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-700 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
               >
                 Sign in
               </Submit>
