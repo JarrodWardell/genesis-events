@@ -7,6 +7,7 @@ const AdminLayout = ({ children }) => {
     const TABS = [
       'users',
       'tournaments',
+      'stores',
       'player-tournament-scores',
       'player-match-scores',
       'matches',

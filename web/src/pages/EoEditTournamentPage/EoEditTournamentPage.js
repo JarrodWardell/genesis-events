@@ -37,9 +37,16 @@ const EOEditTournamentPage = ({ url }) => {
   })
 
   return (
-    <>
-      <TournamentEOForm tournament={tournament} />
-    </>
+    <div className="min-h-screen container mx-auto flex flex-col justify-center bg-gray-100 border-sm py-4 text-sm text-gray-700 ">
+      <div className="sm:mx-auto sm:w-full sm:max-w-3xl px-4">
+        <h2 className="sm:mt-8 text-left text-2xl text-gray-900">
+          Edit Tournament: {tournament?.name}
+        </h2>
+      </div>
+      <div className="sm:mx-auto sm:w-full sm:max-w-3xl px-4">
+        <TournamentEOForm tournament={tournament} />
+      </div>
+    </div>
   )
 }
 

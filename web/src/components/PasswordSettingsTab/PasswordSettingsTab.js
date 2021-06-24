@@ -4,14 +4,13 @@ import PasswordCheck from '../PasswordCheck/PasswordCheck'
 
 const PasswordSettingsTab = () => {
   const { client, currentUser, logIn } = useAuth()
-  const [loadingPasswordUpdate, setLoadingPasswordUpdate] = React.useState(
-    false
-  )
+  const [loadingPasswordUpdate, setLoadingPasswordUpdate] =
+    React.useState(false)
 
   const onSubmit = async ({ currentPassword, password }) => {
     setLoadingPasswordUpdate(true)
     var auth = client.auth().currentUser
-    let credentials = logIn({
+    logIn({
       email: currentUser?.user?.email,
       password: currentPassword,
     })
@@ -22,14 +21,14 @@ const PasswordSettingsTab = () => {
             setLoadingPasswordUpdate(false)
             toast.success('Successfully updated your password!')
           })
-          .catch((error) => {
+          .catch(() => {
             setLoadingPasswordUpdate(false)
             toast.error(
               'There was an error in updating your password. Please try again.'
             )
           })
       })
-      .catch((reauthError) => {
+      .catch(() => {
         setLoadingPasswordUpdate(false)
         toast.error(
           'There was an error with your current password. Please confirm it is correct before trying again.'

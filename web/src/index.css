@@ -11,3 +11,7 @@
 /**
  * END --- TAILWIND GENERATOR EDIT
  */
+
+ .react-datepicker-popper {
+   z-index: 3 !important;
+ }

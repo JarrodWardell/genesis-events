@@ -22,6 +22,9 @@ import toast from 'react-hot-toast'
 import { stateFromHTML } from 'draft-js-import-html'
 import { stateToHTML } from 'draft-js-export-html'
 import { TOURNAMENT_BY_URL } from 'src/pages/ViewTournamentPage/ViewTournamentPage'
+import ReactDatePicker from 'react-datepicker'
+
+import 'react-datepicker/dist/react-datepicker.css'
 
 const CREATE_TOURNAMENT = gql`
   mutation CreateTournamentMutation($input: CreateTournamentInput!) {
@@ -71,6 +74,11 @@ const TournamentEOForm = ({ tournament }) => {
       let contentState = stateFromHTML(tournament?.desc)
       setDesc(EditorState.createWithContent(contentState))
     }
+
+    if (tournament?.startDate) {
+      formMethods.setValue('startDate', new Date(tournament?.startDate))
+    }
+
     formMethods.setValue('locationName', tournament?.locationName)
     formMethods.setValue('storeId', tournament?.storeId)
     formMethods.setValue('country', tournament?.country)
@@ -230,217 +238,232 @@ const TournamentEOForm = ({ tournament }) => {
 
   return (
     <div className="min-h-screen flex flex-col justify-center">
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-3xl">
-        <Form onSubmit={onSubmit} formMethods={formMethods}>
-          <FormError
-            wrapperClassName="rw-form-error-wrapper"
-            titleClassName="rw-form-error-title"
-            listClassName="rw-form-error-list"
-          />
+      <div className="sm:mx-auto sm:w-full sm:max-w-3xl">
+        <Form
+          onSubmit={onSubmit}
+          formMethods={formMethods}
+          className="grid-cols-1 grid sm:grid-cols-2 gap-4 font-normal"
+        >
+          <div className="flex flex-col col-span-2">
+            <FormError
+              wrapperClassName="rw-form-error-wrapper"
+              titleClassName="rw-form-error-title"
+              listClassName="rw-form-error-list"
+            />
+          </div>
+          <div className="flex flex-col col-span-2">
+            <Label
+              name="tournamentName"
+              className="mt-2"
+              errorClassName=" -error"
+            >
+              Name of Tournament
+            </Label>
+            <TextField
+              name="tournamentName"
+              defaultValue={tournament?.name}
+              className="border-2 p-2 mt-2 w-full rounded-md shadow-sm"
+              errorClassName="border-2 p-2 mt-2 w-full rounded-md shadow-sm border-red-500"
+              validation={{ required: true }}
+            />
+            <FieldError name="tournamentName" className="rw-field-error" />
+          </div>
 
-          <Label
-            name="tournamentName"
-            className="rw-label"
-            errorClassName="rw-label rw-label-error"
-          >
-            Tournament Name
-          </Label>
-          <TextField
-            name="tournamentName"
-            defaultValue={tournament?.name}
-            className="rw-input"
-            errorClassName="rw-input rw-input-error"
-            validation={{ required: true }}
-          />
-          <FieldError name="tournamentName" className="rw-field-error" />
+          <div className="flex flex-col w-full col-span-2 sm:col-span-1">
+            <Label name="startDate" className="" errorClassName=" -error">
+              Start date
+            </Label>
+            <Controller
+              control={formMethods.control}
+              name="startDate"
+              rules={{
+                required: true,
+              }}
+              render={({ name, value, onChange, ref, onBlur }) => (
+                <ReactDatePicker
+                  onChange={onChange}
+                  selected={value}
+                  name={name}
+                  customInputRef={ref}
+                  onBlur={onBlur}
+                  minDate={new Date()}
+                  showTimeSelect
+                  className="border-2 p-2 mt-2 w-full z-10"
+                  errorClassName="border-2 p-2 mt-2 w-full border-red-500"
+                  peekNextMonth
+                  dateFormat="MMMM d, yyyy h:mm aa"
+                  calendarClassName="z-10"
+                />
+              )}
+            />
+            <FieldError name="startDate" className="rw-field-error" />
+          </div>
 
-          <Label
-            name="startDate"
-            className="rw-label"
-            errorClassName="rw-label rw-label-error"
-          >
-            Start date
-          </Label>
-          <DatetimeLocalField
-            name="startDate"
-            defaultValue={formatDatetime(tournament?.startDate)}
-            className="rw-input"
-            min={new Date().toISOString().split('T')[0]}
-            errorClassName="rw-input rw-input-error"
-            validation={{ required: true }}
-          />
-          <FieldError name="startDate" className="rw-field-error" />
+          <div className="flex flex-col w-full col-span-2 sm:col-span-1">
+            <Label name="maxPlayers" className="" errorClassName=" -error">
+              Max players
+            </Label>
+            <NumberField
+              name="maxPlayers"
+              defaultValue={tournament?.maxPlayers}
+              className="rw-input"
+              errorClassName="rw-input rw-input-error"
+              min={0}
+              validation={{ required: true, validate: () => {} }}
+            />
+            <FieldError name="maxPlayers" className="rw-field-error" />
+          </div>
 
-          <Label
-            name="maxPlayers"
-            className="rw-label"
-            errorClassName="rw-label rw-label-error"
-          >
-            Max players
-          </Label>
-          <NumberField
-            name="maxPlayers"
-            defaultValue={tournament?.maxPlayers}
-            className="rw-input"
-            errorClassName="rw-input rw-input-error"
-            min={0}
-            validation={{ required: true, validate: () => {} }}
-          />
-          <FieldError name="maxPlayers" className="rw-field-error" />
+          <div className="flex flex-col col-span-2">
+            <Label
+              name="description"
+              className=" mt-2"
+              errorClassName=" -error"
+            >
+              Description of Tournament (Optional)
+            </Label>
+            <Editor
+              editorState={desc}
+              defaultValue={tournament?.desc}
+              onEditorStateChange={onDescChange}
+              editorStyle={{
+                height: 200,
+                overflow: 'auto',
+                backgroundColor: 'white',
+                marginTop: '-3px',
+              }}
+              toolbar={{
+                inline: { inDropdown: true },
+                list: { inDropdown: true },
+                textAlign: { inDropdown: true },
+                link: { inDropdown: true },
+                history: { inDropdown: true },
+              }}
+              wrapperClassName="border-2 w-full rounded-md shadow-sm"
+            />
+          </div>
 
-          <Label
-            name="locationName"
-            className="rw-label"
-            errorClassName="rw-label rw-label-error"
-          >
-            Location name
-          </Label>
-          <Controller
-            control={formMethods.control}
-            defaultValue={tournament?.locationName}
-            name="locationName"
-            rules={{
-              required: true,
-            }}
-            render={() => (
-              <CreatableSelect
-                onCreateOption={onCreateLocation}
-                onChange={onStoreSelect}
-                value={{
-                  value: locationName,
-                  label: locationName,
-                }}
-                options={currentUser?.stores?.map((store) => ({
-                  value: store,
-                  label: store.name,
-                }))}
-              />
-            )}
-          />
-          <FieldError name="locationName" className="rw-field-error" />
+          <div className="flex flex-col col-span-2">
+            <Label name="locationName" className="" errorClassName=" -error">
+              Location name
+            </Label>
+            <Controller
+              control={formMethods.control}
+              defaultValue={tournament?.locationName}
+              name="locationName"
+              rules={{
+                required: true,
+              }}
+              render={() => (
+                <CreatableSelect
+                  onCreateOption={onCreateLocation}
+                  onChange={onStoreSelect}
+                  className="w-full rounded-md shadow-sm"
+                  errorClassName="border-2 p-2 mt-2 w-full rounded-md shadow-sm border-red-500"
+                  value={{
+                    value: locationName,
+                    label: locationName,
+                  }}
+                  options={currentUser?.stores?.map((store) => ({
+                    value: store,
+                    label: store.name,
+                  }))}
+                />
+              )}
+            />
+            <FieldError name="locationName" className="rw-field-error" />
+          </div>
 
-          <Label
-            name="street1"
-            className="rw-label"
-            errorClassName="rw-label rw-label-error"
-          >
-            Address
-          </Label>
-          <GooglePlacesAutocomplete
-            apiKey={process.env.GOOGLE_API_KEY}
-            selectProps={{
-              value: {
-                label: street1,
-                value: { description: street1, place_id: '' },
-              },
-              onChange: onSelectAddress,
-            }}
-            className="border-2 p-2 mt-2 w-full"
-          />
+          <div className="flex flex-col col-span-2">
+            <Label name="street1" className="" errorClassName=" -error">
+              Address of Tournament (Optional)
+            </Label>
+            <GooglePlacesAutocomplete
+              apiKey={process.env.GOOGLE_API_KEY}
+              selectProps={{
+                value: {
+                  label: street1,
+                  value: { description: street1, place_id: '' },
+                },
+                onChange: onSelectAddress,
+              }}
+              className="border-2 p-2 mt-2 w-full"
+            />
+          </div>
 
-          <Label
-            name="city"
-            className="rw-label"
-            errorClassName="rw-label rw-label-error"
-          >
-            City
-          </Label>
-          <TextField
-            name="city"
-            defaultValue={tournament?.city}
-            className="rw-input"
-            errorClassName="rw-input rw-input-error"
-          />
-          <FieldError name="city" className="rw-field-error" />
+          <div className="flex flex-col w-full col-span-2 sm:col-span-1">
+            <Label name="city" className="" errorClassName=" -error">
+              City (Optional)
+            </Label>
+            <TextField
+              name="city"
+              defaultValue={tournament?.city}
+              className="rw-input"
+              errorClassName="rw-input rw-input-error"
+            />
+            <FieldError name="city" className="rw-field-error" />
+          </div>
 
-          <Label
-            name="country"
-            className="rw-label"
-            errorClassName="rw-label rw-label-error"
-          >
-            Country
-          </Label>
-          <TextField
-            name="country"
-            defaultValue={tournament?.country}
-            className="rw-input"
-            errorClassName="rw-input rw-input-error"
-          />
-          <FieldError name="country" className="rw-field-error" />
+          <div className="flex flex-col w-full col-span-2 sm:col-span-1">
+            <Label name="state" className="" errorClassName=" -error">
+              State (Optional)
+            </Label>
+            <TextField
+              name="state"
+              defaultValue={tournament?.state}
+              className="rw-input"
+              errorClassName="rw-input rw-input-error"
+            />
+            <FieldError name="state" className="rw-field-error" />
+          </div>
 
-          <Label
-            name="state"
-            className="rw-label"
-            errorClassName="rw-label rw-label-error"
-          >
-            State
-          </Label>
-          <TextField
-            name="state"
-            defaultValue={tournament?.state}
-            className="rw-input"
-            errorClassName="rw-input rw-input-error"
-          />
-          <FieldError name="state" className="rw-field-error" />
+          <div className="flex flex-col w-full col-span-2 sm:col-span-1">
+            <Label name="country" className="" errorClassName=" -error">
+              Country (Optional)
+            </Label>
+            <TextField
+              name="country"
+              defaultValue={tournament?.country}
+              className="rw-input"
+              errorClassName="rw-input rw-input-error"
+            />
+            <FieldError name="country" className="rw-field-error" />
+          </div>
 
-          <Label
-            name="zip"
-            className="rw-label"
-            errorClassName="rw-label rw-label-error"
-          >
-            Zip
-          </Label>
-          <TextField
-            name="zip"
-            defaultValue={tournament?.zip}
-            className="rw-input"
-            errorClassName="rw-input rw-input-error"
-          />
-          <FieldError name="zip" className="rw-field-error" />
+          <div className="flex flex-col w-full col-span-2 sm:col-span-1">
+            <Label name="zip" className="" errorClassName=" -error">
+              Zip (Optional)
+            </Label>
+            <TextField
+              name="zip"
+              defaultValue={tournament?.zip}
+              className="rw-input"
+              errorClassName="rw-input rw-input-error"
+            />
+            <FieldError name="zip" className="rw-field-error" />
+          </div>
 
-          <Label
-            name="infoUrl"
-            className="rw-label"
-            errorClassName="rw-label rw-label-error"
-          >
-            Extra Information URL
-          </Label>
-          <TextField
-            name="infoUrl"
-            defaultValue={tournament?.infoUrl}
-            className="rw-input"
-            errorClassName="rw-input rw-input-error"
-          />
-          <FieldError name="infoUrl" className="rw-field-error" />
+          <div className="col-span-2 flex flex-col w-full col-span-2">
+            <Label name="infoUrl" className="" errorClassName=" -error">
+              Extra Information URL (Optional)
+            </Label>
+            <TextField
+              name="infoUrl"
+              defaultValue={tournament?.infoUrl}
+              className="rw-input"
+              errorClassName="rw-input rw-input-error"
+            />
+            <FieldError name="infoUrl" className="rw-field-error" />
+          </div>
 
-          <Label
-            name="description"
-            className="rw-label"
-            errorClassName="rw-label rw-label-error"
-          >
-            Description
-          </Label>
-          <Editor
-            editorState={desc}
-            defaultValue={tournament?.desc}
-            onEditorStateChange={onDescChange}
-            toolbar={{
-              inline: { inDropdown: true },
-              list: { inDropdown: true },
-              textAlign: { inDropdown: true },
-              link: { inDropdown: true },
-              history: { inDropdown: true },
-            }}
-            wrapperClassName="border-gray-50 border-2 rounded"
-          />
           <HiddenField name="lat" />
           <HiddenField name="lng" />
           <HiddenField name="storeId" />
 
-          <div className="rw-button-group">
-            {tournament && (
+          <div className="col-span-2 flex justify-center">
+            {tournament?.id && (
               <div
-                className="rw-button rw-button-red"
+                className="w-full mr-4  text-center py-4 px-4 h-14 sm:h-auto border rounded-md text-white bg-red-700 hover:bg-red-800 justify-center items-center flex flex-col sm:flex-row"
                 onClick={() => setConfirmCancel(true)}
               >
                 Cancel Tournament
@@ -448,9 +471,9 @@ const TournamentEOForm = ({ tournament }) => {
             )}
             <Submit
               disabled={createTournamentLoading || updateTournamentLoading}
-              className="rw-button rw-button-blue"
+              className="w-full py-4 px-4 h-14 sm:h-auto border rounded-md text-white bg-green-700 hover:bg-green-800 justify-center items-center flex flex-col sm:flex-row"
             >
-              Save
+              Submit
             </Submit>
           </div>
         </Form>

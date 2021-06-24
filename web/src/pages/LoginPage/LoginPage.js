@@ -4,18 +4,23 @@ import { Redirect, routes, Link } from '@redwoodjs/router'
 import { GoogleIcon } from 'src/components/Icons/Google'
 import { FacebookIcon } from 'src/components/Icons/Facebook'
 import { TwitterIcon } from 'src/components/Icons/Twitter'
+import { toast } from '@redwoodjs/web/dist/toast'
 
 const LoginPage = () => {
   const [error, setError] = React.useState(null)
   const { logIn, loading, currentUser } = useAuth()
 
   const onSubmit = async (data) => {
-    await logIn({ ...data })
+    await logIn({ ...data }).catch(() =>
+      toast.error('There was an error in logging in. Please try again.')
+    )
     setError(null)
   }
 
   const onProviderClick = async (provider) => {
-    await logIn(provider)
+    await logIn(provider).catch(() =>
+      toast.error('There was an error in logging in. Please try again.')
+    )
   }
 
   if (!currentUser?.user) {
