@@ -36,6 +36,7 @@ const Routes = () => {
       </Set>
       <Set wrap={[MainLayout, AdminLayout]}>
         <Private unauthenticated="login" role={['ADMIN']}>
+          <Route path="/admin" page={AdminPage} name="admin" />
           <Route path="/admin/users/new" page={NewUserPage} name="newUser" />
           <Route path="/admin/users/{id}/edit" page={EditUserPage} name="editUser" />
           <Route path="/admin/users/{id}" page={UserPage} name="user" />
