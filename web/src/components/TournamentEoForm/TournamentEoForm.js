@@ -330,6 +330,7 @@ const TournamentEOForm = ({ tournament }) => {
                 height: 200,
                 overflow: 'auto',
                 backgroundColor: 'white',
+                padding: '8px',
                 marginTop: '-3px',
               }}
               toolbar={{

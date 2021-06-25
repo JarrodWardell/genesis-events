@@ -28,9 +28,9 @@ export const QUERY = gql`
 
 export const Loading = () => <div>Loading...</div>
 
-export const Empty = () => <div>Empty</div>
+export const Empty = () => <div></div>
 
-export const Failure = ({ error }) => <div>Error: {error.message}</div>
+export const Failure = () => <div></div>
 
 export const Success = ({ homeBanners }) => {
   if (homeBanners.length > 0) {
