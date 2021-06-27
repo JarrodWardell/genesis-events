@@ -7,7 +7,7 @@ const HomePage = () => {
     <>
       <Header />
       <HomeBannersCell />
-      <div className="flex flex-col container mx-auto w-full">
+      <div className="flex flex-col container mx-auto w-11/12 sm:w-full text-sm text-gray-700">
         <HomePageCell />
       </div>
     </>

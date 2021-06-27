@@ -67,7 +67,6 @@ const TournamentSearchPage = () => {
   React.useEffect(() => {})
 
   React.useEffect(() => {
-    searchTournaments({ variables: { input: { ...filters } } })
     breakdownSearch()
     getUserGeneralLocation()
   }, [])
@@ -99,8 +98,6 @@ const TournamentSearchPage = () => {
         ...filters,
         ...query,
       }
-
-      console.log(newQuery)
 
       setFilters({
         ...newQuery,
@@ -192,30 +189,34 @@ const TournamentSearchPage = () => {
 
   return (
     <>
-      <div className="flex flex-col">
+      <div className="min-h-screen container mx-auto flex flex-col bg-gray-100 border-sm text-sm text-gray-700 p-4">
         <div className="flex">
           <h1>Tournament Search</h1>
         </div>
         <div className="flex">
-          <input
-            onChange={(e) => addFilter('name', e.target.value)}
-            value={filters.name}
-            className="rw-input"
-            placeholder="Tournament Name"
-          />
-          <input
-            type="date"
-            className="rw-input mx-4"
-            value={filters.dateStart}
-            onChange={(e) => addFilter('dateStart', e.target.value)}
-          />
-          <input
-            type="date"
-            className="rw-input mx-4"
-            min={filters.dateStart}
-            value={filters.dateEnd}
-            onChange={(e) => addFilter('dateEnd', e.target.value)}
-          />
+          <div className="w-1/2 relative">
+            <input
+              onChange={(e) => addFilter('name', e.target.value)}
+              value={filters.name}
+              className="rw-input"
+              placeholder="Tournament Name"
+            />
+          </div>
+          <div className="w-1/2 grid grid-cols-2 gap-4">
+            <input
+              type="date"
+              className="rw-input mx-4"
+              value={filters.dateStart}
+              onChange={(e) => addFilter('dateStart', e.target.value)}
+            />
+            <input
+              type="date"
+              className="rw-input mx-4"
+              min={filters.dateStart}
+              value={filters.dateEnd}
+              onChange={(e) => addFilter('dateEnd', e.target.value)}
+            />
+          </div>
         </div>
         <div className="flex justify-between">
           <div className="rw-input flex">

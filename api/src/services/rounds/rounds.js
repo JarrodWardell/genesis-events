@@ -33,5 +33,7 @@ export const Round = {
   tournament: (_obj, { root }) =>
     db.round.findUnique({ where: { id: root.id } }).tournament(),
   matches: (_obj, { root }) =>
-    db.round.findUnique({ where: { id: root.id } }).matches(),
+    db.round
+      .findUnique({ where: { id: root.id } })
+      .matches({ orderBy: { id: 'asc' } }),
 }

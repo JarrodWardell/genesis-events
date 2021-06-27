@@ -10,9 +10,11 @@ import FormError from '@redwoodjs/forms/dist/FormError'
 import NicknameCheckField from '../NicknameCheckField/NicknameCheckField'
 import ProfilePicture from '../ProfilePicture/ProfilePicture'
 import UserPictureSelector from '../UserPictureSelector/UserPictureSelector'
-import { useForm } from 'react-hook-form'
+import { useForm, Controller } from 'react-hook-form'
 import { useMutation } from '@redwoodjs/web'
 import toast from 'react-hot-toast'
+import DatePicker from 'react-datepicker'
+import 'react-datepicker/dist/react-datepicker.css'
 
 const UPDATE_USER_MUTATION = gql`
   mutation UpdateUserMutation($id: String!, $input: UpdateUserInput!) {
@@ -86,6 +88,12 @@ const UserSettingsTab = () => {
       },
     })
   }
+
+  React.useEffect(() => {
+    if (currentUser?.user?.dob) {
+      formMethods.setValue('dob', new Date(currentUser?.user?.dob))
+    }
+  }, [currentUser])
 
   return (
     <>
@@ -212,15 +220,29 @@ const UserSettingsTab = () => {
           <Label name="dob" errorClassName="text-red-500">
             Date of Birth
           </Label>
-          <DateField
+          <Controller
+            control={formMethods.control}
             name="dob"
-            className="border-2 p-2 mt-2 w-full"
-            errorClassName="border-2 p-2 mt-2 w-full border-red-500"
-            defaultValue={currentUser?.user?.dob}
-            disabled={!editSettings}
-            validation={{
+            rules={{
               required: true,
             }}
+            render={({ name, value, onChange, ref, onBlur }) => (
+              <DatePicker
+                onChange={onChange}
+                selected={value}
+                disabled={!editSettings}
+                name={name}
+                customInputRef={ref}
+                onBlur={onBlur}
+                maxDate={new Date()}
+                className="border-2 p-2 mt-2 w-full"
+                errorClassName="border-2 p-2 mt-2 w-full border-red-500"
+                peekNextMonth
+                showMonthDropdown
+                showYearDropdown
+                dropdownMode="select"
+              />
+            )}
           />
         </div>
         <div className="flex flex-col w-full">

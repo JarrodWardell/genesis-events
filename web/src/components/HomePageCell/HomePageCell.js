@@ -1,12 +1,15 @@
 import { useAuth } from '@redwoodjs/auth'
+import LoadingIcon from '../LoadingIcon/LoadingIcon'
 import TournamentItem from '../TournamentItem/TournamentItem'
 const CORE_TOURNAMENT_FIELDS = gql`
   fragment CoreTournamentFields on Tournament {
     id
     name
     tournamentUrl
+    locationName
     startDate
     dateEnded
+    desc
     maxPlayers
     players {
       playerId
@@ -45,7 +48,13 @@ export const QUERY = gql`
   }
 `
 
-export const Loading = () => <div>Loading...</div>
+export const Empty = () => <div />
+
+export const Loading = () => (
+  <div className="flex w-full h-full justify-center items-center">
+    <LoadingIcon size={'24'} />
+  </div>
+)
 
 export const Failure = ({ error }) => <div>Error: {error.message}</div>
 
@@ -60,23 +69,36 @@ export const Success = ({
     <>
       {currentUser && (
         <div className="my-8">
-          <h1>Registered Tournaments</h1>
-          {myTournaments.map((tournament) => (
-            <TournamentItem tournament={tournament} key={tournament.id} />
+          <h1 className="text-xl text-black mb-4">Registered Tournaments</h1>
+          {myTournaments.map((tournament, index) => (
+            <TournamentItem
+              tournament={tournament}
+              key={tournament.id}
+              index={index}
+              full={true}
+            />
           ))}
         </div>
       )}
-      <div className="grid md:grid-cols-2 gap-x-8 container mx-auto sm:grid-cols-1">
+      <div className="grid sm:grid-cols-2 gap-x-24 container mx-auto grid-cols-1">
         <div className="flex flex-col">
-          <h1>Upcoming Tournaments</h1>
-          {upcomingTournaments.map((tournament) => (
-            <TournamentItem tournament={tournament} key={tournament.id} />
+          <h1 className="text-xl text-black mb-4">Upcoming Tournaments</h1>
+          {upcomingTournaments.map((tournament, index) => (
+            <TournamentItem
+              tournament={tournament}
+              key={tournament.id}
+              index={index}
+            />
           ))}
         </div>
-        <div className="flex flex-col">
-          <h1>Finished Tournaments</h1>
-          {finishedTournaments.map((tournament) => (
-            <TournamentItem tournament={tournament} key={tournament.id} />
+        <div className="flex flex-col mt-8 sm:mt-0">
+          <h1 className="text-xl text-black mb-4">Finished Tournaments</h1>
+          {finishedTournaments.map((tournament, index) => (
+            <TournamentItem
+              tournament={tournament}
+              key={tournament.id}
+              index={index}
+            />
           ))}
         </div>
       </div>

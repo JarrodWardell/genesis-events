@@ -1,42 +1,168 @@
 import { Link, routes } from '@redwoodjs/router'
+import { ReactComponent as CalendarIcon } from 'src/components/Icons/CalendarIcon.svg'
+import { ReactComponent as PlayersIcon } from 'src/components/Icons/PlayersIcon.svg'
+import { ReactComponent as LocationIcon } from 'src/components/Icons/LocationIcon.svg'
+import { ReactComponent as InfoIcon } from 'src/components/Icons/InfoIcon.svg'
+import { ReactComponent as ClockIcon } from 'src/components/Icons/ClockIcon.svg'
+import { ReactComponent as HomeIcon } from 'src/components/Icons/HomeIcon.svg'
+import { ReactComponent as TrophyIcon } from 'src/components/Icons/TrophyIcon.svg'
+import Truncate from 'react-truncate-html'
+import { timeUntilTournament } from 'src/helpers/tournamentHelper'
 
-const TournamentItem = ({ tournament }) => {
+const TournamentItem = ({ tournament, full = false, index }) => {
+  const {
+    name,
+    tournamentUrl,
+    startDate,
+    maxPlayers,
+    players,
+    desc,
+    street1,
+    locationName,
+    city,
+    state,
+    country,
+  } = tournament
+
+  let timeTillTournament = timeUntilTournament(startDate)
+
   return (
-    <Link
-      to={routes.viewTournament({
-        url: tournament?.tournamentUrl,
-        tab: 'rounds',
-        tabOptions: 1,
-      })}
-      className="border-2 border-gray-50 p-5 text-center hover:bg-gray-100 cursor-pointer flex flex-col w-full"
+    <div
+      className={`flex flex-col w-full border-b ${
+        index === 0 && 'border-t'
+      } border-gray-200 py-2`}
     >
-      <div className="font-bold">{tournament.name}</div>
-      <div className="bold">
-        Players: {tournament?.players?.length} / {tournament?.maxPlayers}
-      </div>
-      {tournament.dateEnded && (
-        <div className="bold">Date Ended: {tournament.dateEnded}</div>
-      )}
-      {!tournament.dateEnded && (
-        <div className="bold">Date To Start: {tournament.startDate}</div>
-      )}
-      {tournament.city && (
-        <div className="bold">
-          {tournament.city}, {tournament.state}, {tournament.country}
+      <Link
+        to={routes.viewTournament({
+          url: tournamentUrl,
+          tab: 'rounds',
+          tabOptions: 1,
+        })}
+        className="cursor-pointer underline uppercase text-sm text-blue-500 hover:text-blue-300 w-auto font-semibold mb-2"
+      >
+        {name}
+      </Link>
+      {full ? (
+        <div className="flex flex-col sm:grid sm:grid-cols-5 sm:gap-4 text-gray-400 text-sm">
+          <div className="col-span-1 flex flex-col">
+            <p className="flex items-center">
+              <div className="w-6 h-6 flex font-bold">
+                <CalendarIcon />
+              </div>{' '}
+              <span className="ml-1">
+                {new Date(startDate).toLocaleString().split(',')[0]}
+              </span>
+            </p>
+            <p className="flex items-center">
+              <div className="w-6 h-6 flex font-bold">
+                <ClockIcon />
+              </div>{' '}
+              <span className="ml-1">
+                {new Date(startDate).toLocaleString().split(',')[1]}
+              </span>
+            </p>
+          </div>
+          <div className="col-span-1">
+            <p className="flex items-center">
+              <div className="w-6 h-6 flex font-bold">
+                <PlayersIcon />
+              </div>{' '}
+              <span className="ml-1">
+                {players?.length}/{maxPlayers} Players Registered
+              </span>
+            </p>
+            {tournament.street1 && (
+              <p className="flex items-center">
+                <div className="w-6 h-6 flex font-bold">
+                  <LocationIcon />
+                </div>{' '}
+                <span className="ml-1">
+                  {city}, {state}, {country}
+                </span>
+              </p>
+            )}
+          </div>
+          <div className="col-span-2 mt-4 sm:mt-0">
+            <Truncate
+              lines={2}
+              className="leading-normal text-sm"
+              dangerouslySetInnerHTML={{
+                __html: desc,
+              }}
+            />
+          </div>
+          <div className="col-span-1 flex flex-col mt-4 sm:mt-0">
+            <p className="uppercase font-bold text-sm text-red-500 mx-auto">
+              Starting in
+            </p>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="bg-green-700 py-2 px-1 text-white uppercase rounded-md max-w-sm text-center">
+                {timeTillTournament.days} DAYS
+              </div>
+              <div className="bg-green-700 py-2 px-1 text-white uppercase rounded-md  max-w-sm text-center">
+                {timeTillTournament.hours} HRS
+              </div>
+            </div>
+          </div>
         </div>
-      )}
-      {tournament.winners.length > 0 && (
-        <div>
-          <span className="font-bold">Winners: </span>
-          {tournament.winners.map((winner, index) => (
-            <span key={`winner-${winner.playerId}`}>
-              {index > 0 && <span>, </span>}
-              {winner.player.nickname}
+      ) : (
+        <div className="flex flex-col text-gray-400 text-sm">
+          <p className="flex items-center">
+            <div className="w-6 h-6 flex font-bold">
+              <CalendarIcon />
+            </div>{' '}
+            <span className="ml-1">
+              {new Date(startDate).toLocaleString().split(',')[0]}
             </span>
-          ))}
+          </p>
+          <p className="flex items-center">
+            <div className="w-6 h-6 flex font-bold">
+              <ClockIcon />
+            </div>{' '}
+            <span className="ml-1">
+              {new Date(startDate).toLocaleString().split(',')[1]}
+            </span>
+          </p>
+          <p className="flex items-center">
+            <div className="w-6 h-6 flex font-bold">
+              <PlayersIcon />
+            </div>{' '}
+            <span className="ml-1">
+              {players?.length}/{maxPlayers} Players Registered
+            </span>
+          </p>
+          <p className="flex items-center">
+            <div className="w-6 h-6 flex font-bold">
+              <HomeIcon />
+            </div>{' '}
+            <span className="ml-1">{locationName}</span>
+          </p>
+          {tournament.street1 && (
+            <p className="flex items-center">
+              <div className="w-6 h-6 flex font-bold">
+                <LocationIcon />
+              </div>{' '}
+              <span className="ml-1">{street1}</span>
+            </p>
+          )}
+          {tournament.winners.length > 0 && (
+            <p className="flex items-center font-bold ">
+              <div className="w-6 h-6 flex justify-center items-center">
+                <TrophyIcon />
+              </div>{' '}
+              <span className="ml-1">
+                {tournament.winners.map((winner, index) => (
+                  <span key={`winner-${winner.id}`}>
+                    {index > 0 && ', '}
+                    {winner.player.nickname}
+                  </span>
+                ))}
+              </span>
+            </p>
+          )}
         </div>
       )}
-    </Link>
+    </div>
   )
 }
 

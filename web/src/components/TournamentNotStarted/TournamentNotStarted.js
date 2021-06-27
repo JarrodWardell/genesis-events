@@ -51,72 +51,78 @@ const TournamentNotStarted = ({ tournament }) => {
     return () => clearInterval(interval)
   }, [tournament])
 
-  const timeToTournament = (tournament) => {
-    if (!tournament.dateStarted) {
-      return (
-        <h1>
-          Tournament to begin in {timeUntilTourney.days} days,{' '}
-          {timeUntilTourney.hours} hours, {timeUntilTourney.minutes} minutes,{' '}
-          {timeUntilTourney.seconds} seconds
-        </h1>
-      )
-    }
-  }
-
   return (
     <div className="w-full h-full flex items-center">
-      <div className="w-1/4 h-1 bg-black hidden sm:flex" />
-      <div className="w-full sm:w-1/2 bg-green-700 rounded-lg mx-4 my-12">
-        <h1 className="text-white my-8 text-2xl uppercase text-center">
-          Tournament Starting In
-        </h1>
-        <div className="border-2 border-white p-4 flex mx-8">
-          <div className="w-1/4 p-4 flex flex-col justify-center items-center text-xl text-red-900 border-r-2 border-white">
-            <p>{timeUntilTourney.days}</p>
-            <p>Days</p>
-          </div>
-          <div className="w-1/4 p-4 flex flex-col justify-center items-center text-xl text-red-900  border-r-2 border-white">
-            <p>{timeUntilTourney.hours}</p>
-            <p>Hours</p>
-          </div>
-          <div className="w-1/4 p-4 flex flex-col justify-center items-center text-xl text-red-900  border-r-2 border-white">
-            <p>{timeUntilTourney.minutes}</p>
-            <p>Minutes</p>
-          </div>
-          <div className="w-1/4 p-4 flex flex-col justify-center items-center text-xl text-red-900">
-            <p>{timeUntilTourney.seconds}</p>
-            <p>Seconds</p>
-          </div>
-        </div>
-        {checkTournamentPermissions({ hasRole, currentUser, tournament }) &&
-        tournament.players.length > 1 ? (
-          startConfirmation ? (
+      <div className="w-0 sm:w-1/4 h-1 bg-black hidden sm:flex" />
+      {startConfirmation ? (
+        <div className="w-full sm:w-1/2 bg-white rounded-lg mx-4 my-12 py-8 shadow-md p-8 flex flex-col items-center">
+          <h1 className="text-black text-2xl text-center">{tournament.name}</h1>
+          <p className="text-gray-500 text-sm my-8">
+            Are you sure you want to start this tournament?
+          </p>
+          <p className="text-gray-500 text-sm mb-8">
+            You cannot undo this action.{' '}
+          </p>
+          <div className="flex justify-around w-full">
             <button
-              className="py-4 px-8 text-center border-red-700 border-2 cursor-pointer hover:bg-green-600"
+              className="w-1/3 py-2 text-center bg-red-500 border-2 hover:bg-red-800 shadow-sm w-1/2 text-white uppercase text-sm rounded-md"
+              onClick={() => setStartConfirmation(false)}
+            >
+              Cancel
+            </button>
+            <button
+              className="w-1/3 py-2 text-center bg-green-700 border-2 hover:bg-green-600 shadow-sm w-1/2 text-white uppercase text-sm rounded-md"
               onClick={() =>
                 startTournament({ variables: { id: tournament.id } })
               }
               disabled={loading}
             >
-              Click here to Confirm Start Tournament
-            </button>
-          ) : (
-            <button
-              className="py-4 px-8 text-center border-green-700 border-2 cursor-pointer hover:bg-green-600"
-              onClick={() => setStartConfirmation(true)}
-            >
               Start Tournament
             </button>
-          )
-        ) : (
-          tournament.players.length < 2 && (
-            <div className="text-center text-white my-4">
-              Tournaments require a minimum of 2 players
+          </div>
+        </div>
+      ) : (
+        <div className="w-11/12 sm:w-full sm:w-1/2 bg-green-700 rounded-lg mx-auto sm:w-4 my-12 py-8">
+          <h1 className="text-white sm:text-2xl uppercase text-center text-xl">
+            Tournament Starting In
+          </h1>
+          <div className="border-2 border-white sm:p-4 flex mx-2 sm:mx-8 text-sm sm:text-xl text-gray-300 my-4">
+            <div className="w-1/4 py-4 sm:p-4 flex flex-col justify-center items-center  border-r-2 border-white">
+              <p>{timeUntilTourney.days}</p>
+              <p>Days</p>
             </div>
-          )
-        )}
-      </div>
-      <div className="w-1/4 h-1 bg-black hidden sm:flex" />
+            <div className="w-1/4 py-4 sm:p-4 flex flex-col justify-center items-center  border-r-2 border-white">
+              <p>{timeUntilTourney.hours}</p>
+              <p>Hours</p>
+            </div>
+            <div className="w-1/4 py-4 sm:p-4 flex flex-col justify-center items-center  border-r-2 border-white">
+              <p>{timeUntilTourney.minutes}</p>
+              <p>Minutes</p>
+            </div>
+            <div className="w-1/4 py-4 sm:p-4 flex flex-col justify-center items-center">
+              <p>{timeUntilTourney.seconds}</p>
+              <p>Seconds</p>
+            </div>
+          </div>
+          {checkTournamentPermissions({ hasRole, currentUser, tournament }) &&
+          tournament.players.length > 1 ? (
+            <button
+              className="flex items-center mx-auto py-2 px-8 text-center bg-white rounded-md border-2 cursor-pointer hover:bg-green-600 uppercase"
+              onClick={() => setStartConfirmation(true)}
+            >
+              Start
+            </button>
+          ) : (
+            tournament.players.length < 2 && (
+              <div className="text-center text-white my-4">
+                Tournaments require a minimum of 2 players
+              </div>
+            )
+          )}
+        </div>
+      )}
+
+      <div className="w-0 sm:w-1/4 h-1 bg-black hidden sm:flex" />
     </div>
   )
 }

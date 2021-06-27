@@ -1,4 +1,4 @@
-import EOEditTournamentPage from './EOEditTournamentPage'
+import EOEditTournamentPage from './EoEditTournamentPage'
 
 export const generated = () => {
   return <EOEditTournamentPage />

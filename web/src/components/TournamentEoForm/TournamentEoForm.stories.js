@@ -1,7 +1,7 @@
-import TournamentEOForm from './TournamentEOForm'
+import TournamentEOForm from './TournamentEoForm'
 
 export const generated = () => {
-  return <TournamentEOForm />
+  return <TournamentEOForm tournament={{}} />
 }
 
 export default { title: 'Components/TournamentEOForm' }
