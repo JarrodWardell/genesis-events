@@ -36,10 +36,10 @@ const CORE_TOURNAMENT_FIELDS = gql`
 export const QUERY = gql`
   ${CORE_TOURNAMENT_FIELDS}
   query HomePageQuery {
-    myTournaments {
+    upcomingTournaments {
       ...CoreTournamentFields
     }
-    upcomingTournaments {
+    myTournaments {
       ...CoreTournamentFields
     }
     finishedTournaments {
