@@ -611,6 +611,9 @@ const SignupPage = ({ stepRoute }) => {
                 name="store-city"
                 className="border-2 p-2 mt-2 w-full"
                 errorClassName="border-2 p-2 mt-2 w-full border-red-500"
+                validation={{
+                  required: true,
+                }}
               />
             </div>
             <div className="flex flex-col w-full">
@@ -621,6 +624,9 @@ const SignupPage = ({ stepRoute }) => {
                 name="store-state"
                 className="border-2 p-2 mt-2 w-full"
                 errorClassName="border-2 p-2 mt-2 w-full border-red-500"
+                validation={{
+                  required: true,
+                }}
               />
             </div>
             <div className="flex flex-col w-full">
@@ -631,6 +637,9 @@ const SignupPage = ({ stepRoute }) => {
                 name="store-country"
                 className="border-2 p-2 mt-2 w-full"
                 errorClassName="border-2 p-2 mt-2 w-full border-red-500"
+                validation={{
+                  required: true,
+                }}
               />
             </div>
             <div className="flex flex-col w-full">
@@ -641,6 +650,9 @@ const SignupPage = ({ stepRoute }) => {
                 name="store-zip"
                 className="border-2 p-2 mt-2 w-full"
                 errorClassName="border-2 p-2 mt-2 w-full border-red-500"
+                validation={{
+                  required: true,
+                }}
               />
             </div>
             <div className="flex flex-col w-full col-span-2">
