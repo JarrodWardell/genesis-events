@@ -38,20 +38,16 @@ export const myTournaments = () => {
               },
             },
             {
-              AND: [
-                {
-                  dateEnded: {
-                    equals: null,
-                  },
-                },
-                {
-                  dateStarted: {
-                    lte: new Date(),
-                  },
-                },
-              ],
+              dateStarted: {
+                lte: new Date(),
+              },
             },
           ],
+        },
+        {
+          dateEnded: {
+            equals: null,
+          },
         },
       ],
     },
@@ -63,18 +59,14 @@ export const upcomingTournaments = ({ input }) => {
     where: {
       AND: [
         {
-          OR: [
-            {
-              startDate: {
-                gte: new Date(),
-              },
-            },
-            {
-              dateEnded: {
-                equals: null,
-              },
-            },
-          ],
+          dateEnded: {
+            equals: null,
+          },
+        },
+        {
+          startDate: {
+            gte: new Date(),
+          },
         },
       ],
     },
@@ -145,6 +137,7 @@ export const searchTournaments = async ({ input }) => {
           }'`
         : ``
     }
+    ${input.openSpotsOnly ? `AND "Tournament"."dateEnded" IS NULL` : ``}
     GROUP BY "Tournament".id
     ${
       input.openSpotsOnly

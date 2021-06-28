@@ -59,7 +59,7 @@ const Header = () => {
                 <img
                   className="mx-auto h-12 w-auto"
                   src="/Logo.png"
-                  alt="Workflow"
+                  alt="GenesisEventOrganizer"
                 />
               </Link>
             </div>

@@ -41,7 +41,11 @@ const UserContactPage = () => {
   return (
     <div className="min-h-screen flex flex-col justify-center">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <img className="mx-auto h-12 w-auto" src="/Logo.png" alt="Workflow" />
+        <img
+          className="mx-auto h-12 w-auto"
+          src="/Logo.png"
+          alt="GenesisEventOrganizer"
+        />
         <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
           Contact Us
         </h2>

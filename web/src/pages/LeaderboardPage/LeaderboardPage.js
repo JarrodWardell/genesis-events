@@ -1,6 +1,9 @@
 import { Link, routes } from '@redwoodjs/router'
 import { useQuery } from '@redwoodjs/web'
 import PlayerProfileItem from 'src/components/PlayerProfileItem/PlayerProfileItem'
+
+import { ReactComponent as SearchIcon } from 'src/components/Icons/SearchIcon.svg'
+
 const PLAYER_LEADERBOARD = gql`
   query playerLeaderboard($nicknameSearch: String, $skip: Int, $take: Int) {
     playerLeaderboard: playerLeaderboard(
@@ -44,20 +47,9 @@ const LeaderboardPage = () => {
         Leaderboard
       </h1>
       <div className="relative w-11/12 sm:w-1/4 mx-auto sm:ml-auto sm:mr-0 border-2 p-2 my-6 rounded-md text-gray-500 text-base leading-6">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-6 w-1/12 absolute left-2"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-          />
-        </svg>
+        <div className="absolute left-2">
+          <SearchIcon />
+        </div>
         <input
           placeholder="Nickname Search"
           className="ml-8 w-10/12 focus:outline-none"

@@ -2,6 +2,21 @@ import { Link, navigate, routes, useLocation } from '@redwoodjs/router'
 import { useLazyQuery } from '@apollo/client'
 import GooglePlacesAutocomplete from 'react-google-places-autocomplete'
 import { getAddress } from 'src/helpers/formatAddress'
+import LoadingIcon from 'src/components/LoadingIcon/LoadingIcon'
+import { Switch } from '@headlessui/react'
+import { ReactComponent as LocationIcon } from 'src/components/Icons/LocationIcon.svg'
+import { ReactComponent as CalendarIcon } from 'src/components/Icons/CalendarIcon.svg'
+import { ReactComponent as SearchIcon } from 'src/components/Icons/SearchIcon.svg'
+import { ReactComponent as PlayersIcon } from 'src/components/Icons/PlayersIcon.svg'
+import { ReactComponent as TrophyIcon } from 'src/components/Icons/TrophyIcon.svg'
+
+import DatePicker from 'react-datepicker'
+
+import 'react-datepicker/dist/react-datepicker.css'
+
+function classNames(...classes) {
+  return classes.filter(Boolean).join(' ')
+}
 
 export const SEARCH_TOURNAMENTS = gql`
   query searchTournaments($input: SearchTournamentInput!) {
@@ -21,6 +36,9 @@ export const SEARCH_TOURNAMENTS = gql`
           nickname
         }
       }
+      players {
+        id
+      }
       lat
       lng
       street1
@@ -35,6 +53,7 @@ export const SEARCH_TOURNAMENTS = gql`
 
 const TournamentSearchPage = () => {
   const { pathname, search, hash } = useLocation()
+  const [mobileMenu, showMobileMenu] = React.useState(true)
 
   const [filters, setFilters] = React.useState({
     lat: null,
@@ -45,11 +64,12 @@ const TournamentSearchPage = () => {
     location: null,
     dateStart: null,
     dateEnd: null,
-    openSpotsOnly: false,
+    openSpotsOnly: null,
   })
 
   const [newFilters, setNewFilters] = React.useState({
     ...filters,
+    openSpotsOnly: false,
   })
 
   const [loadingLocation, setLoadingLocation] = React.useState(false)
@@ -139,6 +159,7 @@ const TournamentSearchPage = () => {
     setFilters({
       ...newFilters,
     })
+    showMobileMenu(false)
     stringifyParams({ ...newFilters })
   }
 
@@ -188,121 +209,297 @@ const TournamentSearchPage = () => {
   }
 
   return (
-    <>
-      <div className="min-h-screen container mx-auto flex flex-col bg-gray-100 border-sm text-sm text-gray-700 p-4">
-        <div className="flex">
+    <div className="min-h-screen container mx-auto flex flex-col bg-gray-100 border-sm text-sm text-gray-700 p-4 sm:p-12">
+      <div>
+        <div className="flex mb-3 text-xl">
           <h1>Tournament Search</h1>
-        </div>
-        <div className="flex">
-          <div className="w-1/2 relative">
-            <input
-              onChange={(e) => addFilter('name', e.target.value)}
-              value={filters.name}
-              className="rw-input"
-              placeholder="Tournament Name"
-            />
-          </div>
-          <div className="w-1/2 grid grid-cols-2 gap-4">
-            <input
-              type="date"
-              className="rw-input mx-4"
-              value={filters.dateStart}
-              onChange={(e) => addFilter('dateStart', e.target.value)}
-            />
-            <input
-              type="date"
-              className="rw-input mx-4"
-              min={filters.dateStart}
-              value={filters.dateEnd}
-              onChange={(e) => addFilter('dateEnd', e.target.value)}
-            />
-          </div>
-        </div>
-        <div className="flex justify-between">
-          <div className="rw-input flex">
-            <button
-              className="mx-4"
-              onClick={getUserLocation}
-              disabled={loadingLocation}
-            >
-              x
-            </button>
-            <GooglePlacesAutocomplete
-              apiKey={process.env.GOOGLE_API_KEY}
-              selectProps={{
-                value: {
-                  label: filters.location,
-                  value: { description: filters.location, place_id: '' },
-                },
-                onChange: onSelectAddress,
-                className: 'w-full',
-              }}
-            />
-          </div>
-          <div className="mx-4 flex flex-col">
-            <p>Open spots only?</p>
-            <input
-              type="checkbox"
-              checked={newFilters.openSpotsOnly}
-              onClick={(e) => {
-                addFilter('openSpotsOnly', !newFilters.openSpotsOnly)
-              }}
-            ></input>
-          </div>
           <button
-            onClick={searchTourneys}
-            className="bg-green-400 m-4 px-4 py-2"
-            disabled={JSON.stringify(filters) === JSON.stringify(newFilters)}
+            className="ml-auto my-auto rounded-full w-6 h-6 bg-gray-400 cursor-pointer sm:hidden flex justify-center items-center"
+            onClick={() => showMobileMenu(!mobileMenu)}
           >
-            SEARCH
+            {mobileMenu ? (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            ) : (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                />
+              </svg>
+            )}
           </button>
         </div>
-      </div>
-      <div className="grid">
-        {loading ? (
-          <div>Loading...</div>
-        ) : (
-          data.map((tournament) => (
-            <div
-              key={tournament.id}
-              onClick={() =>
-                navigate(`/tournament/${tournament.tournamentUrl}/rounds`)
-              }
-              className="flex flex-col p-4 cursor-pointer hover:bg-gray-300"
-            >
-              <div>{tournament.name}</div>
-              <div>
-                Spots Available: {tournament.playerCount}/
-                {tournament.maxPlayers}
-              </div>
-              {tournament.distance && (
-                <div>{convertToKM(tournament.distance)}</div>
-              )}
-              {tournament.street1 ? (
-                <div>
-                  {tournament.street1}, {tournament.city}
-                </div>
-              ) : (
-                <div>No address provided</div>
-              )}
-
-              {tournament.winners.length > 0 && (
-                <div>
-                  <div className="font-bold">WINNERS</div>{' '}
-                  {tournament.winners.map((winner) => (
-                    <p
-                      key={`tournament-${tournament.id}-winner-${winner.player.nickname}`}
-                    >
-                      {winner.player.nickname}
-                    </p>
-                  ))}
-                </div>
-              )}
+        <div
+          className={`grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-x-8 sm:gap-y-4 ${
+            mobileMenu ? '' : ' hidden sm:grid'
+          }`}
+        >
+          <div className="cols-span-1">
+            <div className="relative flex flex-col border border-gray-400 rounded-md w-full bg-white">
+              <p className="bg-white text-sm text-gray-400 ml-2">
+                Tournament Name
+              </p>
+              <input
+                onChange={(e) => addFilter('name', e.target.value)}
+                value={filters.name}
+                className="focus:outline-none px-2 h-8"
+              />
             </div>
-          ))
+          </div>
+          <div className="cols-span-1 grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-2">
+            <div className="cols-span-1">
+              <div className="relative flex flex-col border border-gray-400 rounded-md w-full bg-white">
+                <p className="bg-white text-sm text-gray-400 ml-2">From</p>
+                <div className="flex">
+                  <div className="mx-2">
+                    <CalendarIcon />
+                  </div>
+
+                  <DatePicker
+                    onChange={(val) =>
+                      addFilter(
+                        'dateStart',
+                        new Date(val).toISOString().split('T')[0]
+                      )
+                    }
+                    selected={
+                      newFilters.dateStart
+                        ? new Date(newFilters.dateStart)
+                        : null
+                    }
+                    name={'dateStart'}
+                    className="focus:outline-none px-2 h-8"
+                    dropdownMode="select"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="cols-span-1">
+              <div className="relative flex flex-col border border-gray-400 rounded-md w-full bg-white">
+                <p className="bg-white text-sm text-gray-400 ml-2">To</p>
+                <div className="flex">
+                  <div className="mx-2">
+                    <CalendarIcon />
+                  </div>
+
+                  <DatePicker
+                    onChange={(val) =>
+                      addFilter(
+                        'dateEnd',
+                        new Date(val).toISOString().split('T')[0]
+                      )
+                    }
+                    selected={
+                      newFilters.dateEnd ? new Date(newFilters.dateEnd) : null
+                    }
+                    name={'dateEnd'}
+                    className="focus:outline-none px-2 h-8"
+                    dropdownMode="select"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="cols-span-1">
+            <div className="relative flex flex-col border border-gray-400 rounded-md w-full bg-white">
+              <p className="bg-white text-sm text-gray-400 ml-2">
+                Tournament Location
+              </p>
+              <div className="flex">
+                <button
+                  className="mx-2"
+                  onClick={getUserLocation}
+                  disabled={loadingLocation}
+                >
+                  <LocationIcon />
+                </button>
+                <GooglePlacesAutocomplete
+                  apiKey={process.env.GOOGLE_API_KEY}
+                  selectProps={{
+                    value: {
+                      label: newFilters.location,
+                      value: { description: newFilters.location, place_id: '' },
+                    },
+                    styles: {
+                      container: (provided) => ({
+                        border: 'none',
+                      }),
+                      control: (provide) => ({
+                        border: 'none',
+                      }),
+                      dropdownIndicator: (provided) => ({
+                        borderLeft: 'none',
+                        display: 'none',
+                      }),
+                      indicatorSeparator: (provided) => ({
+                        display: 'none',
+                      }),
+                    },
+                    onChange: onSelectAddress,
+                    className: 'w-full',
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+          <div className="cols-span-1 grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4">
+            <div className="mx-4 flex flex-col justify-center">
+              <Switch.Group
+                as="div"
+                className="flex items-center justify-evenly"
+              >
+                <span className="flex flex-col items-center  ">
+                  <Switch.Label
+                    as="span"
+                    className="text-sm font-medium text-gray-900"
+                    passive
+                  >
+                    Spots Available
+                  </Switch.Label>
+                </span>
+                <Switch
+                  checked={newFilters.openSpotsOnly}
+                  onChange={(e) =>
+                    setNewFilters({
+                      ...newFilters,
+                      openSpotsOnly: e,
+                    })
+                  }
+                  className={classNames(
+                    newFilters.openSpotsOnly ? 'bg-indigo-600' : 'bg-gray-200',
+                    'relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'
+                  )}
+                >
+                  <span
+                    aria-hidden="true"
+                    className={classNames(
+                      newFilters.openSpotsOnly
+                        ? 'translate-x-5'
+                        : 'translate-x-0',
+                      'pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200'
+                    )}
+                  />
+                </Switch>
+              </Switch.Group>
+            </div>
+            <button
+              onClick={searchTourneys}
+              className="bg-green-700 m-4 px-4 py-2 uppercase text-white rounded-md"
+              disabled={JSON.stringify(filters) === JSON.stringify(newFilters)}
+            >
+              Find it now
+            </button>
+          </div>
+        </div>
+      </div>
+      <div>
+        {called ? (
+          loading ? (
+            <div className="w-full h-full flex justify-center items-center">
+              <LoadingIcon size={'44px'} />
+            </div>
+          ) : (
+            <div className="flex flex-col p-4">
+              <p className="mb-4">{data.length} search results found.</p>
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 sm:gap-12">
+                {data.map((tournament) => (
+                  <div
+                    key={tournament.id}
+                    onClick={() =>
+                      navigate(`/tournament/${tournament.tournamentUrl}/rounds`)
+                    }
+                    className="bg-white shadow-md flex flex-col p-4 cursor-pointer border hover:border-blue-400 col-span-1 text-center w-full h-full"
+                  >
+                    <div className="cursor-pointer underline uppercase text-sm text-blue-500 hover:text-blue-300 w-auto font-semibold mb-2">
+                      {tournament.name}
+                    </div>
+                    <div className="flex flex-col text-gray-400 text-sm">
+                      <p className="flex items-center">
+                        <div className="w-6 h-6 flex font-bold">
+                          <CalendarIcon />
+                        </div>{' '}
+                        <span className="ml-1">
+                          {
+                            new Date(tournament.startDate)
+                              .toLocaleString()
+                              .split(',')[0]
+                          }
+                        </span>
+                      </p>
+                      <p className="flex items-center">
+                        <div className="w-6 h-6 flex font-bold">
+                          <PlayersIcon />
+                        </div>{' '}
+                        <span className="ml-1">
+                          {tournament.players?.length}/{tournament.maxPlayers}{' '}
+                          Players Registered
+                        </span>
+                      </p>
+                      {tournament.street1 && (
+                        <p className="flex items-center">
+                          <div className="w-6 h-6 flex font-bold">
+                            <LocationIcon />
+                          </div>{' '}
+                          <span className="ml-1">
+                            {tournament.city}, {tournament.state},{' '}
+                            {tournament.country}
+                          </span>
+                        </p>
+                      )}
+                      {tournament.winners.length > 0 && (
+                        <p className="flex items-center font-bold ">
+                          <div className="w-6 h-6 flex justify-center items-center">
+                            <TrophyIcon />
+                          </div>{' '}
+                          <span className="ml-1">
+                            {tournament.winners.map((winner, index) => (
+                              <span key={`winner-${winner.id}`}>
+                                {index > 0 && ', '}
+                                {winner.player.nickname}
+                              </span>
+                            ))}
+                          </span>
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )
+        ) : (
+          <div className="w-full h-60 flex flex-col justify-center items-center">
+            <div className="mt-8">
+              <SearchIcon />
+            </div>
+            <p className="mt-8 text-2xl">Ready to find a tournament?</p>
+            <p className="mt-8 text-2xl">Search above!</p>
+          </div>
         )}
       </div>
-    </>
+    </div>
   )
 }
 

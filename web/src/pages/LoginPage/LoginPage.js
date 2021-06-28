@@ -27,7 +27,11 @@ const LoginPage = () => {
     return (
       <div className="min-h-screen container mx-auto flex flex-col justify-center bg-gray-200 border-sm py-4 text-sm text-gray-700 ">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
-          <img className="mx-auto h-20 w-auto" src="/Logo.png" alt="Workflow" />
+          <img
+            className="mx-auto h-20 w-auto"
+            src="/Logo.png"
+            alt="GenesisEventOrganizer"
+          />
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
             Sign in to your account
           </h2>

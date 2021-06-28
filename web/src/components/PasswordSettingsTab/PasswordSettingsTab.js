@@ -37,7 +37,8 @@ const PasswordSettingsTab = () => {
   }
 
   return (
-    <div>
+    <div className="flex flex-col">
+      <h1 className="text-gray-900 text-xl mb-4">Edit Password</h1>
       <PasswordCheck
         onSubmit={onSubmit}
         submitText={'SUBMIT'}

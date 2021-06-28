@@ -6,7 +6,11 @@ const StorePendingPage = () => {
   return (
     <div className="min-h-screen container mx-auto flex flex-col justify-center bg-gray-200 border-sm py-4 text-sm text-gray-700 ">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <img className="mx-auto h-20 w-auto" src="/Logo.png" alt="Workflow" />
+        <img
+          className="mx-auto h-20 w-auto"
+          src="/Logo.png"
+          alt="GenesisEventOrganizer"
+        />
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">

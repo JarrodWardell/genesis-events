@@ -91,19 +91,19 @@ const StoreSettingsTab = () => {
   return (
     <Form
       onSubmit={onSubmit}
-      className="grid grid-cols-2 gap-4"
+      className="grid grid-cols-1 sm:grid-cols-2 gap-4"
       validation={{ mode: 'onBlur' }}
       formMethods={formMethods}
     >
-      <div className="flex flex-col w-full col-span-2">
+      <div className="flex flex-col w-full col-span-1 sm:col-span-2">
         <Label errorClassName="text-red-500" name="name">
           Store Name
         </Label>
         <TextField
           name="name"
           placeholder="Store Name"
-          className="border-2 p-2 mt-2 w-full"
-          errorClassName="border-2 p-2 mt-2 w-full border-red-500"
+          className="border-2 p-2 mt-2 w-full shadow-sm border-gray-200 rounded-md"
+          errorClassName="border-2 p-2 mt-2 w-full shadow-sm border-gray-200 rounded-md border-red-500"
           defaultValue={currentStore?.name}
           disabled={!editSettings}
           validation={{
@@ -111,7 +111,7 @@ const StoreSettingsTab = () => {
           }}
         />
       </div>
-      <div className="flex flex-col w-full col-span-2">
+      <div className="flex flex-col w-full col-span-1 sm:col-span-2">
         <Label errorClassName="text-red-500" name="address">
           Store Address
         </Label>
@@ -125,7 +125,7 @@ const StoreSettingsTab = () => {
             disabled: !editSettings,
             onChange: onSelectAddress,
           }}
-          className="border-2 p-2 mt-2 w-full"
+          className="border-2 p-2 mt-2 w-full shadow-sm border-gray-200 rounded-md"
         />
       </div>
       <div className="flex flex-col w-full">
@@ -134,8 +134,8 @@ const StoreSettingsTab = () => {
         </Label>
         <TextField
           name="email"
-          className="border-2 p-2 mt-2 w-full"
-          errorClassName="border-2 p-2 mt-2 w-full border-red-500"
+          className="border-2 p-2 mt-2 w-full shadow-sm border-gray-200 rounded-md"
+          errorClassName="border-2 p-2 mt-2 w-full shadow-sm border-gray-200 rounded-md border-red-500"
           defaultValue={currentStore?.email}
           disabled={!editSettings}
           validation={{
@@ -152,9 +152,9 @@ const StoreSettingsTab = () => {
         </Label>
         <TextField
           name="phone"
-          className="border-2 p-2 mt-2 w-full"
+          className="border-2 p-2 mt-2 w-full shadow-sm border-gray-200 rounded-md"
           defaultValue={currentStore?.phone}
-          errorClassName="border-2 p-2 mt-2 w-full border-red-500"
+          errorClassName="border-2 p-2 mt-2 w-full shadow-sm border-gray-200 rounded-md border-red-500"
           disabled={!editSettings}
           validation={{
             required: true,
@@ -167,8 +167,8 @@ const StoreSettingsTab = () => {
         </Label>
         <TextField
           name="city"
-          className="border-2 p-2 mt-2 w-full"
-          errorClassName="border-2 p-2 mt-2 w-full border-red-500"
+          className="border-2 p-2 mt-2 w-full shadow-sm border-gray-200 rounded-md"
+          errorClassName="border-2 p-2 mt-2 w-full shadow-sm border-gray-200 rounded-md border-red-500"
           disabled={!editSettings}
           defaultValue={currentStore?.city}
         />
@@ -179,8 +179,8 @@ const StoreSettingsTab = () => {
         </Label>
         <TextField
           name="state"
-          className="border-2 p-2 mt-2 w-full"
-          errorClassName="border-2 p-2 mt-2 w-full border-red-500"
+          className="border-2 p-2 mt-2 w-full shadow-sm border-gray-200 rounded-md"
+          errorClassName="border-2 p-2 mt-2 w-full shadow-sm border-gray-200 rounded-md border-red-500"
           disabled={!editSettings}
           defaultValue={currentStore?.state}
         />
@@ -191,8 +191,8 @@ const StoreSettingsTab = () => {
         </Label>
         <TextField
           name="country"
-          className="border-2 p-2 mt-2 w-full"
-          errorClassName="border-2 p-2 mt-2 w-full border-red-500"
+          className="border-2 p-2 mt-2 w-full shadow-sm border-gray-200 rounded-md"
+          errorClassName="border-2 p-2 mt-2 w-full shadow-sm border-gray-200 rounded-md border-red-500"
           disabled={!editSettings}
           defaultValue={currentStore?.country}
         />
@@ -203,21 +203,21 @@ const StoreSettingsTab = () => {
         </Label>
         <TextField
           name="zip"
-          className="border-2 p-2 mt-2 w-full"
-          errorClassName="border-2 p-2 mt-2 w-full border-red-500"
+          className="border-2 p-2 mt-2 w-full shadow-sm border-gray-200 rounded-md"
+          errorClassName="border-2 p-2 mt-2 w-full shadow-sm border-gray-200 rounded-md border-red-500"
           disabled={!editSettings}
           defaultValue={currentStore?.zip}
         />
       </div>
 
-      <div className="flex flex-col w-full col-span-2">
+      <div className="flex flex-col w-full col-span-1 sm:col-span-2">
         <Label name="distributor" errorClassName="text-red-500">
           Distributor
         </Label>
         <SelectField
           name="distributor"
-          className="border-2 p-2 mt-2 w-full"
-          errorClassName="border-2 p-2 mt-2 w-full border-red-500"
+          className="border-2 p-2 mt-2 w-full shadow-sm border-gray-200 rounded-md"
+          errorClassName="border-2 p-2 mt-2 w-full shadow-sm border-gray-200 rounded-md border-red-500"
           disabled={!editSettings}
           defaultValue={currentStore?.distributor}
           validation={{
@@ -237,21 +237,21 @@ const StoreSettingsTab = () => {
       {editSettings ? (
         <>
           <button
-            className="my-8 w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+            className="my-2 sm:my-8 w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
             onClick={() => setEditSettings(false)}
           >
             Cancel
           </button>
           <Submit
             disabled={loading}
-            className="my-8 w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            className="my-2 sm:my-8 w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-700 hover:bg-green-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:green-indigo-500"
           >
             Submit
           </Submit>
         </>
       ) : (
         <button
-          className="col-span-2 my-8 w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          className="col-span-1 sm:col-span-2 my-8 w-1/2 mx-auto flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-700 hover:bg-green-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
           onClick={() => setEditSettings(true)}
         >
           Edit

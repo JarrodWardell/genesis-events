@@ -34,7 +34,9 @@ const PasswordCheck = ({
     }
 
     return (
-      <div className={`rounded-md px-2 text-sm ${bgColor} ${textColor}`}>
+      <div
+        className={`cols-span-1 sm:w-auto rounded-md px-2 text-sm ${bgColor} ${textColor}`}
+      >
         {text}
       </div>
     )
@@ -125,7 +127,7 @@ const PasswordCheck = ({
           },
         }}
       />
-      <div className="flex my-4 w-full justify-between sm:flex-wrap md:flex-nowrap">
+      <div className=" grid grid-cols-2 gap-2 sm:flex my-4 w-full sm:justify-between">
         {passwordRuleDiv({
           text: '1 lower case letter',
           ruleFunction: passwordContainsLowercase,
@@ -175,7 +177,13 @@ const PasswordCheck = ({
         )}
         <Submit
           disabled={loading || !checkPasswordRules()}
-          className="my-8 w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          className={`my-8 flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+            backButtonText ? ' w-full' : ' mx-auto col-span-2 w-1/2'
+          } ${
+            showOldPasswordField
+              ? ' bg-green-700 hover:bg-green-900 focus:ring-green-500'
+              : '  bg-indigo-600 hover:bg-indigo-700 focus:ring-indigo-500'
+          }`}
         >
           {submitText}
         </Submit>

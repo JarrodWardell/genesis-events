@@ -26,7 +26,7 @@ export const QUERY = gql`
   }
 `
 
-export const Loading = () => <div>Loading...</div>
+export const Loading = () => <div></div>
 
 export const Empty = () => <div></div>
 
