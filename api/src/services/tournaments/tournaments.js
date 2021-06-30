@@ -1,5 +1,7 @@
 import newPlayerRegistered from 'src/emails/newPlayerRegistered'
 import tournamentCancelledPlayer from 'src/emails/tournamentCancelledPlayer'
+import tournamentEditedEO from 'src/emails/tournamentEditedEO'
+import tournamentEditedPlayer from 'src/emails/tournamentEditedPlayer'
 import { sendEmail } from 'src/helpers/sendEmail'
 import {
   generateMatches,
@@ -194,17 +196,63 @@ export const createTournament = async ({ input }) => {
   })
 }
 
-export const updateTournament = ({ id, input }) => {
+export const updateTournament = async ({ id, input }) => {
   let newData = { ...input }
 
   if (newData.storeId === '') {
     delete newData.storeId
   }
 
-  return db.tournament.update({
+  const prevTournament = await db.tournament.findUnique({
+    where: { id },
+  })
+
+  const tournament = await db.tournament.update({
     data: { ...newData, updatedAt: new Date() },
     where: { id },
   })
+
+  const owner = await db.tournament.findUnique({ where: { id } }).owner({})
+
+  const players = await db.tournament.findUnique({ where: { id } }).players({})
+
+  //Send emails to all players
+  players.forEach(async (player) => {
+    let html = `${
+      tournamentEditedPlayer({ tournament, player, prevTournament }).html
+    }`
+    let playerAccount = await db.user({ where: { id: player.playerId } })
+
+    sendEmail({
+      to: playerAccount.email,
+      subject: `GEO: Tournament ${tournament.name} has been updated`,
+      html,
+      text: `Tournament ${tournament.name} has been updated`,
+    })
+  })
+
+  let html = `${tournamentEditedEO({ tournament, owner, prevTournament }).html}`
+
+  sendEmail({
+    to: owner.email,
+    subject: `GEO: Tournament ${tournament.name} has been updated`,
+    html,
+    text: `Tournament ${tournament.name} has been updated`,
+  })
+
+  html = `${
+    tournamentEditedEO({ tournament, owner, prevTournament, adminEmail: true })
+      .html
+  }`
+
+  sendEmail({
+    to: process.env.ADMIN_EMAILS,
+    subject: `GEO: Tournament ${tournament.name} has been updated`,
+    html,
+    text: `Tournament ${tournament.name} has been updated`,
+  })
+
+  return tournament
 }
 
 export const registerForTournament = async ({ id }) => {
