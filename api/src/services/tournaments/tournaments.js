@@ -1,4 +1,7 @@
-import newPlayerRegistered from 'src/emails/newPlayerRegistered'
+import newPlayerRegisteredEO from 'src/emails/newPlayerRegisteredEO'
+import newPlayerRegistered from 'src/emails/newPlayerRegisteredEO'
+import newPlayerRegisteredPlayer from 'src/emails/newPlayerRegisteredPlayer'
+import tournamentCancelledEO from 'src/emails/tournamentCancelledEO'
 import tournamentCancelledPlayer from 'src/emails/tournamentCancelledPlayer'
 import tournamentEditedEO from 'src/emails/tournamentEditedEO'
 import tournamentEditedPlayer from 'src/emails/tournamentEditedPlayer'
@@ -297,12 +300,20 @@ export const registerForTournament = async ({ id }) => {
     ownerEmail = owner.email
   }
 
-  let html = `${newPlayerRegistered({ tournament, player }).html}`
+  let html = `${newPlayerRegisteredEO({ tournament, player }).html}`
   sendEmail({
     to: ownerEmail,
     subject: `GEO: New Player Registered for: ${tournament.name}`,
     html,
     text: `New Player Registered for: ${tournament.name}`,
+  })
+
+  html = `${newPlayerRegisteredPlayer({ tournament, player }).html}`
+  sendEmail({
+    to: player.email,
+    subject: `GEO: Thanks for Registering for: ${tournament.name}`,
+    html,
+    text: `Thanks for Registering for:: ${tournament.name}`,
   })
 
   return 'Successfully Signed up for Tournament'
@@ -486,6 +497,23 @@ export const cancelTournament = async ({ id }) => {
       html,
       text: `Tournament ${tournament.name} has been cancelled`,
     })
+  })
+
+  const owner = await db.tournament.findUnique({ where: { id } }).owner({})
+  let html = `${tournamentCancelledEO({ tournament, owner }).html}`
+  sendEmail({
+    to: owner.email,
+    subject: `GEO: Tournament ${tournament.name} has been cancelled`,
+    html,
+    text: `Tournament ${tournament.name} has been cancelled`,
+  })
+
+  html = `${tournamentCancelledEO({ tournament, owner, adminEmail = true }).html}`
+  sendEmail({
+    to: owner.email,
+    subject: `GEO: Tournament ${tournament.name} has been cancelled`,
+    html,
+    text: `Tournament ${tournament.name} has been cancelled`,
   })
 
   return tournament
