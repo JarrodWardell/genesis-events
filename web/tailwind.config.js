@@ -1,5 +1,4 @@
 module.exports = {
-  purge: [],
   darkMode: false, // or 'media' or 'class'
   theme: {
     extend: {
@@ -9,7 +8,9 @@ module.exports = {
     },
   },
   variants: {
-    extend: {},
+    extend: {
+      opacity: ['disabled'],
+    },
   },
   plugins: [],
 }

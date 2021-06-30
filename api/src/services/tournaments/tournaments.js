@@ -508,7 +508,9 @@ export const cancelTournament = async ({ id }) => {
     text: `Tournament ${tournament.name} has been cancelled`,
   })
 
-  html = `${tournamentCancelledEO({ tournament, owner, adminEmail = true }).html}`
+  html = `${
+    tournamentCancelledEO({ tournament, owner, adminEmail: true }).html
+  }`
   sendEmail({
     to: owner.email,
     subject: `GEO: Tournament ${tournament.name} has been cancelled`,

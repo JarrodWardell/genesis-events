@@ -3,6 +3,7 @@ import { navigate } from '@redwoodjs/router'
 import { useMutation } from '@redwoodjs/web'
 import toast from 'react-hot-toast'
 import { TOURNAMENT_BY_URL } from 'src/pages/ViewTournamentPage/ViewTournamentPage'
+import Button from '../Button/Button'
 import { FacebookIcon } from '../Icons/Facebook'
 import { TwitterIcon } from '../Icons/Twitter'
 
@@ -140,15 +141,16 @@ const TournamentSignupTab = ({ tournament }) => {
       </p>
       <p className="text-gray-500">{returnInfoText()}</p>
       {checkIfCanSignup() && (
-        <button
-          className="bg-green-700 rounded-md mt-8 py-2 px-16 uppercase text-center hover:bg-green-400 text-white text-sm leading-5 font-normal"
+        <Button
           onClick={() =>
             registerForTournament({ variables: { id: tournament.id } })
           }
-          disabled={loading}
+          loading={loading}
+          full={false}
+          className="w-1/2 sm:w-1/4"
         >
-          <p className="text-center">Sign up</p>
-        </button>
+          <p className="text-center v">Sign up</p>
+        </Button>
       )}
       <div className="mt-10">
         <div className="relative">

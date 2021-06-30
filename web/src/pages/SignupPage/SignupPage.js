@@ -24,6 +24,7 @@ import PasswordCheck from 'src/components/PasswordCheck/PasswordCheck'
 import { GoogleIcon } from 'src/components/Icons/Google'
 import { FacebookIcon } from 'src/components/Icons/Facebook'
 import { TwitterIcon } from 'src/components/Icons/Twitter'
+import Button from 'src/components/Button/Button'
 import toast from 'react-hot-toast'
 import DatePicker from 'react-datepicker'
 
@@ -435,13 +436,10 @@ const SignupPage = ({ stepRoute }) => {
                 defaultValue={form['howHeard']}
               />
             </div>
-            <div className="flex  col-span-2 w-full">
-              <Submit
-                disabled={!nicknameValid}
-                className="my-8 w-1/2 mx-auto justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-700 hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-400 disabled:bg-red-400n"
-              >
+            <div className="flex col-span-2 w-full">
+              <Button disabled={!nicknameValid} type="submit">
                 Next
-              </Submit>
+              </Button>
             </div>
           </Form>
         )

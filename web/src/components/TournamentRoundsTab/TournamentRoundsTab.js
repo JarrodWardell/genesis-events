@@ -6,6 +6,7 @@ import { checkTournamentPermissions } from 'src/helpers/tournamentHelper'
 import { TOURNAMENT_BY_URL } from 'src/pages/ViewTournamentPage/ViewTournamentPage'
 import MatchDetails from '../MatchDetails/MatchDetails'
 import TournamentNotStarted from '../TournamentNotStarted/TournamentNotStarted'
+import Button from '../Button/Button'
 
 export const ADVANCE_ROUND = gql`
   mutation advanceRound($id: Int!, $roundNumber: Int!) {
@@ -162,25 +163,21 @@ const TournamentRoundsTab = ({ tournament, roundNumber }) => {
         checkTournamentPermissions({ hasRole, currentUser, tournament }) &&
         !tournament.dateEnded && (
           <div className="grid w-full grid-cols-2 gap-4">
-            <button
-              disabled={
-                !checkScoresSubmitted() ||
-                loadingAdvanceRound ||
-                loadingEndTournament
-              }
+            <Button
+              className="uppercase col-span-1"
+              color="red"
+              disabled={!checkScoresSubmitted()}
+              loading={loadingAdvanceRound || loadingEndTournament}
               onClick={() =>
                 endTournament({ variables: { id: tournament.id } })
               }
-              className="uppercase my-8 w-full justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-grredeen-400 disabled:bg-red-400n"
             >
               End Tournament
-            </button>
-            <button
-              disabled={
-                !checkScoresSubmitted() ||
-                loadingAdvanceRound ||
-                loadingEndTournament
-              }
+            </Button>
+            <Button
+              className="uppercase col-span-1"
+              disabled={!checkScoresSubmitted()}
+              loading={loadingAdvanceRound || loadingEndTournament}
               onClick={() => {
                 advanceRound({
                   variables: {
@@ -189,10 +186,9 @@ const TournamentRoundsTab = ({ tournament, roundNumber }) => {
                   },
                 })
               }}
-              className="uppercase my-8 w-full justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-400 disabled:bg-red-400n"
             >
               Advance to next round
-            </button>
+            </Button>
           </div>
         )}
     </div>

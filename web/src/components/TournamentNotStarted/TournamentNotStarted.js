@@ -7,6 +7,8 @@ import {
 } from 'src/helpers/tournamentHelper'
 import { TOURNAMENT_BY_URL } from 'src/pages/ViewTournamentPage/ViewTournamentPage'
 
+import Button from '../Button/Button'
+
 const START_TOURNAMENT_MUTATION = gql`
   mutation startTournament($id: Int!) {
     startTournament(id: $id) {
@@ -64,21 +66,24 @@ const TournamentNotStarted = ({ tournament }) => {
             You cannot undo this action.{' '}
           </p>
           <div className="flex justify-around w-full">
-            <button
-              className="w-1/3 py-2 text-center bg-red-500 border-2 hover:bg-red-800 shadow-sm w-1/2 text-white uppercase text-sm rounded-md"
+            <Button
+              color="red"
+              className="w-1/3"
+              full={false}
               onClick={() => setStartConfirmation(false)}
             >
               Cancel
-            </button>
-            <button
-              className="w-1/3 py-2 text-center bg-green-700 border-2 hover:bg-green-600 shadow-sm w-1/2 text-white uppercase text-sm rounded-md"
+            </Button>
+            <Button
+              className="w-1/3"
               onClick={() =>
                 startTournament({ variables: { id: tournament.id } })
               }
-              disabled={loading}
+              full={false}
+              loading={loading}
             >
               Start Tournament
-            </button>
+            </Button>
           </div>
         </div>
       ) : (

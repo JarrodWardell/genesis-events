@@ -5,7 +5,6 @@ import {
   FieldError,
   Label,
   TextField,
-  DatetimeLocalField,
   NumberField,
   Submit,
   HiddenField,
@@ -25,6 +24,7 @@ import { TOURNAMENT_BY_URL } from 'src/pages/ViewTournamentPage/ViewTournamentPa
 import ReactDatePicker from 'react-datepicker'
 
 import 'react-datepicker/dist/react-datepicker.css'
+import Button from '../Button/Button'
 
 const CREATE_TOURNAMENT = gql`
   mutation CreateTournamentMutation($input: CreateTournamentInput!) {
@@ -96,7 +96,9 @@ const TournamentEOForm = ({ tournament }) => {
     CREATE_TOURNAMENT,
     {
       onCompleted: ({ createTournament }) => {
-        toast(`Successfully created ${createTournament.name} Tournament`)
+        toast.success(
+          `Successfully created ${createTournament.name} Tournament`
+        )
         navigate(`/tournament/${createTournament.tournamentUrl}/rounds`)
       },
     }
@@ -106,7 +108,9 @@ const TournamentEOForm = ({ tournament }) => {
     UPDATE_TOURNAMENT,
     {
       onCompleted: ({ updateTournament }) => {
-        toast(`Successfully updated ${updateTournament.name} Tournament`)
+        toast.success(
+          `Successfully updated ${updateTournament.name} Tournament`
+        )
         navigate(`/tournament/${updateTournament.tournamentUrl}/rounds`)
       },
       refetchQueries: [
@@ -464,18 +468,18 @@ const TournamentEOForm = ({ tournament }) => {
           <div className="col-span-2 flex justify-center">
             {tournament?.id && (
               <div
-                className="w-full mr-4  text-center py-4 px-4 h-14 sm:h-auto border rounded-md text-white bg-red-700 hover:bg-red-800 justify-center items-center flex flex-col sm:flex-row"
+                className="w-full mr-4 text-center py-4 px-4 h-14 sm:h-auto border rounded-md text-white bg-red-700 hover:bg-red-800 justify-center items-center flex flex-col sm:flex-row"
                 onClick={() => setConfirmCancel(true)}
               >
                 Cancel Tournament
               </div>
             )}
-            <Submit
-              disabled={createTournamentLoading || updateTournamentLoading}
-              className="w-full py-4 px-4 h-14 sm:h-auto border rounded-md text-white bg-green-700 hover:bg-green-800 justify-center items-center flex flex-col sm:flex-row"
+            <Button
+              loading={createTournamentLoading || updateTournamentLoading}
+              type="submit"
             >
               Submit
-            </Submit>
+            </Button>
           </div>
         </Form>
       </div>
