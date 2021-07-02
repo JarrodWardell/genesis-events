@@ -1,8 +1,8 @@
-import { render, screen } from '@redwoodjs/testing'
-import { Loading, Empty, Failure, Success } from './HomePageCell'
-import { standard } from './HomePageCell.mock'
+import { render } from '@redwoodjs/testing'
+import { Loading, Empty, Failure, Success } from './MyTournamentsCell'
+import { standard } from './MyTournamentsCell.mock'
 
-describe('HomePageCell', () => {
+describe('MyTournamentsCell', () => {
   it('renders Loading successfully', () => {
     expect(() => {
       render(<Loading />)
@@ -24,11 +24,12 @@ describe('HomePageCell', () => {
   // When you're ready to test the actual output of your component render
   // you could test that, for example, certain text is present:
   //
-  //   expect(screen.getByText('Hello, world')).toBeInTheDocument()
+  // 1. import { screen } from '@redwoodjs/testing'
+  // 2. Add test: expect(screen.getByText('Hello, world')).toBeInTheDocument()
 
   it('renders Success successfully', async () => {
     expect(() => {
-      render(<Success homePage={standard().homePage} />)
+      render(<Success myTournaments={standard().myTournaments} />)
     }).not.toThrow()
   })
 })

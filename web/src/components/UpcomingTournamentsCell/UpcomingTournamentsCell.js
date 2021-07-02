@@ -3,8 +3,8 @@ import TournamentItem from '../TournamentItem/TournamentItem'
 
 export const QUERY = gql`
   ${CORE_TOURNAMENT_FIELDS}
-  query MyTournamentsQuery {
-    myTournaments {
+  query UpcomingTournamentsQuery {
+    upcomingTournaments {
       ...CoreTournamentFields
     }
   }
@@ -12,13 +12,19 @@ export const QUERY = gql`
 
 export const Loading = () => <div />
 
-export const Success = ({ myTournaments }) => {
-  return myTournaments.map((tournament, index) => (
+export const Empty = () => <div>No Upcoming Tournaments Found</div>
+
+export const Failure = ({ error }) => (
+  <div style={{ color: 'red' }}>Error: {error.message}</div>
+)
+
+export const Success = ({ upcomingTournaments }) => {
+  return upcomingTournaments.map((tournament, index) => (
     <TournamentItem
       tournament={tournament}
       key={tournament.id}
       index={index}
-      full={true}
+      full={false}
     />
   ))
 }

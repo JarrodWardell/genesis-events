@@ -7,6 +7,8 @@ import { TOURNAMENT_BY_URL } from 'src/pages/ViewTournamentPage/ViewTournamentPa
 import MatchDetails from '../MatchDetails/MatchDetails'
 import TournamentNotStarted from '../TournamentNotStarted/TournamentNotStarted'
 import Button from '../Button/Button'
+import ReactToPrint from 'react-to-print'
+import PrintRound from '../PrintRound/PrintRound'
 
 export const ADVANCE_ROUND = gql`
   mutation advanceRound($id: Int!, $roundNumber: Int!) {
@@ -33,6 +35,7 @@ export const END_TOURNAMENT = gql`
 `
 
 const TournamentRoundsTab = ({ tournament, roundNumber }) => {
+  const componentRef = React.useRef()
   const { hasRole, currentUser } = useAuth()
 
   if ((!roundNumber || roundNumber === '') && tournament.round.length) {
@@ -128,26 +131,46 @@ const TournamentRoundsTab = ({ tournament, roundNumber }) => {
 
   return (
     <div className="w-full">
-      <div className="flex sm:w-full border-b border-gray-500 overflow-x-auto">
-        {tournament.round?.map((round) => {
-          return (
-            <div
-              key={round.id}
-              onClick={() =>
-                navigate(
-                  `/tournament/${tournament?.tournamentUrl}/rounds/${round.roundNumber}`
-                )
-              }
-              className={
-                'py-4 px-8 border-gray-100 cursor-pointer hover:bg-gray-100 sm:hover:bg-blue-500 text-gray-900 text-sm w-36 text-center sm:w-auto' +
-                (round.roundNumber === roundNumber ? ' bg-gray-200' : '')
-              }
-            >
-              Round {round.roundNumber}
-            </div>
-          )
-        })}
+      <div className="w-full flex border-b border-gray-500">
+        <div className="flex sm:w-10/12 overflow-x-auto">
+          {tournament.round?.map((round) => {
+            return (
+              <div
+                key={round.id}
+                onClick={() =>
+                  navigate(
+                    `/tournament/${tournament?.tournamentUrl}/rounds/${round.roundNumber}`
+                  )
+                }
+                className={
+                  'py-4 px-8 border-gray-100 cursor-pointer hover:bg-gray-100 sm:hover:bg-blue-500 text-gray-900 text-sm w-36 text-center sm:w-auto flex items-center' +
+                  (round.roundNumber === roundNumber ? ' bg-gray-200' : '')
+                }
+              >
+                Round {round.roundNumber}
+              </div>
+            )
+          })}
+        </div>
+        {checkTournamentPermissions({ hasRole, tournament, currentUser }) && (
+          <div className="flex sm:w-2/12 ml-2">
+            <ReactToPrint
+              trigger={() => (
+                <Button className="uppercase" my={'2'}>
+                  Print Round Stats
+                </Button>
+              )}
+              content={() => componentRef.current}
+            />
+            <PrintRound
+              round={grabRound()}
+              tournament={tournament}
+              ref={componentRef}
+            />
+          </div>
+        )}
       </div>
+
       <div className="w-full overflow-x-auto">
         <div className="grid grid-cols-12 gap-y-4 my-4 w-max sm:w-full">
           <div className="text-gray-500 text-xs bg-gray-200 col-span-12 grid grid-cols-12 px-2">

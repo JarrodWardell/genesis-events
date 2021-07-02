@@ -3,7 +3,7 @@ import { navigate } from '@redwoodjs/router'
 const SingleBanner = ({ banner }) => {
   return (
     <div
-      className="w-full relative bg-fixed bg-no-repeat bg-center bg-cover flex flex-col py-24 px-12 justify-around"
+      className="w-full relative bg-fixed bg-no-repeat bg-center bg-cover flex flex-col py-24 px-12 justify-around mb-4"
       style={{
         backgroundImage: `url(${banner?.backgroundUrl})`,
         height: '50vh',

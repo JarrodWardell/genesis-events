@@ -179,7 +179,7 @@ const Header = () => {
               </div>
             </div>
           ) : (
-            <div className="hiddenmd:ml-6 md:flex md:space-x-8">
+            <div className="hidden md:ml-6 md:flex md:space-x-8">
               <NavLink
                 to={routes.login()}
                 className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"

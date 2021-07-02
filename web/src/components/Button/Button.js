@@ -7,11 +7,12 @@ const Button = ({
   full = true,
   className = '',
   color = 'green',
+  my = '8',
 }) => {
   return (
     <button
       type={type}
-      className={`my-8 flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2 ${className} bg-${color}-700 focus:ring-${color}-500 ${
+      className={`my-${my} flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2 ${className} bg-${color}-700 focus:ring-${color}-500 ${
         disabled ? 'bg-opacity-50 cursor-not-allowed' : `hover:bg-${color}-900`
       } ${full ? 'w-full' : ''}`}
       onClick={onClick}

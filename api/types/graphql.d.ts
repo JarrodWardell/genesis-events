@@ -311,8 +311,6 @@ export type MutationAddMatchScoreArgs = {
 export type MutationAdvanceRoundArgs = {
   id: Scalars['Int'];
   roundNumber: Scalars['Int'];
-  startingTimerInSeconds?: Maybe<Scalars['Int']>;
-  roundTimerLeftInSeconds?: Maybe<Scalars['Int']>;
 };
 
 

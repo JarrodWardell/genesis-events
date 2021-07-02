@@ -353,20 +353,32 @@ export const startTournament = async ({ id }) => {
   return tournament
 }
 
-export const advanceRound = async ({
-  id,
-  roundNumber,
-  startingTimerInSeconds,
-  roundTimerLeftInSeconds,
-}) => {
+export const advanceRound = async ({ id, roundNumber }) => {
   const tournament = await db.tournament.findUnique({ where: { id } })
 
   //Grab list of players and generate match ups
   const proposedMatches = await generateMatches({ roundNumber, id, db })
 
   const lastRound = await db.round.findFirst({
+    where: { tournamentId: id },
     orderBy: { roundNumber: 'desc' },
   })
+
+  let startingTimerInSeconds = tournament.startingTimerInSeconds
+  let roundTimerLeftInSeconds = 0
+
+  let timeElapsed = 0
+  if (tournament.timerStatus === 'INPROGRESS') {
+    timeElapsed = Math.floor(
+      (new Date() - new Date(tournament.timerLastUpdated)) / 1000
+    )
+  }
+
+  if (timeElapsed > tournament.timerLeftInSeconds) {
+    timeElapsed = tournament.timerLeftInSeconds
+  }
+
+  roundTimerLeftInSeconds = tournament.timerLeftInSeconds - timeElapsed
 
   await db.round.update({
     data: {
@@ -395,6 +407,10 @@ export const advanceRound = async ({
   await db.tournament.update({
     data: {
       updatedAt: new Date(),
+      startingTimerInSeconds: null,
+      timerLeftInSeconds: null,
+      timerStatus: null,
+      timerLastUpdated: null,
     },
     where: {
       id,
@@ -407,11 +423,7 @@ export const advanceRound = async ({
 
 export const reshuffleRound = async ({ id }) => {}
 
-export const endTournament = async ({
-  id,
-  startingTimerInSeconds,
-  roundTimerLeftInSeconds,
-}) => {
+export const endTournament = async ({ id }) => {
   const tournament = await db.tournament.findUnique({ where: { id } })
   const players = await db.tournament.findUnique({ where: { id } }).players({
     orderBy: [
@@ -435,8 +447,25 @@ export const endTournament = async ({
   })
 
   const lastRound = await db.round.findFirst({
+    where: { tournamentId: id },
     orderBy: { roundNumber: 'desc' },
   })
+
+  let startingTimerInSeconds = tournament.startingTimerInSeconds
+  let roundTimerLeftInSeconds = 0
+
+  let timeElapsed = 0
+  if (tournament.timerStatus === 'INPROGRESS') {
+    timeElapsed = Math.floor(
+      (new Date() - new Date(tournament.timerLastUpdated)) / 1000
+    )
+  }
+
+  if (timeElapsed > tournament.timerLeftInSeconds) {
+    timeElapsed = tournament.timerLeftInSeconds
+  }
+
+  roundTimerLeftInSeconds = tournament.timerLeftInSeconds - timeElapsed
 
   await db.round.update({
     data: {
@@ -453,6 +482,10 @@ export const endTournament = async ({
     data: {
       updatedAt: new Date(),
       dateEnded: new Date(),
+      startingTimerInSeconds: null,
+      timerLeftInSeconds: null,
+      timerStatus: null,
+      timerLastUpdated: null,
     },
     where: {
       id,

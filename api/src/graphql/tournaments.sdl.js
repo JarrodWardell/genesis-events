@@ -189,12 +189,7 @@ export const schema = gql`
     startTournament(id: Int!): Tournament!
     updateTimer(input: TimerInput!): Tournament!
     addMatchScore(input: TournamentMatchScoreInput!): Match!
-    advanceRound(
-      id: Int!
-      roundNumber: Int!
-      startingTimerInSeconds: Int
-      roundTimerLeftInSeconds: Int
-    ): Tournament
+    advanceRound(id: Int!, roundNumber: Int!): Tournament
     endTournament(id: Int!): Tournament!
     cancelTournament(id: Int!): Tournament!
   }

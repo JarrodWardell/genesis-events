@@ -15,6 +15,7 @@ import { ReactComponent as ClockIcon } from 'src/components/Icons/ClockIcon.svg'
 import { ReactComponent as HomeIcon } from 'src/components/Icons/HomeIcon.svg'
 import { ReactComponent as TrophyIcon } from 'src/components/Icons/TrophyIcon.svg'
 import Truncate from 'react-truncate-html'
+import LoadingIcon from 'src/components/LoadingIcon/LoadingIcon'
 
 export const TOURNAMENT_BY_URL = gql`
   query tournamentByUrl($url: String!) {
@@ -79,6 +80,7 @@ export const TOURNAMENT_BY_URL = gql`
       round {
         id
         roundNumber
+        roundTimerLeftInSeconds
         matches {
           id
           players {
@@ -107,12 +109,8 @@ export const TOURNAMENT_BY_URL = gql`
 
 const ViewTournamentPage = ({ url, tab, tabOptions }) => {
   const TABS = ['rounds', 'leaderboard', 'matches', 'signup']
-  const [startingTimerInSeconds, setStartingTimerInSeconds] =
-    React.useState(null)
-  const [timerInSeconds, setTimerSeconds] = React.useState(null)
   const { currentUser, hasRole } = useAuth()
   const [expandedDesc, setExpandedDesc] = React.useState(false)
-  const MAX_STRING_LENGTH = 150
 
   if (!tab || tab === '' || TABS.indexOf(tab) === -1) {
     return <Redirect to={`/tournament/${url}/${TABS[0]}`} />
@@ -161,7 +159,11 @@ const ViewTournamentPage = ({ url, tab, tabOptions }) => {
   }
 
   if (loading) {
-    return <h1>Loading</h1>
+    return (
+      <div className="w-full h-96 flex justify-center items-center">
+        <LoadingIcon size={24} />
+      </div>
+    )
   }
 
   const {
@@ -179,7 +181,7 @@ const ViewTournamentPage = ({ url, tab, tabOptions }) => {
   return (
     <div className="flex flex-col">
       <div className="w-full px-10 flex flex-col sm:flex-row text-sm">
-        <div className="w-full sm:w-3/4 pt-4 sm:pt-0">
+        <div className="w-full sm:w-5/6 pt-4 sm:pt-0">
           <h1 className="text-xl">{name}</h1>
           <div className="py-2 my-2 border-gray-100 border-t-2 border-b-2 text-gray-400 leading-relaxed">
             <p className="flex items-center">
@@ -320,17 +322,11 @@ const ViewTournamentPage = ({ url, tab, tabOptions }) => {
               </div>
             ))}
         </div>
-        <div className="w-full sm:w-1/4 ml-auto">
+        <div className="w-full sm:w-1/6 ml-auto">
           {tournament.active &&
             tournament.dateStarted &&
             !tournament.dateEnded && (
-              <TournamentTimer
-                tournament={tournament}
-                startingTimerInSeconds={startingTimerInSeconds}
-                setStartingTimerInSeconds={setStartingTimerInSeconds}
-                timerInSeconds={timerInSeconds}
-                setTimerSeconds={setTimerSeconds}
-              />
+              <TournamentTimer tournament={tournament} />
             )}
           {!tournament.active && <p>Tournament Cancelled</p>}
         </div>

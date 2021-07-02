@@ -3,6 +3,7 @@ import { useMutation } from '@redwoodjs/web'
 import InputMask from 'react-input-mask'
 import { checkTournamentPermissions } from 'src/helpers/tournamentHelper'
 import { TOURNAMENT_BY_URL } from 'src/pages/ViewTournamentPage/ViewTournamentPage'
+import { ReactComponent as ClockIcon } from 'src/components/Icons/ClockIcon.svg'
 
 export const UPDATE_TIMER = gql`
   mutation updateTimer($input: TimerInput!) {
@@ -15,15 +16,13 @@ export const UPDATE_TIMER = gql`
   }
 `
 
-const TournamentTimer = ({
-  tournament,
-  startingTimerInSeconds,
-  setStartingTimerInSeconds,
-  timerInSeconds,
-  setTimerSeconds,
-}) => {
+const TournamentTimer = ({ tournament }) => {
   const [timerInput, setTimerInput] = React.useState('060:00')
   const [timerStatus, setTimerStatus] = React.useState('PENDING')
+  const [startingTimerInSeconds, setStartingTimerInSeconds] =
+    React.useState(null)
+  const [timerInSeconds, setTimerSeconds] = React.useState(null)
+  const [confirmStop, setConfirmStop] = React.useState(false)
   const { currentUser, hasRole } = useAuth()
   const [updateTimer, { loading, error }] = useMutation(UPDATE_TIMER, {
     refetchQueries: [
@@ -114,6 +113,7 @@ const TournamentTimer = ({
 
   const endTimer = () => {
     setTimerStatus('STOPPED')
+    setTimerSeconds(null)
     updateTimer({
       variables: {
         input: {
@@ -143,43 +143,68 @@ const TournamentTimer = ({
 
   const renderButtons = () => {
     if (checkTournamentPermissions({ hasRole, currentUser, tournament })) {
-      if (timerInSeconds) {
-        return (
-          <>
-            {timerStatus === 'INPROGRESS' ? (
-              <button
-                className="rounded-md bg-yellow-300 cursor-pointer hover:bg-yellow-400 px-4 my-2"
-                onClick={pauseTimer}
-                disabled={loading}
-              >
-                Pause Timer
-              </button>
-            ) : (
-              <button
-                className="rounded-md bg-yellow-300 cursor-pointer hover:bg-yellow-400 px-4 my-2"
-                onClick={() => startTimer(formatTime(timerInSeconds))}
-                disabled={loading}
-              >
-                Continue Timer
-              </button>
-            )}
+      let buttonClasses = (color) =>
+        `flex w-full justify-center uppercase my-2 py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2 bg-${color}-400 cursor-pointer hover:bg-${color}-500 focus:ring-${color}-600`
 
-            <button
-              className="rounded-md bg-red-300 cursor-pointer hover:bg-red-400 px-4 my-2"
-              onClick={endTimer}
-              disabled={loading}
-            >
-              End Timer
-            </button>
-          </>
-        )
+      if (timerInSeconds) {
+        if (confirmStop) {
+          return (
+            <>
+              <button
+                className={buttonClasses('green')}
+                onClick={() => setConfirmStop(false)}
+                disabled={loading}
+              >
+                Cancel
+              </button>
+              <button
+                className={buttonClasses('red')}
+                onClick={endTimer}
+                disabled={loading}
+              >
+                Confirm Stop
+              </button>
+            </>
+          )
+        } else {
+          return (
+            <>
+              {timerStatus === 'INPROGRESS' ? (
+                <button
+                  className={buttonClasses('yellow')}
+                  onClick={pauseTimer}
+                  disabled={loading}
+                >
+                  Pause
+                </button>
+              ) : (
+                <button
+                  className={buttonClasses('yellow')}
+                  onClick={() => startTimer(formatTime(timerInSeconds))}
+                  disabled={loading}
+                >
+                  Continue
+                </button>
+              )}
+
+              <button
+                className={buttonClasses('red')}
+                onClick={() => setConfirmStop(true)}
+                disabled={loading}
+              >
+                Stop
+              </button>
+            </>
+          )
+        }
       } else {
         return (
           <button
-            className="rounded-md bg-green-300 cursor-pointer hover:bg-green-400 px-4 my-2"
+            className={buttonClasses('green')}
             onClick={() => startTimer(timerInput)}
+            disabled={loading}
           >
-            Start Timer
+            Start
           </button>
         )
       }
@@ -191,11 +216,29 @@ const TournamentTimer = ({
   return (
     <>
       {timerInSeconds ? (
-        <div className="flex flex-col">
-          <div className="center-text">{formatTime(timerInSeconds)}</div>
-          <div className="w-full rounded-2xl border-2 border-black-900">
+        <div className="flex flex-col justify-center  items-center">
+          <div className="text-xl flex border-gray-100 border-b-2 pb-1 mb-2 w-full justify-center items-center">
+            <span>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-8 w-8"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+            </span>
+            {formatTime(timerInSeconds)}
+          </div>
+          <div className="w-full rounded-sm border border-red-400">
             <div
-              className="bg-red-500 h-4 rounded-l-2xl"
+              className="bg-red-300 h-4 rounded-l-sm border-red-300 border-l"
               style={{
                 width: `${
                   100 - (timerInSeconds / startingTimerInSeconds) * 100
@@ -207,14 +250,33 @@ const TournamentTimer = ({
         </div>
       ) : (
         <div className="flex flex-col">
-          <InputMask
-            className="border-black-500 border-2 text-xl w-full px-4 rounded-l"
-            mask={'?99:99'}
-            formatChars={{ 9: '[0-9]', t: '[0-9-]', '?': '[0-9 ]' }}
-            maskChar={null}
-            value={timerInput}
-            onChange={(e) => setTimerInput(e.target.value)}
-          />
+          <div className="border-gray-100 border-b-2 pb-1 flex flex-row">
+            <span>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-8 w-8"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+            </span>
+            <InputMask
+              className="border-black border text-xl w-full px-1 rounded-l"
+              mask={'?99:99'}
+              formatChars={{ 9: '[0-9]', t: '[0-9-]', '?': '[0-9 ]' }}
+              maskChar={null}
+              value={timerInput}
+              onChange={(e) => setTimerInput(e.target.value)}
+            />
+          </div>
+
           {renderButtons()}
         </div>
       )}
