@@ -46,7 +46,12 @@ const TournamentLeaderboardTab = ({ tournament }) => {
               <td className="text-center py-2">{playerScore.byes}</td>
               <td className="text-center py-2">{playerScore.losses}</td>
               <td className="text-center py-2">{playerScore.score}</td>
-              <td></td>
+              {!tournament.dateEnded &&
+                checkTournamentPermissions({
+                  tournament,
+                  hasRole,
+                  currentUser,
+                }) && <td></td>}
             </tr>
           ))}
         </table>

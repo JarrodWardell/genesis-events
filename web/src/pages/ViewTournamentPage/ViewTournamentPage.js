@@ -111,6 +111,7 @@ const ViewTournamentPage = ({ url, tab, tabOptions }) => {
   const TABS = ['rounds', 'leaderboard', 'matches', 'signup']
   const { currentUser, hasRole } = useAuth()
   const [expandedDesc, setExpandedDesc] = React.useState(false)
+  const [isTruncated, setIsTruncated] = React.useState(false)
 
   if (!tab || tab === '' || TABS.indexOf(tab) === -1) {
     return <Redirect to={`/tournament/${url}/${TABS[0]}`} />
@@ -295,30 +296,33 @@ const ViewTournamentPage = ({ url, tab, tabOptions }) => {
                 <Truncate
                   lines={3}
                   className="leading-normal text-sm"
+                  onTr
                   dangerouslySetInnerHTML={{
                     __html: desc,
                   }}
                 />
-                <button
-                  onClick={() => setExpandedDesc(true)}
-                  className="hover:text-blue-500 text-blue-400 flex items-center max-w-prose"
-                >
-                  <span>Read More</span>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-6 w-6 ml-1"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
+                {desc.length > 150 && (
+                  <button
+                    onClick={() => setExpandedDesc(true)}
+                    className="hover:text-blue-500 text-blue-400 flex items-center max-w-prose"
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M19 9l-7 7-7-7"
-                    />
-                  </svg>
-                </button>
+                    <span>Read More</span>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-6 w-6 ml-1"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M19 9l-7 7-7-7"
+                      />
+                    </svg>
+                  </button>
+                )}
               </div>
             ))}
         </div>
@@ -331,8 +335,10 @@ const ViewTournamentPage = ({ url, tab, tabOptions }) => {
           {!tournament.active && <p>Tournament Cancelled</p>}
         </div>
       </div>
-      <div className="w-full my-4 border-green-700 border-t-4 border-b-4 hidden sm:flex">
-        {renderTabNav()}
+      <div className="w-full my-4 hidden sm:flex px-10">
+        <div className="w-full border-green-700 border-t-4 border-b-4 flex">
+          {renderTabNav()}
+        </div>
       </div>
       <select
         className="mx-auto w-11/12 border-t-8 border-b-8 border border-green-700 sm:hidden capitalize text-center text-base my-4 py-2"
