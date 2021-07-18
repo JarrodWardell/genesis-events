@@ -1,10 +1,3 @@
-// Define what you want `currentUser` to return throughout your app. For example,
-// to return a real user from your database, you could do something like:
-//
-//   export const getCurrentUser = async ({ email }) => {
-//     return await db.user.findUnique({ where: { email } })
-//   }
-
 import { AuthenticationError } from '@redwoodjs/api'
 import admin from 'firebase-admin'
 
@@ -37,28 +30,46 @@ export const getCurrentUser = async (decoded, { token, type }) => {
       },
     })
   }
+
   let user = provider.userId
     ? await db.user.findUnique({
         where: { id: provider.userId },
+        include: {
+          photo: true,
+        },
       })
     : {}
 
-  const userRoles = provider.userId
-    ? await db.userRole.findMany({
-        where: { userId: user.id },
-        select: { name: true },
+  let roles = provider.userId ? await retrieveUserRoles(provider.userId) : []
+
+  let stores = provider.userId
+    ? await db.store.findMany({
+        where: { ownerId: user.id },
       })
-    : []
+    : {}
 
-  const roles = userRoles.map((role) => {
-    return role.name
-  })
-
-  return { email, uid, user, roles }
+  return { email, uid, user, roles, stores }
 }
 
 export const requireAuth = () => {
   if (!context.currentUser) {
     throw new AuthenticationError("You don't have permission to do that.")
   }
+}
+
+export const retrieveUserRoles = async (userId) => {
+  const roles = []
+
+  let userRoles = await db.userUserRole.findMany({
+    where: { userId },
+  })
+
+  for (let i = 0; i < userRoles.length; i++) {
+    let role = await db.userRole.findUnique({
+      where: { id: userRoles[i].userRoleId },
+    })
+    roles.push(role.name)
+  }
+
+  return roles
 }

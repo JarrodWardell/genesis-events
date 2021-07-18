@@ -9,13 +9,28 @@ export const schema = gql`
     state: String
     country: String
     zip: String
-    howHeard: String
-    approved: Boolean!
-    approvedOn: DateTime
     createdAt: DateTime!
     updatedAt: DateTime!
-    userRoles: [UserRole]!
+    howHeard: String
+    flags: Int!
+    adminComments: String
+    disabled: Boolean!
+    disabledOn: DateTime
+    nickname: String!
+    userPictureId: Int
+    disabledBy: String
+    email: String!
+    dob: String
+    active: Boolean!
+    photo: UserPicture
+    Contact: [Contact]!
+    matches: [PlayerMatchScore]!
+    tournamentsPlayed: [PlayerTournamentScore]!
     providers: [Provider]!
+    Store: [Store]!
+    tournamentsOwned: [Tournament]!
+    Tournament: [Tournament]!
+    UserRole: [UserRole]!
   }
 
   type UserRole {
@@ -37,16 +52,13 @@ export const schema = gql`
 
   type Query {
     users: [User!]!
-    user(id: Int!): User
+    user(id: String!): User
     checkNickname(nickname: String): Boolean!
   }
 
   input CreateUserInput {
-    role: String!
-    email: String!
-    nickname: String!
-    firstname: String!
-    lastname: String!
+    firstname: String
+    lastname: String
     gender: String
     phone: String
     city: String
@@ -54,9 +66,48 @@ export const schema = gql`
     country: String
     zip: String
     howHeard: String
+    flags: Int
+    adminComments: String
+    disabled: Boolean
+    disabledOn: DateTime
+    nickname: String!
+    userPictureId: Int
+    disabledBy: String
+    email: String!
+    dob: String
+    active: Boolean
+    role: Role
+    imageId: Int
   }
 
-  input CreateStoreInput {
+  enum Role {
+    PLAYER
+    EO
+  }
+
+  input UpdateUserInput {
+    firstname: String
+    lastname: String
+    gender: String
+    phone: String
+    city: String
+    state: String
+    country: String
+    zip: String
+    howHeard: String
+    flags: Int
+    adminComments: String
+    disabled: Boolean
+    disabledOn: DateTime
+    nickname: String
+    userPictureId: Int
+    disabledBy: String
+    email: String
+    dob: String
+    active: Boolean
+    imageId: Int
+  }
+  input CreateUserStoreInput {
     name: String!
     email: String!
     phone: String!
@@ -70,27 +121,9 @@ export const schema = gql`
     distributor: String!
   }
 
-  input UpdateUserInput {
-    firstname: String
-    lastname: String
-    gender: String
-    phone: String
-    city: String
-    state: String
-    country: String
-    zip: String
-    howHeard: String
-    approved: Boolean
-    approvedOn: DateTime
-    flags: Int
-    adminComments: String
-    disabled: Boolean
-    disabledOn: DateTime
-  }
-
   type Mutation {
-    createUser(input: CreateUserInput!, storeInput: CreateStoreInput): User!
-    updateUser(id: Int!, input: UpdateUserInput!): User!
-    deleteUser(id: Int!): User!
+    createUser(input: CreateUserInput!, storeInput: CreateUserStoreInput): User!
+    updateUser(id: String!, input: UpdateUserInput!): User!
+    deleteUser(id: String!): User!
   }
 `

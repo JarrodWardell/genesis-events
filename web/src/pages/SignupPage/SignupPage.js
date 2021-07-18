@@ -1,10 +1,8 @@
 import {
   Form,
   TextField,
-  PasswordField,
   Submit,
   Label,
-  DateField,
   TextAreaField,
   FormError,
   SelectField,
@@ -12,20 +10,30 @@ import {
 import GooglePlacesAutocomplete from 'react-google-places-autocomplete'
 
 import { useEffect, useRef } from 'react'
-import { useForm } from 'react-hook-form'
+import { useForm, Controller } from 'react-hook-form'
 
 import { useAuth } from '@redwoodjs/auth'
 import { useMutation } from '@redwoodjs/web'
-import { Redirect } from '@redwoodjs/router'
+import { navigate, routes, Redirect } from '@redwoodjs/router'
 
 import NicknameCheckField from 'src/components/NicknameCheckField/NicknameCheckField'
 import { getAddress } from 'src/helpers/formatAddress'
-import { logEvent } from 'firebase/analytics'
+import { analytics } from 'src/App'
+import UserPictureSelector from 'src/components/UserPictureSelector/UserPictureSelector'
+import PasswordCheck from 'src/components/PasswordCheck/PasswordCheck'
+import { GoogleIcon } from 'src/components/Icons/Google'
+import { FacebookIcon } from 'src/components/Icons/Facebook'
+import { TwitterIcon } from 'src/components/Icons/Twitter'
+import Button from 'src/components/Button/Button'
+import toast from 'react-hot-toast'
+import DatePicker from 'react-datepicker'
+
+import 'react-datepicker/dist/react-datepicker.css'
 
 const CREATE_USER = gql`
   mutation CreateUserMutation(
     $input: CreateUserInput!
-    $storeInput: CreateStoreInput
+    $storeInput: CreateUserStoreInput
   ) {
     createUser(input: $input, storeInput: $storeInput) {
       id
@@ -34,43 +42,61 @@ const CREATE_USER = gql`
 `
 
 const distributors = [
-  'Alliance Game Distributors',
-  'Prince Wholesalers',
-  'ACD Distribution',
-  'GTS Distribution',
-  'Publisher Services Inc',
-  'Lion Rampant',
-  'Hit Point Sales',
-  'Universal Distribution',
-  'Grosnor Distribution Inc',
-  'Asmodee',
-  'Luma Games',
-  'Golden Distribution',
   'ABC Blackfire Distribution',
+  'ACD Distribution',
+  'Alliance Game Distributors',
+  'Asmodee',
+  'Golden Distribution',
+  'Grosnor Distribution Inc',
+  'GTS Distribution',
+  'Hit Point Sales',
+  'Lion Rampant',
+  'Luma Games',
+  'Prince Wholesalers',
+  'Publisher Services Inc',
+  'Universal Distribution',
 ]
 
-const SignupPage = () => {
+const SignupPage = ({ stepRoute }) => {
   const [error, setError] = React.useState(null)
   const [step, setStep] = React.useState(1)
   const [form, setForm] = React.useState({})
   const [nicknameValid, setNicknameValid] = React.useState(null)
+  const [userPicture, setUserPicture] = React.useState({ url: null })
   const { signUp, loading, currentUser, client } = useAuth()
   const [createUser, { loading: createUserLoading }] = useMutation(CREATE_USER)
-  const analytics = client.analytics()
   const formMethods = useForm()
   const password = useRef()
   password.current = formMethods.watch('password', '')
+
   const onSubmit = async (data) => {
     let newData = { ...data, ...form }
-    await signUp({ password: newData.password, email: newData.email })
+    await signUp({ password: newData.password, email: newData.email }).then(
+      async () => {
+        delete newData.password
+        await callCreateUser(newData)
+      }
+    )
+  }
 
-    delete newData.password
+  const onProviderClick = async (provider) => {
+    await signUp(provider)
+      .then(async () => {
+        await callCreateUser({ ...form })
+      })
+      .catch(() => {
+        toast.error('There was an error in creating your account')
+      })
+  }
+
+  const callCreateUser = async (data) => {
     let {
       role,
       email,
       nickname,
       firstname,
       lastname,
+      dob,
       gender,
       phone,
       city,
@@ -78,7 +104,7 @@ const SignupPage = () => {
       country,
       zip,
       howHeard,
-    } = newData
+    } = data
 
     let variables = {
       input: {
@@ -87,6 +113,7 @@ const SignupPage = () => {
         email,
         firstname,
         lastname,
+        dob,
         gender,
         phone,
         city,
@@ -94,69 +121,42 @@ const SignupPage = () => {
         country,
         zip,
         howHeard,
+        imageId: userPicture?.id,
       },
     }
 
     if (role === 'EO') {
       variables.storeInput = {
-        name: newData['store-name'],
-        email: newData['store-email'],
-        phone: newData['store-phone'],
-        lat: newData.lng,
-        lng: newData.lat,
-        street1: newData['formatted_address'],
-        city: newData['store-city'],
-        country: newData['store-country'],
-        state: newData['store-state'],
-        zip: newData['store-zip'],
-        distributor: newData.distributor,
+        name: data['store-name'],
+        email: data['store-email'],
+        phone: data['store-phone'],
+        lat: data.lat,
+        lng: data.lng,
+        street1: data['formatted_address'],
+        city: data['store-city'],
+        country: data['store-country'],
+        state: data['store-state'],
+        zip: data['store-zip'],
+        distributor: data.distributor,
       }
     }
 
-    createUser({
+    await createUser({
       variables,
     })
-    setError(null)
-  }
-
-  const onProviderClick = async (provider) => {
-    await signUp(provider)
-
-    let {
-      role,
-      email,
-      nickname,
-      firstname,
-      lastname,
-      gender,
-      phone,
-      city,
-      state,
-      country,
-      zip,
-      howHeard,
-    } = form
-
-    let variables = {
-      input: {
-        role,
-        nickname,
-        email,
-        firstname,
-        lastname,
-        gender,
-        phone,
-        city,
-        state,
-        country,
-        zip,
-        howHeard,
-      },
-    }
-
-    createUser({
-      variables,
-    })
+      .then(() => {
+        setError(null)
+        if (role === 'EO') navigate(routes.storePending())
+        window.location.reload()
+      })
+      .catch((err) => {
+        var auth = client?.auth()?.currentUser
+        auth.delete().then(() => {
+          toast.error(
+            'There was an error in creating your account. Please try again.'
+          )
+        })
+      })
   }
 
   const selectType = (role) => {
@@ -202,18 +202,48 @@ const SignupPage = () => {
   const renderStep = () => {
     if (step === 1) {
       return (
-        <div className="flex justify-between">
+        <div className="grid gap-8 grid-cols-1 sm:grid-cols-2">
           <button
-            className="w-full py-2 px-4 border rounded-md text-white bg-green-400 hover:bg-green-600"
-            onClick={() => selectType('PLAYER')}
-          >
-            PLAYER
-          </button>
-          <button
-            className="w-full py-2 px-4 border rounded-md text-white bg-green-400 hover:bg-green-600"
+            className="w-full max-w-sm py-4 px-4 h-24 sm:h-auto border rounded-md text-white bg-green-700 hover:bg-green-800 justify-center items-center flex flex-col sm:flex-row"
             onClick={() => selectType('EO')}
           >
-            EVENT ORGANIZER
+            <div className="mr-0 sm:mr-4">EVENT ORGANIZER</div>
+
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+              />
+            </svg>
+          </button>
+
+          <button
+            className="w-full max-w-sm py-2 px-4 h-24 sm:h-auto border rounded-md text-white bg-green-700 hover:bg-green-800 justify-center items-center flex flex-col sm:flex-row"
+            onClick={() => selectType('PLAYER')}
+          >
+            <div className="mr-0 sm:mr-4">PLAYER</div>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+              />
+            </svg>
           </button>
         </div>
       )
@@ -230,7 +260,14 @@ const SignupPage = () => {
           >
             <FormError error={error} className="col-span-2" />
             <div className="flex flex-col col-span-2">
-              <span name="firstname">Nickname</span>
+              <span name="image" className="text-center">
+                User Image
+              </span>
+              <UserPictureSelector
+                userPicture={userPicture}
+                selectImage={(image) => setUserPicture({ ...image })}
+              />
+              <span name="firstname">Unique Nickname</span>
               <NicknameCheckField
                 onChange={(data) => {
                   setForm({
@@ -239,6 +276,7 @@ const SignupPage = () => {
                   })
                 }}
                 setNicknameValid={setNicknameValid}
+                defaultValue={form['nickname']}
               />
             </div>
             <div className="flex flex-col w-full">
@@ -247,9 +285,9 @@ const SignupPage = () => {
               </Label>
               <TextField
                 name="firstname"
-                placeholder="First name"
                 className="border-2 p-2 mt-2 w-full"
                 errorClassName="border-2 p-2 mt-2 w-full border-red-500"
+                defaultValue={form['firstname']}
                 validation={{
                   required: true,
                 }}
@@ -261,9 +299,9 @@ const SignupPage = () => {
               </Label>
               <TextField
                 name="lastname"
-                placeholder="Last name"
                 className="border-2 p-2 mt-2 w-full"
                 errorClassName="border-2 p-2 mt-2 w-full border-red-500"
+                defaultValue={form['lastname']}
                 validation={{
                   required: true,
                 }}
@@ -277,6 +315,7 @@ const SignupPage = () => {
                 name="email"
                 className="border-2 p-2 mt-2 w-full"
                 errorClassName="border-2 p-2 mt-2 w-full border-red-500"
+                defaultValue={form['email']}
                 validation={{
                   required: true,
                   pattern: {
@@ -293,10 +332,16 @@ const SignupPage = () => {
                 name="phone"
                 className="border-2 p-2 mt-2 w-full"
                 errorClassName="border-2 p-2 mt-2 w-full border-red-500"
+                defaultValue={form['phone']}
                 validation={{
                   required: true,
                 }}
               />
+            </div>
+            <div className="flex flex-col w-full col-span-2 italic text-gray-500 text-sm">
+              Your email and phone number is collected for authentication and
+              tournament registration updates and will never be shared with
+              anyone.
             </div>
             <div className="flex flex-col w-full">
               <Label name="gender" errorClassName="text-red-500">
@@ -306,6 +351,7 @@ const SignupPage = () => {
                 name="gender"
                 className="border-2 p-2 mt-2 w-full"
                 errorClassName="border-2 p-2 mt-2 w-full border-red-500"
+                defaultValue={form['gender']}
                 validation={{
                   required: true,
                 }}
@@ -315,13 +361,28 @@ const SignupPage = () => {
               <Label name="dob" errorClassName="text-red-500">
                 Date of Birth
               </Label>
-              <DateField
+              <Controller
+                control={formMethods.control}
                 name="dob"
-                className="border-2 p-2 mt-2 w-full"
-                errorClassName="border-2 p-2 mt-2 w-full border-red-500"
-                validation={{
+                rules={{
                   required: true,
                 }}
+                render={({ name, value, onChange, ref, onBlur }) => (
+                  <DatePicker
+                    onChange={onChange}
+                    selected={value}
+                    name={name}
+                    customInputRef={ref}
+                    onBlur={onBlur}
+                    maxDate={new Date()}
+                    className="border-2 p-2 mt-2 w-full"
+                    errorClassName="border-2 p-2 mt-2 w-full border-red-500"
+                    peekNextMonth
+                    showMonthDropdown
+                    showYearDropdown
+                    dropdownMode="select"
+                  />
+                )}
               />
             </div>
             <div className="flex flex-col w-full">
@@ -332,6 +393,7 @@ const SignupPage = () => {
                 name="city"
                 className="border-2 p-2 mt-2 w-full"
                 errorClassName="border-2 p-2 mt-2 w-full border-red-500"
+                defaultValue={form['city']}
               />
             </div>
             <div className="flex flex-col w-full">
@@ -342,6 +404,7 @@ const SignupPage = () => {
                 name="state"
                 className="border-2 p-2 mt-2 w-full"
                 errorClassName="border-2 p-2 mt-2 w-full border-red-500"
+                defaultValue={form['state']}
               />
             </div>
             <div className="flex flex-col w-full">
@@ -352,6 +415,7 @@ const SignupPage = () => {
                 name="country"
                 className="border-2 p-2 mt-2 w-full"
                 errorClassName="border-2 p-2 mt-2 w-full border-red-500"
+                defaultValue={form['country']}
               />
             </div>
             <div className="flex flex-col w-full">
@@ -362,6 +426,7 @@ const SignupPage = () => {
                 name="zip"
                 className="border-2 p-2 mt-2 w-full"
                 errorClassName="border-2 p-2 mt-2 w-full border-red-500"
+                defaultValue={form['zip']}
               />
             </div>
             <div className="flex flex-col w-full col-span-2">
@@ -370,15 +435,14 @@ const SignupPage = () => {
                 name="howHeard"
                 className="border-2 p-2 mt-2 w-full"
                 errorClassName="border-2 p-2 mt-2 w-full border-red-500"
+                defaultValue={form['howHeard']}
               />
             </div>
-
-            <Submit
-              disabled={!nicknameValid}
-              className="col-span-2 my-8 w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-            >
-              Next
-            </Submit>
+            <div className="flex col-span-2 w-full">
+              <Button disabled={!nicknameValid} type="submit">
+                Next
+              </Button>
+            </div>
           </Form>
         )
       } else if (form.role === 'EO') {
@@ -396,7 +460,14 @@ const SignupPage = () => {
             </h3>
             <FormError error={error} className="col-span-2" />
             <div className="flex flex-col col-span-2">
-              <span name="firstname">Nickname</span>
+              <span name="image" className="text-center">
+                User Image
+              </span>
+              <UserPictureSelector
+                userPicture={userPicture}
+                selectImage={(image) => setUserPicture({ ...image })}
+              />
+              <span name="firstname">Unique Nickname</span>
               <NicknameCheckField
                 onChange={(data) => {
                   setForm({
@@ -405,6 +476,7 @@ const SignupPage = () => {
                   })
                 }}
                 setNicknameValid={setNicknameValid}
+                defaultValue={form.nickname}
               />
             </div>
             <div className="flex flex-col w-full">
@@ -413,9 +485,9 @@ const SignupPage = () => {
               </Label>
               <TextField
                 name="firstname"
-                placeholder="First name"
                 className="border-2 p-2 mt-2 w-full"
                 errorClassName="border-2 p-2 mt-2 w-full border-red-500"
+                defaultValue={form.firstname}
                 validation={{
                   required: true,
                 }}
@@ -427,9 +499,9 @@ const SignupPage = () => {
               </Label>
               <TextField
                 name="lastname"
-                placeholder="Last name"
                 className="border-2 p-2 mt-2 w-full"
                 errorClassName="border-2 p-2 mt-2 w-full border-red-500"
+                defaultValue={form.lastname}
                 validation={{
                   required: true,
                 }}
@@ -443,6 +515,7 @@ const SignupPage = () => {
                 name="email"
                 className="border-2 p-2 mt-2 w-full"
                 errorClassName="border-2 p-2 mt-2 w-full border-red-500"
+                defaultValue={form.email}
                 validation={{
                   required: true,
                   pattern: {
@@ -459,36 +532,16 @@ const SignupPage = () => {
                 name="phone"
                 className="border-2 p-2 mt-2 w-full"
                 errorClassName="border-2 p-2 mt-2 w-full border-red-500"
+                defaultValue={form.phone}
                 validation={{
                   required: true,
                 }}
               />
             </div>
-            <div className="flex flex-col w-full col-span-2">
-              <Label name="distributor" errorClassName="text-red-500">
-                Distributor
-              </Label>
-              <SelectField
-                name="distributor"
-                className="border-2 p-2 mt-2 w-full"
-                errorClassName="border-2 p-2 mt-2 w-full border-red-500"
-                defaultValue=""
-                validation={{
-                  required: true,
-                  matchesInitialValue: (value) => {
-                    return value !== '' || 'Select an Option'
-                  },
-                }}
-              >
-                <option disabled value="">
-                  Please select an option
-                </option>
-                {distributors.map((dist) => (
-                  <option value={dist} key={`dist-${dist}`}>
-                    {dist}
-                  </option>
-                ))}
-              </SelectField>
+            <div className="flex flex-col w-full col-span-2 italic text-gray-500 text-sm">
+              Your email and phone number is collected for authentication and
+              tournament registration updates and will never be shared with
+              anyone.
             </div>
             <h3 className="col-span-2 mb-4 font-bold underline text-xl">
               Store Information
@@ -499,9 +552,9 @@ const SignupPage = () => {
               </Label>
               <TextField
                 name="store-name"
-                placeholder="Store Name"
                 className="border-2 p-2 mt-2 w-full"
                 errorClassName="border-2 p-2 mt-2 w-full border-red-500"
+                defaultValue={form['store-name']}
                 validation={{
                   required: true,
                 }}
@@ -516,13 +569,14 @@ const SignupPage = () => {
                 selectProps={{
                   value: form.address,
                   onChange: onSelectAddress,
+                  placeholder: '',
                 }}
                 className="border-2 p-2 mt-2 w-full"
               />
             </div>
             <div className="flex flex-col w-full">
               <Label name="store-email" errorClassName="text-red-500">
-                Email
+                Store Email Address
               </Label>
               <TextField
                 name="store-email"
@@ -538,7 +592,7 @@ const SignupPage = () => {
             </div>
             <div className="flex flex-col w-full">
               <Label name="store-phone" errorClassName="text-red-500">
-                Phone Number
+                Store Phone Number
               </Label>
               <TextField
                 name="store-phone"
@@ -557,6 +611,9 @@ const SignupPage = () => {
                 name="store-city"
                 className="border-2 p-2 mt-2 w-full"
                 errorClassName="border-2 p-2 mt-2 w-full border-red-500"
+                validation={{
+                  required: true,
+                }}
               />
             </div>
             <div className="flex flex-col w-full">
@@ -567,6 +624,9 @@ const SignupPage = () => {
                 name="store-state"
                 className="border-2 p-2 mt-2 w-full"
                 errorClassName="border-2 p-2 mt-2 w-full border-red-500"
+                validation={{
+                  required: true,
+                }}
               />
             </div>
             <div className="flex flex-col w-full">
@@ -577,6 +637,9 @@ const SignupPage = () => {
                 name="store-country"
                 className="border-2 p-2 mt-2 w-full"
                 errorClassName="border-2 p-2 mt-2 w-full border-red-500"
+                validation={{
+                  required: true,
+                }}
               />
             </div>
             <div className="flex flex-col w-full">
@@ -587,7 +650,36 @@ const SignupPage = () => {
                 name="store-zip"
                 className="border-2 p-2 mt-2 w-full"
                 errorClassName="border-2 p-2 mt-2 w-full border-red-500"
+                validation={{
+                  required: true,
+                }}
               />
+            </div>
+            <div className="flex flex-col w-full col-span-2">
+              <Label name="distributor" errorClassName="text-red-500">
+                Distributor
+              </Label>
+              <SelectField
+                name="distributor"
+                className="border-2 p-2 mt-2 w-full"
+                errorClassName="border-2 p-2 mt-2 w-full border-red-500"
+                defaultValue={form.distributor ? form.distributor : ''}
+                validation={{
+                  required: true,
+                  matchesInitialValue: (value) => {
+                    return value !== '' || 'Select an Option'
+                  },
+                }}
+              >
+                <option disabled value="">
+                  Please select an option
+                </option>
+                {distributors.map((dist) => (
+                  <option value={dist} key={`dist-${dist}`}>
+                    {dist}
+                  </option>
+                ))}
+              </SelectField>
             </div>
 
             <Submit className="col-span-2 my-8 w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
@@ -598,48 +690,24 @@ const SignupPage = () => {
       }
     } else if (step === 3) {
       return (
-        <Form
+        <PasswordCheck
+          loading={loading || createUserLoading}
           onSubmit={onSubmit}
-          className="flex flex-col"
-          validation={{ mode: 'onBlur' }}
-        >
-          <Label name="password" errorClassName="text-red-500">
-            Password
-          </Label>
-          <PasswordField
-            name="password"
-            placeholder="Password"
-            className="border-2 p-2 mt-2 mb-4"
-            errorClassName="border-2 p-2 mt-2 w-full border-red-500 mb-4"
-            validation={{
-              required: true,
-              minLength: {
-                value: 8,
-                message: 'Password must have at least 8 characters',
-              },
-            }}
-          />
-          <Submit
-            disabled={loading || createUserLoading}
-            className="my-8 w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-          >
-            Sign Up
-          </Submit>
-        </Form>
+          submitText={'Sign Up'}
+          onBack={() => setStep(2)}
+          backButtonText={'Back'}
+        />
       )
     }
   }
 
   if (!currentUser?.user) {
     return (
-      <div className="min-h-screen flex flex-col justify-center">
+      <div className="min-h-screen container mx-auto flex flex-col justify-center bg-gray-200 border-sm py-4 text-sm text-gray-700">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
-          <img className="mx-auto h-12 w-auto" src="/Logo.png" alt="Workflow" />
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Sign up
-          </h2>
+          <h2 className="text-center text-2xl text-gray-900">Create Account</h2>
         </div>
-        <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-3xl">
+        <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-3xl p-4">
           {error && <p>{error}</p>}
           {renderStep()}
           {step === 3 && (
@@ -649,7 +717,7 @@ const SignupPage = () => {
                   <div className="w-full border-t border-gray-300"></div>
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white text-gray-500">
+                  <span className="px-2 bg-gray-200 text-gray-500">
                     Or continue with
                   </span>
                 </div>
@@ -664,57 +732,34 @@ const SignupPage = () => {
                     className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
                   >
                     <span className="sr-only">Sign in with Google</span>
-                    <svg
-                      className="w-5 h-5"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                      aria-hidden="true"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M20 10c0-5.523-4.477-10-10-10S0 4.477 0 10c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V10h2.54V7.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V10h2.773l-.443 2.89h-2.33v6.988C16.343 19.128 20 14.991 20 10z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
+                    <GoogleIcon />
                   </button>
                 </div>
 
                 <div>
-                  <a
-                    href="#"
+                  <button
+                    disabled={loading}
+                    onClick={async () =>
+                      await onProviderClick('twitter.com', 'TWITTER')
+                    }
                     className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
                   >
                     <span className="sr-only">Sign in with Twitter</span>
-                    <svg
-                      className="w-5 h-5"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                      aria-hidden="true"
-                    >
-                      <path d="M6.29 18.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0020 3.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.073 4.073 0 01.8 7.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 010 16.407a11.616 11.616 0 006.29 1.84" />
-                    </svg>
-                  </a>
+                    <TwitterIcon />
+                  </button>
                 </div>
 
                 <div>
-                  <a
-                    href="#"
+                  <button
+                    disabled={loading}
+                    onClick={async () =>
+                      await onProviderClick('facebook.com', 'FACEBOOK')
+                    }
                     className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
                   >
-                    <span className="sr-only">Sign in with GitHub</span>
-                    <svg
-                      className="w-5 h-5"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                      aria-hidden="true"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M10 0C4.477 0 0 4.484 0 10.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0110 4.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.203 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.942.359.31.678.921.678 1.856 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0020 10.017C20 4.484 15.522 0 10 0z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  </a>
+                    <span className="sr-only">Sign in with Facebook</span>
+                    <FacebookIcon />
+                  </button>
                 </div>
               </div>
             </div>

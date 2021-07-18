@@ -11,3 +11,19 @@
 /**
  * END --- TAILWIND GENERATOR EDIT
  */
+
+ .react-datepicker-popper {
+   z-index: 3 !important;
+ }
+
+ .print {
+   display: none;
+ }
+
+ @media print {
+  .print {
+      margin: 5vh 5vw;
+      display: flex;
+      flex-direction: column;
+  }
+}
