@@ -3,6 +3,7 @@ import { useQuery } from '@redwoodjs/web'
 import PlayerProfileItem from 'src/components/PlayerProfileItem/PlayerProfileItem'
 
 import { ReactComponent as SearchIcon } from 'src/components/Icons/SearchIcon.svg'
+import LoadingIcon from 'src/components/LoadingIcon/LoadingIcon'
 
 const PLAYER_LEADERBOARD = gql`
   query playerLeaderboard($nicknameSearch: String, $skip: Int, $take: Int) {
@@ -65,6 +66,15 @@ const LeaderboardPage = () => {
           <th className="py-2">Country</th>
           <th className="py-2">Score</th>
         </tr>
+        {loading && (
+          <tr>
+            <td rowSpan="6" colSpan="4" className="py-8 w-full">
+              <div className="w-full flex flex-col justify-center items-center">
+                <LoadingIcon size={'44px'} />
+              </div>
+            </td>
+          </tr>
+        )}
         {!leaderboard ||
           (leaderboard.length === 0 && (
             <td

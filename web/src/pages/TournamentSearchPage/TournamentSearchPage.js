@@ -418,7 +418,7 @@ const TournamentSearchPage = () => {
       <div>
         {called ? (
           loading ? (
-            <div className="w-full h-full flex justify-center items-center">
+            <div className="w-full py-16 flex justify-center items-center">
               <LoadingIcon size={'44px'} />
             </div>
           ) : (
