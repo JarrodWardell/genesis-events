@@ -1,5 +1,5 @@
 import { useAuth } from '@redwoodjs/auth'
-import { navigate } from '@redwoodjs/router'
+import { navigate, routes } from '@redwoodjs/router'
 import { useMutation } from '@redwoodjs/web'
 import toast from 'react-hot-toast'
 import { TOURNAMENT_BY_URL } from 'src/pages/ViewTournamentPage/ViewTournamentPage'
@@ -10,6 +10,12 @@ import { TwitterIcon } from '../Icons/Twitter'
 export const REGISTER_TOURNAMENT = gql`
   mutation registerForTournament($id: Int!) {
     registerForTournament: registerForTournament(id: $id)
+  }
+`
+
+export const LEAVE_TOURNAMENT = gql`
+  mutation leaveTournament($id: Int!) {
+    leaveTournament: leaveTournament(id: $id)
   }
 `
 
@@ -30,6 +36,22 @@ const TournamentSignupTab = ({ tournament }) => {
       ],
     }
   )
+
+  const [
+    leaveTournament,
+    { loading: loadingLeaveTournament, error: errorLeaveTournament },
+  ] = useMutation(LEAVE_TOURNAMENT, {
+    onCompleted: () => {
+      toast.success('Successfully Left Tournament')
+      navigate(`/tournament/${tournament.tournamentUrl}/rounds`)
+    },
+    refetchQueries: [
+      {
+        query: TOURNAMENT_BY_URL,
+        variables: { url: tournament.tournamentUrl },
+      },
+    ],
+  })
 
   const checkIfSignupActive = () => {
     // Tournament not started
@@ -130,6 +152,12 @@ const TournamentSignupTab = ({ tournament }) => {
     )
   }
 
+  const confirmLeaveTournament = () => {
+    if (confirm('Are you sure you would like to leave this tournament')) {
+      leaveTournament({ variables: { id: tournament.id } })
+    }
+  }
+
   return (
     <div className="w-full py-10 flex flex-col items-center justify-center">
       <h2 className="text-center text-2xl uppercase text-gray-900 mb-6 font-normal">
@@ -140,6 +168,27 @@ const TournamentSignupTab = ({ tournament }) => {
         <strong>{checkIfSignupActive() ? 'open' : 'closed'}</strong>.
       </p>
       <p className="text-gray-500">{returnInfoText()}</p>
+      {isInTournament() && (
+        <Button
+          onClick={() => confirmLeaveTournament()}
+          loading={loadingLeaveTournament}
+          full={false}
+          className="w-1/2 sm:w-1/4 mb-0"
+          color="red"
+        >
+          <p className="text-center">Leave Tournament</p>
+        </Button>
+      )}
+      {checkIfSignupActive && !currentUser && (
+        <Button
+          onClick={() => navigate(routes.signup())}
+          loading={loading}
+          full={false}
+          className="w-1/2 sm:w-1/4 mb-0"
+        >
+          <p className="text-center v">Create an account here</p>
+        </Button>
+      )}
       {checkIfCanSignup() && (
         <Button
           onClick={() =>

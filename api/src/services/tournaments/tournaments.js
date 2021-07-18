@@ -217,7 +217,9 @@ export const updateTournament = async ({ id, input }) => {
 
   const owner = await db.tournament.findUnique({ where: { id } }).owner({})
 
-  const players = await db.tournament.findUnique({ where: { id } }).players({})
+  const players = await db.tournament
+    .findUnique({ where: { id } })
+    .players({ where: { active: true } })
 
   //Send emails to all players
   players.forEach(async (player) => {
@@ -426,6 +428,7 @@ export const reshuffleRound = async ({ id }) => {}
 export const endTournament = async ({ id }) => {
   const tournament = await db.tournament.findUnique({ where: { id } })
   const players = await db.tournament.findUnique({ where: { id } }).players({
+    where: { active: true },
     orderBy: [
       { score: 'desc' },
       { wins: 'desc' },
@@ -507,7 +510,9 @@ export const endTournament = async ({ id }) => {
 }
 
 export const cancelTournament = async ({ id }) => {
-  const players = await db.tournament.findUnique({ where: { id } }).players({})
+  const players = await db.tournament
+    .findUnique({ where: { id } })
+    .players({ where: { active: true } })
 
   //Update tournament correctly
   const tournament = await db.tournament.update({
@@ -645,6 +650,53 @@ export const updateTimer = async ({ input }) => {
   })
 }
 
+export const removePlayer = async ({ id }) => {
+  //TODO: Check if admin or owner
+
+  try {
+    await db.playerTournamentScore.update({
+      data: {
+        active: false,
+      },
+      where: {
+        id,
+      },
+    })
+
+    return 'SUCCESS'
+  } catch (err) {
+    return err
+  }
+}
+
+export const leaveTournament = async ({ id }) => {
+  //TODO: Check if in tournament
+
+  let currentUser = context.currentUser
+
+  try {
+    const playerTournamentScore = await db.playerTournamentScore.findFirst({
+      where: {
+        tournamentId: id,
+        playerId: currentUser?.user?.id,
+      },
+    })
+
+    await db.playerTournamentScore.update({
+      data: {
+        active: false,
+      },
+      where: {
+        id: playerTournamentScore?.id,
+      },
+    })
+
+    return 'SUCCESS'
+  } catch (err) {
+    return err
+  }
+}
+
 const createMatches = async ({ proposedMatches, id, round }) => {
   //Create all matches
   proposedMatches.forEach(async (proposedMatch) => {
@@ -714,6 +766,7 @@ export const Tournament = {
   players: (_obj, { root }) =>
     db.tournament.findUnique({ where: { id: root.id } }).players({
       orderBy: [
+        { active: 'desc' },
         { score: 'desc' },
         { wins: 'desc' },
         { byes: 'desc' },

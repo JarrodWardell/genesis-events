@@ -86,6 +86,7 @@ const LeaderboardPage = () => {
             </td>
           ))}
         {!loading &&
+          leaderboard &&
           leaderboard.map((player) => (
             <tr
               key={`leaderboard-player-${player.id}`}

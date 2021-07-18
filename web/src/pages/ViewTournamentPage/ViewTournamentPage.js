@@ -55,6 +55,7 @@ export const TOURNAMENT_BY_URL = gql`
         byes
         draws
         losses
+        active
         player {
           id
           nickname
