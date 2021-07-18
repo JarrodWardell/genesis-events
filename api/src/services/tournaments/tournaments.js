@@ -23,7 +23,7 @@ export const tournaments = () => {
   return db.tournament.findMany()
 }
 
-export const myTournaments = () => {
+export const myTournaments = ({}) => {
   let currentUser = context.currentUser
 
   return db.tournament.findMany({
@@ -59,7 +59,7 @@ export const myTournaments = () => {
   })
 }
 
-export const upcomingTournaments = ({ input }) => {
+export const upcomingTournaments = ({ input, take = 6 }) => {
   return db.tournament.findMany({
     where: {
       AND: [
@@ -83,10 +83,11 @@ export const upcomingTournaments = ({ input }) => {
         createdAt: 'desc',
       },
     ],
+    take,
   })
 }
 
-export const finishedTournaments = ({ input }) => {
+export const finishedTournaments = ({ input, take = 6 }) => {
   return db.tournament.findMany({
     where: {
       AND: [
@@ -104,6 +105,7 @@ export const finishedTournaments = ({ input }) => {
     orderBy: {
       dateEnded: 'desc',
     },
+    take,
   })
 }
 
