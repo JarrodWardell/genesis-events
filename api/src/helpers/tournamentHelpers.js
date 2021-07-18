@@ -32,7 +32,9 @@ export const generateTournamentUrl = async (tournamentName, db) => {
 
 export const generateMatches = async ({ roundNumber = 1, db, id }) => {
   //Given a tournament, generate the matches for the round
-  const players = await db.tournament.findUnique({ where: { id } }).players()
+  const players = await db.tournament
+    .findUnique({ where: { id } })
+    .players({ where: { active: true } })
   let playersNotGivenMatches = players.map((player) => player.playerId)
   let playersGivenMatches = []
   let playerScores = {}

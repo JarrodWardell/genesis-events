@@ -193,5 +193,7 @@ export const schema = gql`
     advanceRound(id: Int!, roundNumber: Int!): Tournament
     endTournament(id: Int!): Tournament!
     cancelTournament(id: Int!): Tournament!
+    leaveTournament(id: Int!): String!
+    removePlayer(id: Int!): String!
   }
 `
