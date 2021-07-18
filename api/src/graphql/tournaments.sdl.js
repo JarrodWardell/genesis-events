@@ -44,6 +44,7 @@ export const schema = gql`
     name
     tournamentUrl
     startDate
+    dateStarted
     dateEnded
     maxPlayers
     players {
