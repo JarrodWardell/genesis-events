@@ -5,6 +5,7 @@ export const CORE_TOURNAMENT_FIELDS = gql`
     tournamentUrl
     locationName
     startDate
+    dateStarted
     dateEnded
     desc
     maxPlayers
