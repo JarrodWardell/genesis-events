@@ -141,7 +141,7 @@ const Header = () => {
                       aria-labelledby="user-menu-button"
                       tabIndex="-1"
                     >
-                      <div className="block px-4 py-2 text-sm text-gray-700">
+                      <div className="block px-4 py-2 text-sm text-gray-700 font-bold border-b border-gray-200">
                         {currentUser?.user?.nickname}
                       </div>
                       {hasRole('ADMIN') && (
@@ -157,7 +157,7 @@ const Header = () => {
                       )}
                       <Link
                         to={routes.settings()}
-                        className="block px-4 py-2 text-sm text-gray-700"
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
                         role="menuitem"
                         tabIndex="-1"
                         id="user-menu-item-1"
@@ -166,7 +166,7 @@ const Header = () => {
                       </Link>
                       <button
                         onClick={async () => await logOut()}
-                        className="block px-4 py-2 text-sm text-gray-700"
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200 w-full text-left"
                         role="menuitem"
                         tabIndex="-1"
                         id="user-menu-item-2"

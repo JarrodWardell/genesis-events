@@ -11,6 +11,7 @@ import FormError from '@redwoodjs/forms/dist/FormError'
 import { useMutation } from '@redwoodjs/web'
 import toast from 'react-hot-toast'
 import { useForm } from 'react-hook-form'
+import Button from 'src/components/Button/Button'
 
 const CREATE_CONTACT_MUTATION = gql`
   mutation CreateContactMutation($input: CreateContactInput!) {
@@ -64,17 +65,11 @@ const UserContactPage = () => {
             className="rw-label"
             errorClassName="rw-label rw-label-error"
           >
-            Name
+            Nickname
           </Label>
           <TextField
             name="name"
-            defaultValue={
-              currentUser?.user?.firstname
-                ? currentUser?.user?.firstname +
-                  '  ' +
-                  currentUser?.user?.lastname
-                : null
-            }
+            defaultValue={currentUser?.user?.nickname}
             className="rw-input"
             errorClassName="rw-input rw-input-error"
             validation={{ required: true }}
@@ -104,7 +99,7 @@ const UserContactPage = () => {
             className="rw-label"
             errorClassName="rw-label rw-label-error"
           >
-            Text
+            Message
           </Label>
           <TextAreaField
             name="text"
@@ -115,9 +110,14 @@ const UserContactPage = () => {
           <FieldError name="text" className="rw-field-error" />
 
           <div className="rw-button-group">
-            <Submit disabled={loading} className="rw-button rw-button-blue">
-              Save
-            </Submit>
+            <Button
+              type="submit"
+              loading={loading}
+              full={false}
+              className="w-1/2"
+            >
+              <p className="text-center">Send</p>
+            </Button>
           </div>
         </Form>
       </div>

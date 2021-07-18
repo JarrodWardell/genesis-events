@@ -35,7 +35,7 @@ const PasswordCheck = ({
 
     return (
       <div
-        className={`cols-span-1 sm:w-auto rounded-md px-2 text-sm ${bgColor} ${textColor}`}
+        className={`cols-span-1 sm:w-auto rounded-md px-4 py-1 text-sm ${bgColor} ${textColor} sm:mx-2`}
       >
         {text}
       </div>
@@ -117,8 +117,8 @@ const PasswordCheck = ({
       <PasswordField
         name="password"
         placeholder="Password"
-        className="border-2 p-2 mt-2 mb-4"
-        errorClassName="border-2 p-2 mt-2 w-full border-red-500 mb-4"
+        className="border-2 p-2 mt-2"
+        errorClassName="border-2 p-2 mt-2 w-full border-red-500"
         validation={{
           required: true,
           minLength: {
@@ -127,7 +127,7 @@ const PasswordCheck = ({
           },
         }}
       />
-      <div className=" grid grid-cols-2 gap-2 sm:flex my-4 w-full sm:justify-between">
+      <div className=" grid grid-cols-2 gap-2 sm:flex my-4 w-full">
         {passwordRuleDiv({
           text: '1 lower case letter',
           ruleFunction: passwordContainsLowercase,
@@ -145,14 +145,18 @@ const PasswordCheck = ({
           ruleFunction: passwordContainsUpperCase,
         })}
       </div>
-      <Label name="confirm_password" errorClassName="text-red-500">
+      <Label
+        name="confirm_password"
+        className="mt-2"
+        errorClassName="text-red-500"
+      >
         Confirm Password
       </Label>
       <PasswordField
         name="confirm_password"
         placeholder="Confirm Password"
-        className="border-2 p-2 mt-2 mb-4"
-        errorClassName="border-2 p-2 mt-2 w-full border-red-500 mb-4"
+        className="border-2 p-2 mt-2"
+        errorClassName="border-2 p-2 mt-2 w-full border-red-500"
         validation={{
           required: true,
           validate: (value) =>

@@ -65,8 +65,16 @@ const LeaderboardPage = () => {
           <th className="py-2">Country</th>
           <th className="py-2">Score</th>
         </tr>
+        {leaderboard.length === 0 && (
+          <td
+            rowSpan="6"
+            colSpan="4"
+            className="text-gray-500 text-lg text-center py-8"
+          >
+            No tournaments have been completed.
+          </td>
+        )}
         {!loading &&
-          leaderboard &&
           leaderboard.map((player) => (
             <tr
               key={`leaderboard-player-${player.id}`}

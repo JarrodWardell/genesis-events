@@ -1,4 +1,5 @@
 import { Link, routes } from '@redwoodjs/router'
+import { format } from 'date-fns'
 import { ReactComponent as CalendarIcon } from 'src/components/Icons/CalendarIcon.svg'
 import { ReactComponent as PlayersIcon } from 'src/components/Icons/PlayersIcon.svg'
 import { ReactComponent as LocationIcon } from 'src/components/Icons/LocationIcon.svg'
@@ -57,7 +58,7 @@ const TournamentItem = ({ tournament, full = false, index }) => {
                 <ClockIcon />
               </div>{' '}
               <span className="ml-1">
-                {new Date(startDate).toLocaleString().split(',')[1]}
+                {format(new Date(startDate), 'p zzzz')}
               </span>
             </p>
           </div>
@@ -90,7 +91,7 @@ const TournamentItem = ({ tournament, full = false, index }) => {
               }}
             />
           </div>
-          <div className="col-span-1 flex flex-col mt-4 sm:mt-0">
+          <div className="col-span-1 flex flex-col sm:-mt-4">
             <p className="uppercase font-bold text-sm text-red-500 mx-auto">
               Starting in
             </p>
@@ -119,7 +120,7 @@ const TournamentItem = ({ tournament, full = false, index }) => {
               <ClockIcon />
             </div>{' '}
             <span className="ml-1">
-              {new Date(startDate).toLocaleString().split(',')[1]}
+              {format(new Date(startDate), 'p zzzz')}
             </span>
           </p>
           <p className="flex items-center">

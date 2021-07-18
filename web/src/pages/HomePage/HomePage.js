@@ -14,16 +14,9 @@ const HomePage = () => {
       <HomeBannersCell />
       <div className="flex flex-col mt-4 px-2">
         <div className="flex flex-col container mx-auto w-11/12 sm:w-full text-sm text-gray-700">
-          {currentUser && (
-            <div className="my-8">
-              <h1 className="text-xl text-black mb-4">
-                Registered Tournaments
-              </h1>
-              <MyTournamentsCell />
-            </div>
-          )}
+          {currentUser && <MyTournamentsCell />}
         </div>
-        <div className="grid px-2 sm:grid-cols-2 gap-x-24 container mx-auto grid-cols-1 max-h-screen overflow-auto">
+        <div className="grid sm:grid-cols-2 gap-x-24 container mx-auto grid-cols-1 max-h-screen overflow-auto">
           <div className="flex flex-col sm:w-3/4">
             <h1 className="text-xl text-black mb-4">Upcoming Tournaments</h1>
             <UpcomingTournamentsCell />

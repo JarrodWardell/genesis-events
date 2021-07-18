@@ -1,6 +1,7 @@
 import { useAuth } from '@redwoodjs/auth'
 import { Link, navigate, Redirect, routes } from '@redwoodjs/router'
 import { useQuery } from '@redwoodjs/web'
+import { format } from 'date-fns'
 import TournamentLeaderboardTab from 'src/components/TournamentLeaderboardTab/TournamentLeaderboardTab'
 import TournamentMatchesTab from 'src/components/TournamentMatchesTab/TournamentMatchesTab'
 import TournamentRoundsTab from 'src/components/TournamentRoundsTab/TournamentRoundsTab'
@@ -167,22 +168,21 @@ const ViewTournamentPage = ({ url, tab, tabOptions }) => {
     )
   }
 
-  const {
-    name,
-    startDate,
-    maxPlayers,
-    players,
-    desc,
-    street1,
-    locationName,
-    city,
-    state,
-  } = tournament
+  const { name, startDate, maxPlayers, players, desc, street1, locationName } =
+    tournament
+
+  let tournamentActive =
+    tournament.active && tournament.dateStarted && !tournament.dateEnded
 
   return (
     <div className="flex flex-col">
       <div className="w-full px-10 flex flex-col sm:flex-row text-sm">
-        <div className="w-full sm:w-5/6 pt-4 sm:pt-0">
+        <div
+          className={
+            'w-full pt-4 sm:pt-0' +
+            (tournamentActive || !tournament.active ? ' sm:w-5/6' : ' w-full')
+          }
+        >
           <h1 className="text-xl">{name}</h1>
           <div className="py-2 my-2 border-gray-100 border-t-2 border-b-2 text-gray-400 leading-relaxed">
             <p className="flex items-center">
@@ -198,7 +198,7 @@ const ViewTournamentPage = ({ url, tab, tabOptions }) => {
                 <ClockIcon />
               </div>{' '}
               <span className="ml-1">
-                {new Date(startDate).toLocaleString().split(',')[1]}
+                {format(new Date(startDate), 'p zzzz')}
               </span>
             </p>
             <p className="flex items-center">
@@ -326,12 +326,13 @@ const ViewTournamentPage = ({ url, tab, tabOptions }) => {
               </div>
             ))}
         </div>
-        <div className="w-full sm:w-1/6 ml-auto">
-          {tournament.active &&
-            tournament.dateStarted &&
-            !tournament.dateEnded && (
-              <TournamentTimer tournament={tournament} />
-            )}
+        <div
+          className={
+            'w-full ml-auto' +
+            (tournamentActive || !tournament.active ? ' sm:w-1/6 ' : ' hidden')
+          }
+        >
+          {tournamentActive && <TournamentTimer tournament={tournament} />}
           {!tournament.active && <p>Tournament Cancelled</p>}
         </div>
       </div>

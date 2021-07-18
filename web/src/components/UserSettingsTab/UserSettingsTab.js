@@ -47,7 +47,7 @@ const UPDATE_USER_MUTATION = gql`
 
 const UserSettingsTab = () => {
   const [editSettings, setEditSettings] = React.useState(false)
-  const { currentUser, reauthenticate, client, hasRole } = useAuth()
+  const { currentUser, reauthenticate, hasRole } = useAuth()
   const [currentPicture, setCurrentPicture] = React.useState({})
   const [nicknameValid, setNicknameValid] = React.useState(null)
   const [nickname, setNickname] = React.useState()

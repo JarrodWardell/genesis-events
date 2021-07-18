@@ -257,20 +257,22 @@ const TournamentSearchPage = () => {
         >
           <div className="cols-span-1">
             <div className="relative flex flex-col border border-gray-400 rounded-md w-full bg-white">
-              <p className="bg-white text-sm text-gray-400 ml-2">
+              <p className="bg-white text-sm text-gray-400 ml-2 rounded-md mt-2">
                 Tournament Name
               </p>
               <input
                 onChange={(e) => addFilter('name', e.target.value)}
                 value={filters.name}
-                className="focus:outline-none px-2 h-8"
+                className="focus:outline-none px-2 h-8  rounded-md "
               />
             </div>
           </div>
           <div className="cols-span-1 grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-2">
             <div className="cols-span-1">
               <div className="relative flex flex-col border border-gray-400 rounded-md w-full bg-white">
-                <p className="bg-white text-sm text-gray-400 ml-2">From</p>
+                <p className="bg-white text-sm text-gray-400 ml-2 rounded-md mt-2">
+                  From
+                </p>
                 <div className="flex">
                   <div className="mx-2">
                     <CalendarIcon />
@@ -289,7 +291,7 @@ const TournamentSearchPage = () => {
                         : null
                     }
                     name={'dateStart'}
-                    className="focus:outline-none px-2 h-8"
+                    className="focus:outline-none px-2 h-8 w-11/12"
                     dropdownMode="select"
                   />
                 </div>
@@ -298,7 +300,9 @@ const TournamentSearchPage = () => {
 
             <div className="cols-span-1">
               <div className="relative flex flex-col border border-gray-400 rounded-md w-full bg-white">
-                <p className="bg-white text-sm text-gray-400 ml-2">To</p>
+                <p className="bg-white text-sm text-gray-400 ml-2 rounded-md mt-2">
+                  To
+                </p>
                 <div className="flex">
                   <div className="mx-2">
                     <CalendarIcon />
@@ -315,7 +319,7 @@ const TournamentSearchPage = () => {
                       newFilters.dateEnd ? new Date(newFilters.dateEnd) : null
                     }
                     name={'dateEnd'}
-                    className="focus:outline-none px-2 h-8"
+                    className="focus:outline-none px-2 h-8 w-11/12"
                     dropdownMode="select"
                   />
                 </div>
@@ -324,7 +328,7 @@ const TournamentSearchPage = () => {
           </div>
           <div className="cols-span-1">
             <div className="relative flex flex-col border border-gray-400 rounded-md w-full bg-white">
-              <p className="bg-white text-sm text-gray-400 ml-2">
+              <p className="bg-white text-sm text-gray-400 ml-2 rounded-md mt-2">
                 Tournament Location
               </p>
               <div className="flex">
@@ -365,12 +369,9 @@ const TournamentSearchPage = () => {
             </div>
           </div>
           <div className="cols-span-1 grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4">
-            <div className="mx-4 flex flex-col justify-center">
-              <Switch.Group
-                as="div"
-                className="flex items-center justify-evenly"
-              >
-                <span className="flex flex-col items-center  ">
+            <div className="flex flex-col justify-center">
+              <Switch.Group as="div" className="flex justify-between">
+                <span className="flex flex-col items-center">
                   <Switch.Label
                     as="span"
                     className="text-sm font-medium text-gray-900"
