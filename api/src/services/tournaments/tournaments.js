@@ -19,8 +19,33 @@ export const tournament = ({ id }) => {
   })
 }
 
-export const tournaments = () => {
-  return db.tournament.findMany()
+export const tournaments = ({ searchTerm }) => {
+  return db.tournament.findMany({
+    where: {
+      OR: [
+        {
+          name: {
+            contains: searchTerm,
+          },
+        },
+        {
+          tournamentUrl: {
+            contains: searchTerm,
+          },
+        },
+        {
+          locationName: {
+            contains: searchTerm,
+          },
+        },
+        {
+          street1: {
+            contains: searchTerm,
+          },
+        },
+      ],
+    },
+  })
 }
 
 export const myTournaments = ({}) => {

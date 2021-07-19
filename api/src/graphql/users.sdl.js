@@ -51,7 +51,7 @@ export const schema = gql`
   }
 
   type Query {
-    users: [User!]!
+    users(searchTerm: String): [User!]!
     user(id: String!): User
     checkNickname(nickname: String): Boolean!
   }

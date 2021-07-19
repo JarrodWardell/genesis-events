@@ -2,9 +2,13 @@ import { Link, routes } from '@redwoodjs/router'
 
 import Tournaments from 'src/components/Tournaments'
 
+export const beforeQuery = (props) => {
+  return { variables: props }
+}
+
 export const QUERY = gql`
-  query TOURNAMENTS {
-    tournaments {
+  query ($searchTerm: String) {
+    tournaments(searchTerm: $searchTerm) {
       id
       name
       tournamentUrl

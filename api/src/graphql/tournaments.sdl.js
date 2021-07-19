@@ -78,7 +78,7 @@ export const schema = gql`
   }
 
   type Query {
-    tournaments: [Tournament!]!
+    tournaments(searchTerm: String): [Tournament!]!
     searchTournaments(input: SearchTournamentInput!): PaginatedTournaments!
     tournament(id: Int!): Tournament
     tournamentByUrl(url: String): Tournament

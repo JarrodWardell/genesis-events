@@ -2,8 +2,33 @@ import newStorePending from 'src/emails/newStorePending'
 import { sendEmail } from 'src/helpers/sendEmail'
 import { db } from 'src/lib/db'
 
-export const users = () => {
-  return db.user.findMany()
+export const users = ({ searchTerm }) => {
+  return db.user.findMany({
+    where: {
+      OR: [
+        {
+          nickname: {
+            contains: searchTerm,
+          },
+        },
+        {
+          firstname: {
+            contains: searchTerm,
+          },
+        },
+        {
+          lastname: {
+            contains: searchTerm,
+          },
+        },
+        {
+          email: {
+            contains: searchTerm,
+          },
+        },
+      ],
+    },
+  })
 }
 
 export const user = ({ id }) => {
