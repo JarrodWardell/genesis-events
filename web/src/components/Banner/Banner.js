@@ -3,6 +3,7 @@ import { toast } from '@redwoodjs/web/toast'
 import { Link, routes, navigate } from '@redwoodjs/router'
 
 import { QUERY } from 'src/components/BannersCell'
+import SingleBanner from '../SingleBanner/SingleBanner'
 
 const DELETE_BANNER_MUTATION = gql`
   mutation DeleteBannerMutation($id: Int!) {
@@ -48,6 +49,7 @@ const Banner = ({ banner }) => {
 
   return (
     <>
+      <SingleBanner banner={banner} />
       <div className="rw-segment">
         <header className="rw-segment-header">
           <h2 className="rw-heading rw-heading-secondary">

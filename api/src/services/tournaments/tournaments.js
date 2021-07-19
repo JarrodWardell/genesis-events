@@ -19,11 +19,36 @@ export const tournament = ({ id }) => {
   })
 }
 
-export const tournaments = () => {
-  return db.tournament.findMany()
+export const tournaments = ({ searchTerm }) => {
+  return db.tournament.findMany({
+    where: {
+      OR: [
+        {
+          name: {
+            contains: searchTerm,
+          },
+        },
+        {
+          tournamentUrl: {
+            contains: searchTerm,
+          },
+        },
+        {
+          locationName: {
+            contains: searchTerm,
+          },
+        },
+        {
+          street1: {
+            contains: searchTerm,
+          },
+        },
+      ],
+    },
+  })
 }
 
-export const myTournaments = () => {
+export const myTournaments = ({}) => {
   let currentUser = context.currentUser
 
   return db.tournament.findMany({
@@ -59,7 +84,7 @@ export const myTournaments = () => {
   })
 }
 
-export const upcomingTournaments = ({ input }) => {
+export const upcomingTournaments = ({ input, take = 6 }) => {
   return db.tournament.findMany({
     where: {
       AND: [
@@ -83,10 +108,11 @@ export const upcomingTournaments = ({ input }) => {
         createdAt: 'desc',
       },
     ],
+    take,
   })
 }
 
-export const finishedTournaments = ({ input }) => {
+export const finishedTournaments = ({ input, take = 6 }) => {
   return db.tournament.findMany({
     where: {
       AND: [
@@ -104,6 +130,7 @@ export const finishedTournaments = ({ input }) => {
     orderBy: {
       dateEnded: 'desc',
     },
+    take,
   })
 }
 
@@ -119,7 +146,7 @@ export const searchTournaments = async ({ input }) => {
 
   let sqlQuery = `
     SELECT "Tournament".id, "Tournament"."name", "Tournament"."desc", "tournamentUrl", "city", "Tournament"."maxPlayers", "Tournament"."locationName", "Tournament".lat, "Tournament".lng, "dateStarted", "startDate", "dateEnded", "Tournament"."createdAt", "Tournament"."updatedAt", "street1", "street2",  "country", "state", "zip", "timerLeftInSeconds", "timerStatus", "Tournament".active,
-    COUNT("PlayerTournamentScore"."tournamentId") AS "playerCount",
+    COUNT("PlayerTournamentScore"."tournamentId") AS "playerCount", COUNT(*) OVER() AS full_count,
     ${distanceQuery}
     FROM "Tournament"
     LEFT JOIN "PlayerTournamentScore" ON "Tournament".id="PlayerTournamentScore"."tournamentId"
@@ -151,14 +178,22 @@ export const searchTournaments = async ({ input }) => {
     }
     ${
       input.lat && input.lng
-        ? `ORDER BY acos(sin(${input.lat}) * sin("Tournament".lat) + cos(${input.lat}) * cos("Tournament".lat) * cos("Tournament".lng - (${input.lng}))) * ${earthsRadius} ASC;`
-        : `;`
+        ? `ORDER BY acos(sin(${input.lat}) * sin("Tournament".lat) + cos(${input.lat}) * cos("Tournament".lat) * cos("Tournament".lng - (${input.lng}))) * ${earthsRadius} ASC`
+        : ``
     }
+    LIMIT ${input.take}
+    OFFSET ${input.skip};
   `
 
-  const tournamentIds = await db.$queryRaw(sqlQuery)
+  console.log(sqlQuery)
 
-  return tournamentIds
+  const tournaments = await db.$queryRaw(sqlQuery)
+
+  return {
+    more: tournaments[0]?.full_count > input.take,
+    totalCount: tournaments[0]?.full_count,
+    tournaments,
+  }
 }
 
 export const tournamentByUrl = ({ url }) => {

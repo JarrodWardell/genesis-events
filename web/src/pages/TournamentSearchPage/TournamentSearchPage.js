@@ -9,7 +9,7 @@ import { ReactComponent as CalendarIcon } from 'src/components/Icons/CalendarIco
 import { ReactComponent as SearchIcon } from 'src/components/Icons/SearchIcon.svg'
 import { ReactComponent as PlayersIcon } from 'src/components/Icons/PlayersIcon.svg'
 import { ReactComponent as TrophyIcon } from 'src/components/Icons/TrophyIcon.svg'
-
+import Button from 'src/components/Button/Button'
 import DatePicker from 'react-datepicker'
 
 import 'react-datepicker/dist/react-datepicker.css'
@@ -21,39 +21,46 @@ function classNames(...classes) {
 export const SEARCH_TOURNAMENTS = gql`
   query searchTournaments($input: SearchTournamentInput!) {
     searchTournaments: searchTournaments(input: $input) {
-      id
-      name
-      tournamentUrl
-      startDate
-      maxPlayers
-      playerCount
-      distance
-      store {
-        name
-      }
-      winners {
-        player {
-          nickname
-        }
-      }
-      players {
+      totalCount
+      more
+      tournaments {
         id
+        name
+        tournamentUrl
+        startDate
+        maxPlayers
+        playerCount
+        distance
+        store {
+          name
+        }
+        winners {
+          id
+          player {
+            nickname
+          }
+        }
+        players {
+          id
+        }
+        lat
+        lng
+        street1
+        street2
+        city
+        country
+        state
+        zip
       }
-      lat
-      lng
-      street1
-      street2
-      city
-      country
-      state
-      zip
     }
   }
 `
 
 const TournamentSearchPage = () => {
-  const { pathname, search, hash } = useLocation()
+  const { pathname, search } = useLocation()
   const [mobileMenu, showMobileMenu] = React.useState(true)
+  const takeAmount = 12
+  const [take, setTake] = React.useState(takeAmount)
 
   const [filters, setFilters] = React.useState({
     lat: null,
@@ -64,7 +71,7 @@ const TournamentSearchPage = () => {
     location: null,
     dateStart: null,
     dateEnd: null,
-    openSpotsOnly: null,
+    openSpotsOnly: false,
   })
 
   const [newFilters, setNewFilters] = React.useState({
@@ -127,7 +134,9 @@ const TournamentSearchPage = () => {
         ...newQuery,
       })
 
-      searchTournaments({ variables: { input: { ...newQuery } } })
+      searchTournaments({
+        variables: { input: { ...newQuery, take, skip: 0 } },
+      })
     }
   }
 
@@ -155,7 +164,10 @@ const TournamentSearchPage = () => {
   }
 
   const searchTourneys = () => {
-    searchTournaments({ variables: { input: { ...newFilters } } })
+    setTake(takeAmount)
+    searchTournaments({
+      variables: { input: { ...newFilters, take: takeAmount, skip: 0 } },
+    })
     setFilters({
       ...newFilters,
     })
@@ -405,13 +417,14 @@ const TournamentSearchPage = () => {
                 </Switch>
               </Switch.Group>
             </div>
-            <button
-              onClick={searchTourneys}
-              className="bg-green-700 m-4 px-4 py-2 uppercase text-white rounded-md"
+            <Button
               disabled={JSON.stringify(filters) === JSON.stringify(newFilters)}
+              loading={loading || loadingLocation}
+              onClick={searchTourneys}
+              className="my-2 sm:m-4 px-4 py-2"
             >
               Find it now
-            </button>
+            </Button>
           </div>
         </div>
       </div>
@@ -423,9 +436,9 @@ const TournamentSearchPage = () => {
             </div>
           ) : (
             <div className="flex flex-col p-4">
-              <p className="mb-4">{data.length} search results found.</p>
+              <p className="mb-4">{data.totalCount} search results found.</p>
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 sm:gap-12">
-                {data.map((tournament) => (
+                {data?.tournaments?.map((tournament) => (
                   <div
                     key={tournament.id}
                     onClick={() =>
@@ -436,7 +449,7 @@ const TournamentSearchPage = () => {
                     <div className="cursor-pointer underline uppercase text-sm text-blue-500 hover:text-blue-300 w-auto font-semibold mb-2">
                       {tournament.name}
                     </div>
-                    <div className="flex flex-col text-gray-400 text-sm">
+                    <div className="flex flex-col text-gray-400 text-sm h-full">
                       <p className="flex items-center">
                         <div className="w-6 h-6 flex font-bold">
                           <CalendarIcon />
@@ -470,7 +483,7 @@ const TournamentSearchPage = () => {
                         </p>
                       )}
                       {tournament.winners.length > 0 && (
-                        <p className="flex items-center font-bold ">
+                        <p className="flex items-center font-bold mb-2">
                           <div className="w-6 h-6 flex justify-center items-center">
                             <TrophyIcon />
                           </div>{' '}
@@ -484,10 +497,37 @@ const TournamentSearchPage = () => {
                           </span>
                         </p>
                       )}
+
+                      {filters.lat && filters.lng && (
+                        <div className="bg-green-500 text-white rounded-md mx-auto p-2 mt-auto text-sm">
+                          {Math.floor(tournament.distance)} KM Away
+                        </div>
+                      )}
                     </div>
                   </div>
                 ))}
               </div>
+              {data?.more && (
+                <Button
+                  full={false}
+                  className={'w-full sm:w-1/4 mx-auto mt-4'}
+                  loading={loading}
+                  onClick={() => {
+                    searchTournaments({
+                      variables: {
+                        input: {
+                          ...filters,
+                          take: take + takeAmount,
+                          skip: 0,
+                        },
+                      },
+                    })
+                    setTake(take + takeAmount)
+                  }}
+                >
+                  Load More
+                </Button>
+              )}
             </div>
           )
         ) : (

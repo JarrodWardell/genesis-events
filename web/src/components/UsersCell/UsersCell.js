@@ -2,9 +2,13 @@ import { Link, routes } from '@redwoodjs/router'
 
 import Users from 'src/components/Users'
 
+export const beforeQuery = (props) => {
+  return { variables: props }
+}
+
 export const QUERY = gql`
-  query USERS {
-    users {
+  query ($searchTerm: String) {
+    users(searchTerm: $searchTerm) {
       id
       firstname
       lastname
@@ -30,7 +34,6 @@ export const QUERY = gql`
     }
   }
 `
-
 export const Loading = () => <div>Loading...</div>
 
 export const Empty = () => {

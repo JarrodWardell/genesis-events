@@ -1,6 +1,6 @@
 export const schema = gql`
   type PlayerTournamentScore {
-    id: Int!
+    id: Int
     wins: Int!
     losses: Int!
     score: Float!
@@ -21,12 +21,18 @@ export const schema = gql`
     tournament: Tournament!
   }
 
+  type PaginatedLeaderboard {
+    more: Boolean
+    totalCount: Int
+    leaderboard: [PlayerTournamentScore!]!
+  }
+
   type Query {
     playerLeaderboard(
       nicknameSearch: String
       skip: Int
       take: Int
-    ): [PlayerTournamentScore!]!
+    ): PaginatedLeaderboard
     playerTournamentScores: [PlayerTournamentScore!]!
     playerTournamentScore(id: Int!): PlayerTournamentScore
   }

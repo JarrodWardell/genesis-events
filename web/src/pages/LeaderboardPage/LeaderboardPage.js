@@ -1,9 +1,9 @@
-import { Link, routes } from '@redwoodjs/router'
 import { useQuery } from '@redwoodjs/web'
 import PlayerProfileItem from 'src/components/PlayerProfileItem/PlayerProfileItem'
 
 import { ReactComponent as SearchIcon } from 'src/components/Icons/SearchIcon.svg'
 import LoadingIcon from 'src/components/LoadingIcon/LoadingIcon'
+import Button from 'src/components/Button/Button'
 
 const PLAYER_LEADERBOARD = gql`
   query playerLeaderboard($nicknameSearch: String, $skip: Int, $take: Int) {
@@ -12,34 +12,38 @@ const PLAYER_LEADERBOARD = gql`
       skip: $skip
       take: $take
     ) {
-      id
-      player {
-        nickname
-        photo {
-          url
-          name
+      leaderboard {
+        playerId
+        player {
+          nickname
+          photo {
+            url
+            name
+          }
+          country
         }
-        country
+        rank
+        totalScore
+        totalPoints
+        totalTournamentsPlayed
       }
-      rank
-      totalScore
-      totalPoints
-      totalTournamentsPlayed
+      totalCount
+      more
     }
   }
 `
 
 const LeaderboardPage = () => {
   const [nicknameSearch, setNicknameSearch] = React.useState('')
-  const [skip, setSkip] = React.useState(0)
-  const [take, setTake] = React.useState(10)
+  const takeAmount = 20
+  const [take, setTake] = React.useState(takeAmount)
 
   const {
     loading,
     error,
-    data: { playerLeaderboard: leaderboard } = {},
+    data: { playerLeaderboard } = {},
   } = useQuery(PLAYER_LEADERBOARD, {
-    variables: { nicknameSearch, skip, take },
+    variables: { nicknameSearch, skip: 0, take },
   })
 
   return (
@@ -54,7 +58,10 @@ const LeaderboardPage = () => {
         <input
           placeholder="Nickname Search"
           className="ml-8 w-10/12 focus:outline-none"
-          onChange={(e) => setNicknameSearch(e.target.value)}
+          onChange={(e) => {
+            setTake(takeAmount)
+            setNicknameSearch(e.target.value)
+          }}
           value={nicknameSearch}
         />
       </div>
@@ -66,7 +73,7 @@ const LeaderboardPage = () => {
           <th className="py-2">Country</th>
           <th className="py-2">Score</th>
         </tr>
-        {loading && (
+        {loading && playerLeaderboard?.leaderboard?.length === 0 && (
           <tr>
             <td rowSpan="6" colSpan="4" className="py-8 w-full">
               <div className="w-full flex flex-col justify-center items-center">
@@ -75,8 +82,17 @@ const LeaderboardPage = () => {
             </td>
           </tr>
         )}
-        {!leaderboard ||
-          (leaderboard.length === 0 && (
+        {playerLeaderboard?.leaderboard?.length === 0 &&
+          !loading &&
+          (nicknameSearch ? (
+            <td
+              rowSpan="6"
+              colSpan="4"
+              className="text-gray-500 text-lg text-center py-8"
+            >
+              No players found with that nickname.
+            </td>
+          ) : (
             <td
               rowSpan="6"
               colSpan="4"
@@ -86,10 +102,9 @@ const LeaderboardPage = () => {
             </td>
           ))}
         {!loading &&
-          leaderboard &&
-          leaderboard.map((player) => (
+          playerLeaderboard?.leaderboard?.map((player) => (
             <tr
-              key={`leaderboard-player-${player.id}`}
+              key={`leaderboard-player-${player.playerId}`}
               className="text-center border-b-2 border-black py-4 text-sm"
             >
               <td className="py-2">{player.rank}</td>
@@ -101,6 +116,18 @@ const LeaderboardPage = () => {
             </tr>
           ))}
       </table>
+      {playerLeaderboard?.more && (
+        <Button
+          className="w-full mt-4 sm:mx-auto sm:w-1/4"
+          full={false}
+          onClick={() => {
+            setTake(take + takeAmount)
+          }}
+          loading={loading}
+        >
+          Load More
+        </Button>
+      )}
     </div>
   )
 }

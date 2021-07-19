@@ -9,6 +9,7 @@ import {
   Submit,
   SelectField,
 } from '@redwoodjs/forms'
+import SingleBanner from '../SingleBanner/SingleBanner'
 
 const formatDatetime = (value) => {
   if (value) {
@@ -23,6 +24,7 @@ const BannerForm = (props) => {
 
   return (
     <div className="rw-form-wrapper">
+      {props.banner && <SingleBanner banner={props.banner} />}
       <Form onSubmit={onSubmit} error={props.error}>
         <FormError
           error={props.error}
@@ -157,7 +159,7 @@ const BannerForm = (props) => {
           className="rw-label"
           errorClassName="rw-label rw-label-error"
         >
-          Button1 link
+          Button1 link (Ensure Begins with /)
         </Label>
         <TextField
           name="button1Link"
@@ -217,7 +219,7 @@ const BannerForm = (props) => {
           className="rw-label"
           errorClassName="rw-label rw-label-error"
         >
-          Button2 link
+          Button2 link (Ensure Begins with /)
         </Label>
         <TextField
           name="button2Link"

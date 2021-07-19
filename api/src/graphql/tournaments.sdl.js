@@ -78,8 +78,8 @@ export const schema = gql`
   }
 
   type Query {
-    tournaments: [Tournament!]!
-    searchTournaments(input: SearchTournamentInput!): [Tournament!]!
+    tournaments(searchTerm: String): [Tournament!]!
+    searchTournaments(input: SearchTournamentInput!): PaginatedTournaments!
     tournament(id: Int!): Tournament
     tournamentByUrl(url: String): Tournament
     myTournaments: [Tournament!]!
@@ -169,6 +169,8 @@ export const schema = gql`
   }
 
   input SearchTournamentInput {
+    take: Int
+    skip: Int
     name: String
     location: String
     lat: Float
@@ -180,6 +182,12 @@ export const schema = gql`
     dateStart: Date
     dateEnd: Date
     distance: Int
+  }
+
+  type PaginatedTournaments {
+    more: Boolean
+    totalCount: Int
+    tournaments: [Tournament!]!
   }
 
   type Mutation {
