@@ -121,7 +121,7 @@ export const searchTournaments = async ({ input }) => {
 
   let sqlQuery = `
     SELECT "Tournament".id, "Tournament"."name", "Tournament"."desc", "tournamentUrl", "city", "Tournament"."maxPlayers", "Tournament"."locationName", "Tournament".lat, "Tournament".lng, "dateStarted", "startDate", "dateEnded", "Tournament"."createdAt", "Tournament"."updatedAt", "street1", "street2",  "country", "state", "zip", "timerLeftInSeconds", "timerStatus", "Tournament".active,
-    COUNT("PlayerTournamentScore"."tournamentId") AS "playerCount",
+    COUNT("PlayerTournamentScore"."tournamentId") AS "playerCount", COUNT(*) OVER() AS full_count,
     ${distanceQuery}
     FROM "Tournament"
     LEFT JOIN "PlayerTournamentScore" ON "Tournament".id="PlayerTournamentScore"."tournamentId"
@@ -153,14 +153,22 @@ export const searchTournaments = async ({ input }) => {
     }
     ${
       input.lat && input.lng
-        ? `ORDER BY acos(sin(${input.lat}) * sin("Tournament".lat) + cos(${input.lat}) * cos("Tournament".lat) * cos("Tournament".lng - (${input.lng}))) * ${earthsRadius} ASC;`
-        : `;`
+        ? `ORDER BY acos(sin(${input.lat}) * sin("Tournament".lat) + cos(${input.lat}) * cos("Tournament".lat) * cos("Tournament".lng - (${input.lng}))) * ${earthsRadius} ASC`
+        : ``
     }
+    LIMIT ${input.take}
+    OFFSET ${input.skip};
   `
 
-  const tournamentIds = await db.$queryRaw(sqlQuery)
+  console.log(sqlQuery)
 
-  return tournamentIds
+  const tournaments = await db.$queryRaw(sqlQuery)
+
+  return {
+    more: tournaments[0]?.full_count > input.take,
+    totalCount: tournaments[0]?.full_count,
+    tournaments,
+  }
 }
 
 export const tournamentByUrl = ({ url }) => {
