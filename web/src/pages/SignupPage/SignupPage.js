@@ -193,6 +193,7 @@ const SignupPage = ({ stepRoute }) => {
     formMethods.setValue('store-country', addr.country)
     formMethods.setValue('store-city', addr.locality)
     formMethods.setValue('store-state', addr.administrative_area_level_1)
+    formMethods.setValue('store-street1', addr.formatted_address)
   }
 
   useEffect(() => {
@@ -561,17 +562,42 @@ const SignupPage = ({ stepRoute }) => {
               />
             </div>
             <div className="flex flex-col w-full col-span-2">
-              <Label errorClassName="text-red-500" name="store-address">
+              <Label errorClassName="text-red-500" name="store-street1">
                 Store Address
               </Label>
-              <GooglePlacesAutocomplete
-                apiKey={process.env.GOOGLE_API_KEY}
-                selectProps={{
-                  value: form.address,
-                  onChange: onSelectAddress,
-                  placeholder: '',
+              <Controller
+                control={formMethods.control}
+                name="store-street1"
+                rules={{
+                  required: true,
                 }}
-                className="border-2 p-2 mt-2 w-full"
+                render={({ name, ref }) => (
+                  <GooglePlacesAutocomplete
+                    apiKey={process.env.GOOGLE_API_KEY}
+                    ref={ref}
+                    name={name}
+                    selectProps={{
+                      value: form.address,
+                      placeholder: '',
+                      onChange: onSelectAddress,
+                      styles: {
+                        control: (provide) => ({
+                          ...provide,
+                          borderColor: formMethods.formState.errors[
+                            'store-street1'
+                          ]
+                            ? 'rgba(239, 68, 68, 1)'
+                            : 'rgba(229, 231, 235, 0.5)',
+                          borderWidth: formMethods.formState.errors[
+                            'store-street1'
+                          ]
+                            ? '2px'
+                            : '1px',
+                        }),
+                      },
+                    }}
+                  />
+                )}
               />
             </div>
             <div className="flex flex-col w-full">

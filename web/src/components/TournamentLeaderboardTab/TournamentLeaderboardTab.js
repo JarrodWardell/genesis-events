@@ -66,7 +66,7 @@ const TournamentLeaderboardTab = ({ tournament }) => {
                   : 'Inactive'}
               </td>
               <td className=" py-2 ">
-                <div className="h-full justify-center items-left flex">
+                <div className="h-full justify-left items-left flex">
                   <PlayerProfileItem player={playerScore.player} />
                 </div>
               </td>
