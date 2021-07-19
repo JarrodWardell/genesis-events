@@ -35,7 +35,7 @@ const PLAYER_LEADERBOARD = gql`
 
 const LeaderboardPage = () => {
   const [nicknameSearch, setNicknameSearch] = React.useState('')
-  const takeAmount = 5
+  const takeAmount = 20
   const [take, setTake] = React.useState(takeAmount)
 
   const {

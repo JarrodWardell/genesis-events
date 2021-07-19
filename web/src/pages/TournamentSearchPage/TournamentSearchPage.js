@@ -59,7 +59,7 @@ export const SEARCH_TOURNAMENTS = gql`
 const TournamentSearchPage = () => {
   const { pathname, search } = useLocation()
   const [mobileMenu, showMobileMenu] = React.useState(true)
-  const takeAmount = 9
+  const takeAmount = 12
   const [take, setTake] = React.useState(takeAmount)
 
   const [filters, setFilters] = React.useState({
