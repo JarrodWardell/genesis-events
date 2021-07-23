@@ -286,7 +286,11 @@ export type Mutation = {
   deleteUserPicture: UserPicture;
   deleteUserUserRole: UserUserRole;
   endTournament: Tournament;
+  leaveTournament: Scalars['String'];
   registerForTournament: Scalars['String'];
+  removePlayer: Scalars['String'];
+  seedTournamentWithPlayers?: Maybe<Tournament>;
+  seedTournaments: Array<Maybe<Tournament>>;
   startTournament: Tournament;
   updateBanner: Banner;
   updateContact: Contact;
@@ -435,8 +439,29 @@ export type MutationEndTournamentArgs = {
 };
 
 
+export type MutationLeaveTournamentArgs = {
+  id: Scalars['Int'];
+};
+
+
 export type MutationRegisterForTournamentArgs = {
   id: Scalars['Int'];
+};
+
+
+export type MutationRemovePlayerArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type MutationSeedTournamentWithPlayersArgs = {
+  id: Scalars['Int'];
+  numPlayers?: Maybe<Scalars['Int']>;
+};
+
+
+export type MutationSeedTournamentsArgs = {
+  numTournaments?: Maybe<Scalars['Int']>;
 };
 
 
@@ -515,6 +540,20 @@ export type MutationUpdateUserUserRoleArgs = {
   input: UpdateUserUserRoleInput;
 };
 
+export type PaginatedLeaderboard = {
+  __typename?: 'PaginatedLeaderboard';
+  more?: Maybe<Scalars['Boolean']>;
+  totalCount?: Maybe<Scalars['Int']>;
+  leaderboard: Array<PlayerTournamentScore>;
+};
+
+export type PaginatedTournaments = {
+  __typename?: 'PaginatedTournaments';
+  more?: Maybe<Scalars['Boolean']>;
+  totalCount?: Maybe<Scalars['Int']>;
+  tournaments: Array<Tournament>;
+};
+
 export type Placement =
   | 'center'
   | 'start'
@@ -537,7 +576,7 @@ export type PlayerMatchScore = {
 
 export type PlayerTournamentScore = {
   __typename?: 'PlayerTournamentScore';
-  id: Scalars['Int'];
+  id?: Maybe<Scalars['Int']>;
   wins: Scalars['Int'];
   losses: Scalars['Int'];
   score: Scalars['Float'];
@@ -580,7 +619,7 @@ export type Query = {
   match?: Maybe<Match>;
   matches: Array<Match>;
   myTournaments: Array<Tournament>;
-  playerLeaderboard: Array<PlayerTournamentScore>;
+  playerLeaderboard?: Maybe<PaginatedLeaderboard>;
   playerMatchScore?: Maybe<PlayerMatchScore>;
   playerMatchScores: Array<PlayerMatchScore>;
   playerTournamentScore?: Maybe<PlayerTournamentScore>;
@@ -588,7 +627,7 @@ export type Query = {
   redwood?: Maybe<Redwood>;
   round?: Maybe<Round>;
   rounds: Array<Round>;
-  searchTournaments: Array<Tournament>;
+  searchTournaments: PaginatedTournaments;
   store?: Maybe<Store>;
   stores: Array<Store>;
   tournament?: Maybe<Tournament>;
@@ -671,6 +710,11 @@ export type QueryTournamentByUrlArgs = {
 };
 
 
+export type QueryTournamentsArgs = {
+  searchTerm?: Maybe<Scalars['String']>;
+};
+
+
 export type QueryUpcomingTournamentsArgs = {
   input?: Maybe<SearchTournamentInput>;
 };
@@ -688,6 +732,11 @@ export type QueryUserPictureArgs = {
 
 export type QueryUserUserRoleArgs = {
   id: Scalars['Int'];
+};
+
+
+export type QueryUsersArgs = {
+  searchTerm?: Maybe<Scalars['String']>;
 };
 
 export type Redwood = {
@@ -716,6 +765,8 @@ export type Round = {
 };
 
 export type SearchTournamentInput = {
+  take?: Maybe<Scalars['Int']>;
+  skip?: Maybe<Scalars['Int']>;
   name?: Maybe<Scalars['String']>;
   location?: Maybe<Scalars['String']>;
   lat?: Maybe<Scalars['Float']>;
@@ -1133,6 +1184,8 @@ export type ResolversTypes = {
   MatchResult: MatchResult;
   MatchScore: MatchScore;
   Mutation: ResolverTypeWrapper<{}>;
+  PaginatedLeaderboard: ResolverTypeWrapper<PaginatedLeaderboard>;
+  PaginatedTournaments: ResolverTypeWrapper<PaginatedTournaments>;
   Placement: Placement;
   PlayerMatchScore: ResolverTypeWrapper<PlayerMatchScore>;
   PlayerTournamentScore: ResolverTypeWrapper<PlayerTournamentScore>;
@@ -1192,6 +1245,8 @@ export type ResolversParentTypes = {
   Match: Match;
   MatchScore: MatchScore;
   Mutation: {};
+  PaginatedLeaderboard: PaginatedLeaderboard;
+  PaginatedTournaments: PaginatedTournaments;
   PlayerMatchScore: PlayerMatchScore;
   PlayerTournamentScore: PlayerTournamentScore;
   Provider: Provider;
@@ -1317,7 +1372,11 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   deleteUserPicture?: Resolver<ResolversTypes['UserPicture'], ParentType, ContextType, RequireFields<MutationDeleteUserPictureArgs, 'id'>>;
   deleteUserUserRole?: Resolver<ResolversTypes['UserUserRole'], ParentType, ContextType, RequireFields<MutationDeleteUserUserRoleArgs, 'id'>>;
   endTournament?: Resolver<ResolversTypes['Tournament'], ParentType, ContextType, RequireFields<MutationEndTournamentArgs, 'id'>>;
+  leaveTournament?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationLeaveTournamentArgs, 'id'>>;
   registerForTournament?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationRegisterForTournamentArgs, 'id'>>;
+  removePlayer?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationRemovePlayerArgs, 'id'>>;
+  seedTournamentWithPlayers?: Resolver<Maybe<ResolversTypes['Tournament']>, ParentType, ContextType, RequireFields<MutationSeedTournamentWithPlayersArgs, 'id'>>;
+  seedTournaments?: Resolver<Array<Maybe<ResolversTypes['Tournament']>>, ParentType, ContextType, RequireFields<MutationSeedTournamentsArgs, never>>;
   startTournament?: Resolver<ResolversTypes['Tournament'], ParentType, ContextType, RequireFields<MutationStartTournamentArgs, 'id'>>;
   updateBanner?: Resolver<ResolversTypes['Banner'], ParentType, ContextType, RequireFields<MutationUpdateBannerArgs, 'id' | 'input'>>;
   updateContact?: Resolver<ResolversTypes['Contact'], ParentType, ContextType, RequireFields<MutationUpdateContactArgs, 'id' | 'input'>>;
@@ -1331,6 +1390,20 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   updateUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationUpdateUserArgs, 'id' | 'input'>>;
   updateUserPicture?: Resolver<ResolversTypes['UserPicture'], ParentType, ContextType, RequireFields<MutationUpdateUserPictureArgs, 'id' | 'input'>>;
   updateUserUserRole?: Resolver<ResolversTypes['UserUserRole'], ParentType, ContextType, RequireFields<MutationUpdateUserUserRoleArgs, 'id' | 'input'>>;
+};
+
+export type PaginatedLeaderboardResolvers<ContextType = any, ParentType extends ResolversParentTypes['PaginatedLeaderboard'] = ResolversParentTypes['PaginatedLeaderboard']> = {
+  more?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  totalCount?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  leaderboard?: Resolver<Array<ResolversTypes['PlayerTournamentScore']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type PaginatedTournamentsResolvers<ContextType = any, ParentType extends ResolversParentTypes['PaginatedTournaments'] = ResolversParentTypes['PaginatedTournaments']> = {
+  more?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  totalCount?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  tournaments?: Resolver<Array<ResolversTypes['Tournament']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type PlayerMatchScoreResolvers<ContextType = any, ParentType extends ResolversParentTypes['PlayerMatchScore'] = ResolversParentTypes['PlayerMatchScore']> = {
@@ -1349,7 +1422,7 @@ export type PlayerMatchScoreResolvers<ContextType = any, ParentType extends Reso
 };
 
 export type PlayerTournamentScoreResolvers<ContextType = any, ParentType extends ResolversParentTypes['PlayerTournamentScore'] = ResolversParentTypes['PlayerTournamentScore']> = {
-  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   wins?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   losses?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   score?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
@@ -1392,7 +1465,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   match?: Resolver<Maybe<ResolversTypes['Match']>, ParentType, ContextType, RequireFields<QueryMatchArgs, 'id'>>;
   matches?: Resolver<Array<ResolversTypes['Match']>, ParentType, ContextType>;
   myTournaments?: Resolver<Array<ResolversTypes['Tournament']>, ParentType, ContextType>;
-  playerLeaderboard?: Resolver<Array<ResolversTypes['PlayerTournamentScore']>, ParentType, ContextType, RequireFields<QueryPlayerLeaderboardArgs, never>>;
+  playerLeaderboard?: Resolver<Maybe<ResolversTypes['PaginatedLeaderboard']>, ParentType, ContextType, RequireFields<QueryPlayerLeaderboardArgs, never>>;
   playerMatchScore?: Resolver<Maybe<ResolversTypes['PlayerMatchScore']>, ParentType, ContextType, RequireFields<QueryPlayerMatchScoreArgs, 'id'>>;
   playerMatchScores?: Resolver<Array<ResolversTypes['PlayerMatchScore']>, ParentType, ContextType>;
   playerTournamentScore?: Resolver<Maybe<ResolversTypes['PlayerTournamentScore']>, ParentType, ContextType, RequireFields<QueryPlayerTournamentScoreArgs, 'id'>>;
@@ -1400,19 +1473,19 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   redwood?: Resolver<Maybe<ResolversTypes['Redwood']>, ParentType, ContextType>;
   round?: Resolver<Maybe<ResolversTypes['Round']>, ParentType, ContextType, RequireFields<QueryRoundArgs, 'id'>>;
   rounds?: Resolver<Array<ResolversTypes['Round']>, ParentType, ContextType>;
-  searchTournaments?: Resolver<Array<ResolversTypes['Tournament']>, ParentType, ContextType, RequireFields<QuerySearchTournamentsArgs, 'input'>>;
+  searchTournaments?: Resolver<ResolversTypes['PaginatedTournaments'], ParentType, ContextType, RequireFields<QuerySearchTournamentsArgs, 'input'>>;
   store?: Resolver<Maybe<ResolversTypes['Store']>, ParentType, ContextType, RequireFields<QueryStoreArgs, 'id'>>;
   stores?: Resolver<Array<ResolversTypes['Store']>, ParentType, ContextType>;
   tournament?: Resolver<Maybe<ResolversTypes['Tournament']>, ParentType, ContextType, RequireFields<QueryTournamentArgs, 'id'>>;
   tournamentByUrl?: Resolver<Maybe<ResolversTypes['Tournament']>, ParentType, ContextType, RequireFields<QueryTournamentByUrlArgs, never>>;
-  tournaments?: Resolver<Array<ResolversTypes['Tournament']>, ParentType, ContextType>;
+  tournaments?: Resolver<Array<ResolversTypes['Tournament']>, ParentType, ContextType, RequireFields<QueryTournamentsArgs, never>>;
   upcomingTournaments?: Resolver<Array<ResolversTypes['Tournament']>, ParentType, ContextType, RequireFields<QueryUpcomingTournamentsArgs, never>>;
   user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryUserArgs, 'id'>>;
   userPicture?: Resolver<Maybe<ResolversTypes['UserPicture']>, ParentType, ContextType, RequireFields<QueryUserPictureArgs, 'id'>>;
   userPictures?: Resolver<Array<ResolversTypes['UserPicture']>, ParentType, ContextType>;
   userUserRole?: Resolver<Maybe<ResolversTypes['UserUserRole']>, ParentType, ContextType, RequireFields<QueryUserUserRoleArgs, 'id'>>;
   userUserRoles?: Resolver<Array<ResolversTypes['UserUserRole']>, ParentType, ContextType>;
-  users?: Resolver<Array<ResolversTypes['User']>, ParentType, ContextType>;
+  users?: Resolver<Array<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryUsersArgs, never>>;
 };
 
 export type RedwoodResolvers<ContextType = any, ParentType extends ResolversParentTypes['Redwood'] = ResolversParentTypes['Redwood']> = {
@@ -1580,6 +1653,8 @@ export type Resolvers<ContextType = any> = {
   JSONObject?: GraphQLScalarType;
   Match?: MatchResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
+  PaginatedLeaderboard?: PaginatedLeaderboardResolvers<ContextType>;
+  PaginatedTournaments?: PaginatedTournamentsResolvers<ContextType>;
   PlayerMatchScore?: PlayerMatchScoreResolvers<ContextType>;
   PlayerTournamentScore?: PlayerTournamentScoreResolvers<ContextType>;
   Provider?: ProviderResolvers<ContextType>;

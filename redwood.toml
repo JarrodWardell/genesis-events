@@ -8,9 +8,10 @@
 [web]
   port = 8910
   apiProxyPath = "/.netlify/functions"
-  includeEnvironmentVariables = ['GOOGLE_API_KEY', 'FIREBASE_API_KEY', 'FIREBASE_AUTH_DOMAIN', 'FIREBASE_PROJECT_ID', 'FIREBASE_STORAGE_BUCKET', 'FIREBASE_MESSAGING_SENDER_ID', 'FIREBASE_APP_ID', 'FIREBASE_MEASUREMENT_ID']
+  includeEnvironmentVariables = ['GOOGLE_API_KEY', 'DATABASE_URL', 'FIREBASE_API_KEY', 'FIREBASE_AUTH_DOMAIN', 'FIREBASE_PROJECT_ID', 'FIREBASE_STORAGE_BUCKET', 'FIREBASE_MESSAGING_SENDER_ID', 'FIREBASE_APP_ID', 'FIREBASE_MEASUREMENT_ID', 'MAILGUN_API_KEY', 'ADMIN_EMAILS', 'FRONTEND_URL']
 [api]
   port = 8911
   schemaPath = "./api/db/schema.prisma"
+  includeEnvironmentVariables = ['DATABASE_URL']
 [browser]
   open = true
