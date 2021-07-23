@@ -51,7 +51,7 @@ const UserContactPage = () => {
           Contact Us
         </h2>
       </div>
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-3xl">
+      <div className="mt-8 mx-8 sm:mx-auto sm:w-full sm:max-w-3xl">
         {error && <p>{error}</p>}
         <Form onSubmit={onSave} error={error} formMethods={formMethods}>
           <FormError
