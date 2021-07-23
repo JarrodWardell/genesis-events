@@ -9,7 +9,7 @@ import MainLayout from './layouts/MainLayout/MainLayout'
 const Routes = () => {
   return (
     <Router>
-      <Route path="/" page={HomePage} name="home" prerender />
+      <Route path="/" page={HomePage} name="home" />
       <Set wrap={[MainLayout]}>
         <Route path="/login" page={LoginPage} name="login" />
         <Route path="/signup" page={SignupPage} name="signup" />
