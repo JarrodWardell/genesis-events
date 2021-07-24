@@ -90,7 +90,7 @@ const LoginPage = () => {
                   </span>
                 </div>
               </div>
-              <div className="mt-6 grid grid-cols-3 gap-3">
+              <div className="mt-6 grid grid-cols-1 gap-3">
                 <div>
                   <button
                     disabled={loading}
@@ -103,6 +103,7 @@ const LoginPage = () => {
                     <GoogleIcon />
                   </button>
                 </div>
+                {/*
 
                 <div>
                   <button
@@ -129,6 +130,7 @@ const LoginPage = () => {
                     <FacebookIcon />
                   </button>
                 </div>
+                  */}
               </div>
             </div>
           </div>

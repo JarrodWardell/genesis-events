@@ -7,7 +7,7 @@ const mg = mailgun({
 
 export const sendEmail = async ({ to, subject, text, html }) => {
   const data = {
-    from: 'Genesis Event Organizer <me@samples.mailgun.org>',
+    from: 'Genesis Event Organizer <noreply@geo.genesisbattlesofchampions.com>',
     to,
     subject,
     text,

@@ -748,7 +748,7 @@ const SignupPage = ({ stepRoute }) => {
                   </span>
                 </div>
               </div>
-              <div className="mt-6 grid grid-cols-3 gap-3">
+              <div className="mt-6 grid grid-cols-1 gap-3">
                 <div>
                   <button
                     disabled={loading}
@@ -761,6 +761,8 @@ const SignupPage = ({ stepRoute }) => {
                     <GoogleIcon />
                   </button>
                 </div>
+
+                {/*
 
                 <div>
                   <button
@@ -787,6 +789,7 @@ const SignupPage = ({ stepRoute }) => {
                     <FacebookIcon />
                   </button>
                 </div>
+                */}
               </div>
             </div>
           )}
