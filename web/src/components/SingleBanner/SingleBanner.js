@@ -38,7 +38,7 @@ const SingleBanner = ({ banner }) => {
       </div>
       <div
         id="buttons"
-        className="justify-around w-1/4 flex"
+        className="justify-around w-1/2 sm:w-1/3 flex"
         style={{
           alignSelf: banner?.buttonsVerticalPlacement,
           justifySelf: banner?.buttonsHorizontalPlacement,
