@@ -54,16 +54,13 @@ const TournamentSignupTab = ({ tournament }) => {
   })
 
   const checkIfSignupActive = () => {
-    // Tournament not started
-    let tournamentNotStarted = tournament?.dateStarted == null
-
     // Tournament is active
     let tournamentIsActive = tournament.active
 
     // Tournament not full
     let tournamentNotFull = tournament.players.length < tournament.maxPlayers
 
-    if (tournamentNotFull && tournamentIsActive && tournamentNotStarted) {
+    if (tournamentNotFull && tournamentIsActive) {
       return true
     }
 
@@ -88,14 +85,12 @@ const TournamentSignupTab = ({ tournament }) => {
   const returnInfoText = () => {
     // Tournament has been cancelled
     if (!tournament.active) return 'Event has been cancelled'
-    // Tournament has started
+    // Tournament has Ended
     if (tournament.dateEnded) return 'Event has already ended'
     // Not a player
     if (!hasRole('PLAYER')) return 'Only players may register for this event'
     // Already registered
     if (isInTournament()) return 'You have already registered for this event'
-    // Tournament has started
-    if (tournament.dateStarted) return 'Event has already started'
     // Tournament full
     if (tournament.players.length >= tournament.maxPlayers)
       return 'Event is full'
