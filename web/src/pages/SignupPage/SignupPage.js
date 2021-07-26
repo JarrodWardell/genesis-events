@@ -388,7 +388,7 @@ const SignupPage = ({ stepRoute }) => {
             </div>
             <div className="flex flex-col w-full">
               <Label name="city" errorClassName="text-red-500">
-                City
+                City (Optional)
               </Label>
               <TextField
                 name="city"
@@ -399,7 +399,7 @@ const SignupPage = ({ stepRoute }) => {
             </div>
             <div className="flex flex-col w-full">
               <Label name="state" errorClassName="text-red-500">
-                State/Province
+                State/Province (Optional)
               </Label>
               <TextField
                 name="state"
@@ -410,7 +410,7 @@ const SignupPage = ({ stepRoute }) => {
             </div>
             <div className="flex flex-col w-full">
               <Label name="country" errorClassName="text-red-500">
-                Country
+                Country (Optional)
               </Label>
               <TextField
                 name="country"
@@ -421,7 +421,7 @@ const SignupPage = ({ stepRoute }) => {
             </div>
             <div className="flex flex-col w-full">
               <Label name="zip" errorClassName="text-red-500">
-                Zip Code/Postal Code
+                Zip Code/Postal Code (Optional)
               </Label>
               <TextField
                 name="zip"
@@ -431,7 +431,9 @@ const SignupPage = ({ stepRoute }) => {
               />
             </div>
             <div className="flex flex-col w-full col-span-2">
-              <Label name="howHeard">How did you hear about us?</Label>
+              <Label name="howHeard">
+                How did you hear about us? (Optional)
+              </Label>
               <TextAreaField
                 name="howHeard"
                 className="border-2 p-2 mt-2 w-full"

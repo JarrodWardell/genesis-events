@@ -38,7 +38,7 @@ const TournamentRoundsTab = ({ tournament, roundNumber }) => {
   const componentRef = React.useRef()
   const { hasRole, currentUser } = useAuth()
 
-  if ((!roundNumber || roundNumber === '') && tournament.round.length) {
+  if ((!roundNumber || roundNumber === '') && tournament?.round?.length > 0) {
     return (
       <Redirect
         to={`/tournament/${tournament?.tournamentUrl}/rounds/${

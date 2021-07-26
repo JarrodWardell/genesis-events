@@ -57,7 +57,7 @@ export const generateMatches = async ({ roundNumber = 1, db, id }) => {
   if (roundNumber > 1) {
     const matches = await db.tournament
       .findUnique({ where: { id } })
-      .matches({ include: { players: true } })
+      .matches({ where: { active: true }, include: { players: true } })
 
     //Go through all previous matches, find which players played which and add to the player dictionary
     matches.forEach((match) => {
@@ -96,8 +96,11 @@ export const generateMatches = async ({ roundNumber = 1, db, id }) => {
     if (playersNotGivenMatches.indexOf(player) !== -1) {
       let match = []
       let scoreDifToCheck = playerScores[player]
+
       //Players to avoid include players NOT in the same differential as current player && players they have played before
+
       let playersToAvoid = []
+
       scoreObjDiff.forEach((key) => {
         //Players to avoid include players NOT with the same differential
         if (parseInt(scoreDifToCheck) !== parseInt(key)) {
@@ -113,10 +116,13 @@ export const generateMatches = async ({ roundNumber = 1, db, id }) => {
       playersNotGivenMatches.splice(playersNotGivenMatches.indexOf(player), 1)
       let playersProhibited = [...playersGivenMatches]
 
+      console.log('Player', player)
       let opponent = findOpponent({
         playersNotGivenMatches,
         playersToAvoid,
         playersProhibited,
+        playersPlayedAgainst:
+          player in playersPlayed ? playersPlayed[player] : [],
       })
 
       if (opponent) {
@@ -153,10 +159,9 @@ const findOpponent = ({
   playersNotGivenMatches = [],
   playersToAvoid = [],
   playersProhibited = [],
+  playersPlayedAgainst = [],
 }) => {
   let chosenOpponent = null
-
-  console.log('Players to Avoid', playersToAvoid)
 
   //We will go through the playersNotGivenMatches and try to find a player that is not in the playersProhibited array and playersToAvoid array
   if (playersNotGivenMatches.length > 0) {
@@ -164,13 +169,27 @@ const findOpponent = ({
       if (
         playersProhibited.indexOf(possOpp) == -1 &&
         playersToAvoid.indexOf(possOpp) == -1 &&
+        playersPlayedAgainst.indexOf(possOpp) === -1 &&
         !chosenOpponent
       ) {
         chosenOpponent = possOpp
       }
     })
 
-    //If none is found, pick the top players from playersToAvoid that is not in playersProhibited
+    //If none is found, pick the top players from playersToAvoid that is not in playersProhibited AND  not in players played against
+    if (!chosenOpponent) {
+      playersNotGivenMatches.forEach((possOpp) => {
+        if (
+          playersProhibited.indexOf(possOpp) == -1 &&
+          playersPlayedAgainst.indexOf(possOpp) === -1 &&
+          !chosenOpponent
+        ) {
+          chosenOpponent = possOpp
+        }
+      })
+    }
+
+    //If  still no opponent found, just pick any player that is not prohibited
     if (!chosenOpponent) {
       playersNotGivenMatches.forEach((possOpp) => {
         if (playersProhibited.indexOf(possOpp) == -1 && !chosenOpponent) {
