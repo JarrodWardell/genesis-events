@@ -47,7 +47,8 @@ const StoreSettingsTab = () => {
   const [street1, setStreet1] = React.useState('')
   const { currentUser, reauthenticate } = useAuth()
   const [editSettings, setEditSettings] = React.useState(false)
-  let currentStore = currentUser?.stores[0]
+  let currentStore =
+    currentUser?.stores.length > 0 ? currentUser?.stores[0] : {}
 
   const [updateStore, { loading, error: updateUserError }] = useMutation(
     UPDATE_STORE_MUTATION,

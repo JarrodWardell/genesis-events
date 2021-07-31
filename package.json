@@ -8,7 +8,7 @@
     ]
   },
   "devDependencies": {
-    "@redwoodjs/core": "^0.34.1",
+    "@redwoodjs/core": "^0.35.2",
     "netlify-plugin-inline-functions-env": "^1.0.9"
   },
   "eslintConfig": {
