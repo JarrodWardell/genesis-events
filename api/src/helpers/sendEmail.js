@@ -18,7 +18,7 @@ export const sendEmail = async ({ to, subject, text, html }) => {
   await mg.messages().send(data, (error, body) => {
     console.log('Body', body)
     if (error) {
-      Sentry.captureException(error)
+      Sentry.captureException(error, { ...data })
     }
   })
 }
