@@ -12,6 +12,7 @@ const Routes = () => {
       <Route path="/" page={HomePage} name="home" />
       <Set wrap={[MainLayout]}>
         <Route path="/login" page={LoginPage} name="login" />
+        <Route path="/signup/{type:String}" page={SignupPage} name="signup" />
         <Route path="/signup" page={SignupPage} name="signup" />
         <Route path="/user-contact" page={UserContactPage} name="userContact" />
         <Route path="/forgot-password" page={ForgotPasswordPage} name="forgotPassword" />

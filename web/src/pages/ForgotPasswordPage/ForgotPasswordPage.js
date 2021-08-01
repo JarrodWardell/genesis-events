@@ -1,19 +1,31 @@
 import { Form, TextField, Submit, Label } from '@redwoodjs/forms'
 import { useAuth } from '@redwoodjs/auth'
 import { Link, navigate, Redirect, routes } from '@redwoodjs/router'
+import { logError } from 'src/helpers/errorLogger'
+import Button from 'src/components/Button/Button'
 
 const ForgotPasswordPage = () => {
-  const [error, setError] = React.useState(null)
   const [sentSendPassword, setSentSendPassword] = React.useState(false)
   const { loading, currentUser, client } = useAuth()
+  const [loadingPasswordReset, setLoadingPasswordReset] = React.useState(false)
 
   const onForgotPassword = async (data) => {
     var auth = client.auth()
+    setLoadingPasswordReset(true)
     await auth
       .sendPasswordResetEmail(data.email)
-      .then(() => setSentSendPassword(true))
-      .catch((err) => setError(err))
-    setError(false)
+      .then(() => {
+        setSentSendPassword(true)
+        setLoadingPasswordReset(false)
+      })
+      .catch((error) => {
+        setLoadingPasswordReset(false)
+        logError({
+          error,
+          showToast: true,
+          log: true,
+        })
+      })
   }
 
   if (!currentUser?.user) {
@@ -61,13 +73,13 @@ const ForgotPasswordPage = () => {
                     required: true,
                   }}
                 />
-
-                <Submit
-                  disabled={loading}
-                  className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-700 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                <Button
+                  type="submit"
+                  loading={loading || loadingPasswordReset}
+                  className="mt-2"
                 >
-                  Send
-                </Submit>
+                  Submit
+                </Button>
               </Form>
             )}
           </div>

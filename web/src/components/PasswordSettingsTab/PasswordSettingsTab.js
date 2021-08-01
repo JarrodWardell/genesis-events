@@ -1,5 +1,6 @@
 import { useAuth } from '@redwoodjs/auth'
 import toast from 'react-hot-toast'
+import { logError } from 'src/helpers/errorLogger'
 import PasswordCheck from '../PasswordCheck/PasswordCheck'
 
 const PasswordSettingsTab = () => {
@@ -28,11 +29,15 @@ const PasswordSettingsTab = () => {
             )
           })
       })
-      .catch(() => {
+      .catch((error) => {
         setLoadingPasswordUpdate(false)
-        toast.error(
-          'There was an error with your current password. Please confirm it is correct before trying again.'
-        )
+        logError({
+          error,
+          log: false,
+          showToast: true,
+          customMessage:
+            'Your current password is incorrect. Please confirm it is correct before trying again.',
+        })
       })
   }
 
@@ -44,6 +49,7 @@ const PasswordSettingsTab = () => {
         submitText={'SUBMIT'}
         loading={loadingPasswordUpdate}
         showOldPasswordField={true}
+        submitColor="blue"
       />
     </div>
   )

@@ -1,26 +1,53 @@
 import { Form, TextField, PasswordField, Submit, Label } from '@redwoodjs/forms'
 import { useAuth } from '@redwoodjs/auth'
-import { Redirect, routes, Link } from '@redwoodjs/router'
+import { Redirect, routes, Link, navigate } from '@redwoodjs/router'
 import { GoogleIcon } from 'src/components/Icons/Google'
 import { FacebookIcon } from 'src/components/Icons/Facebook'
 import { TwitterIcon } from 'src/components/Icons/Twitter'
-import { toast } from '@redwoodjs/web/dist/toast'
+import { logError } from 'src/helpers/errorLogger'
+import Button from 'src/components/Button/Button'
 
 const LoginPage = () => {
   const [error, setError] = React.useState(null)
-  const { logIn, loading, currentUser } = useAuth()
+  const { logIn, loading, currentUser, logOut, client } = useAuth()
 
   const onSubmit = async (data) => {
-    await logIn({ ...data }).catch(() =>
-      toast.error('There was an error in logging in. Please try again.')
-    )
+    await logIn({ ...data }).catch((error) => {
+      logError({
+        error,
+        showToast: true,
+        log: true,
+      })
+    })
     setError(null)
   }
 
   const onProviderClick = async (provider) => {
-    await logIn(provider).catch(() =>
-      toast.error('There was an error in logging in. Please try again.')
-    )
+    await logIn(provider)
+      .then(async (res) => {
+        if (res.additionalUserInfo.isNewUser) {
+          await client
+            .auth()
+            ?.currentUser?.delete()
+            .then(() => {
+              logError({
+                error: null,
+                customMessage:
+                  'A GEO account could not be found with this social login. Please Sign Up first.',
+                showToast: true,
+                log: false,
+              })
+            })
+          await logOut().then(navigate(routes.login()))
+        }
+      })
+      .catch((error) => {
+        logError({
+          error,
+          showToast: true,
+          log: true,
+        })
+      })
   }
 
   if (!currentUser?.user) {
@@ -71,13 +98,9 @@ const LoginPage = () => {
                   Forgot your password?
                 </Link>
               </div>
-
-              <Submit
-                disabled={loading}
-                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-700 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-              >
+              <Button type="submit" loading={loading} className="mt-0 mb-0">
                 Sign in
-              </Submit>
+              </Button>
             </Form>
             <div className="mt-6">
               <div className="relative">

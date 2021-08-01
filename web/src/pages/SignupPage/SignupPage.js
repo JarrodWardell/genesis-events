@@ -25,10 +25,10 @@ import { GoogleIcon } from 'src/components/Icons/Google'
 import { FacebookIcon } from 'src/components/Icons/Facebook'
 import { TwitterIcon } from 'src/components/Icons/Twitter'
 import Button from 'src/components/Button/Button'
-import toast from 'react-hot-toast'
 import DatePicker from 'react-datepicker'
 
 import 'react-datepicker/dist/react-datepicker.css'
+import { logError } from 'src/helpers/errorLogger'
 
 const CREATE_USER = gql`
   mutation CreateUserMutation(
@@ -57,7 +57,7 @@ const distributors = [
   'Universal Distribution',
 ]
 
-const SignupPage = ({ stepRoute }) => {
+const SignupPage = ({ type }) => {
   const [error, setError] = React.useState(null)
   const [step, setStep] = React.useState(1)
   const [form, setForm] = React.useState({})
@@ -69,14 +69,40 @@ const SignupPage = ({ stepRoute }) => {
   const password = useRef()
   password.current = formMethods.watch('password', '')
 
+  React.useEffect(() => {
+    if (!type) {
+      setForm({
+        ...form,
+        role: null,
+      })
+    } else {
+      if (!form.role) {
+        setForm({
+          ...form,
+          role: type.toUpperCase(),
+        })
+
+        setStep(2)
+      }
+    }
+  }, [type])
+
   const onSubmit = async (data) => {
     let newData = { ...data, ...form }
-    await signUp({ password: newData.password, email: newData.email }).then(
-      async () => {
+    await signUp({ password: newData.password, email: newData.email })
+      .then(async () => {
         delete newData.password
         await callCreateUser(newData)
-      }
-    )
+      })
+      .catch((error) => {
+        logError({
+          error,
+          showToast: true,
+          log: true,
+          func: 'onSubmit',
+          route: '/signup',
+        })
+      })
   }
 
   const onProviderClick = async (provider) => {
@@ -84,8 +110,14 @@ const SignupPage = ({ stepRoute }) => {
       .then(async () => {
         await callCreateUser({ ...form })
       })
-      .catch(() => {
-        toast.error('There was an error in creating your account')
+      .catch((error) => {
+        logError({
+          error,
+          showToast: true,
+          log: true,
+          func: 'onProviderClick',
+          route: '/signup',
+        })
       })
   }
 
@@ -149,12 +181,16 @@ const SignupPage = ({ stepRoute }) => {
         if (role === 'EO') navigate(routes.storePending())
         window.location.reload()
       })
-      .catch((err) => {
+      .catch((error) => {
         var auth = client?.auth()?.currentUser
         auth.delete().then(() => {
-          toast.error(
-            'There was an error in creating your account. Please try again.'
-          )
+          logError({
+            error,
+            showToast: true,
+            log: true,
+            func: 'callCreateUser',
+            route: '/signup',
+          })
         })
       })
   }
@@ -165,6 +201,7 @@ const SignupPage = ({ stepRoute }) => {
       role,
     })
     setStep(2)
+    navigate(`/signup/${role.toLowerCase()}`)
   }
 
   const addToForm = (data) => {

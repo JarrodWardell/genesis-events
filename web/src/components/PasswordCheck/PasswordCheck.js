@@ -1,5 +1,6 @@
 import { Form, Label, PasswordField, Submit } from '@redwoodjs/forms/dist'
 import { useForm } from 'react-hook-form'
+import Button from '../Button/Button'
 
 const PasswordCheck = ({
   onSubmit,
@@ -8,6 +9,7 @@ const PasswordCheck = ({
   showOldPasswordField = false,
   onBack = () => {},
   backButtonText = null,
+  submitColor = 'green',
 }) => {
   const formMethods = useForm()
   const password = formMethods.watch('password', '')
@@ -179,18 +181,18 @@ const PasswordCheck = ({
             {backButtonText}
           </button>
         )}
-        <Submit
-          disabled={loading || !checkPasswordRules()}
-          className={`my-8 flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2 ${
-            backButtonText ? ' w-full' : ' mx-auto col-span-2 w-1/2'
-          } ${
-            showOldPasswordField
-              ? ' bg-green-700 hover:bg-green-900 focus:ring-green-500'
-              : '  bg-indigo-600 hover:bg-indigo-700 focus:ring-indigo-500'
+        <Button
+          type="submit"
+          disabled={!checkPasswordRules()}
+          loading={loading}
+          color={submitColor}
+          full={backButtonText ? true : false}
+          className={`my-8 ${
+            backButtonText ? ' w-full' : ' mx-auto w-1/2 col-span-2 '
           }`}
         >
           {submitText}
-        </Submit>
+        </Button>
       </div>
     </Form>
   )
