@@ -1,5 +1,6 @@
 import mjml2html from 'mjml'
 import emailTemplate1 from './template'
+import { isEqual, format } from 'date-fns'
 
 const tournamentEditedPlayer = ({
   options = {},
@@ -30,23 +31,60 @@ const tournamentEditedPlayer = ({
         <mj-text mj-class="body">
           Please see below for the following changes:
         </mj-text>
-        <mj-text mj-class="body">
-        ${prevTournament.name !== tournament.name ? tournament.name : ''}
-      </mj-text>
-        <mj-text>
         ${
-          prevTournament.startDate !== tournament.startDate
-            ? new Date(tournament.startDate).toLocaleString().split(',')[0]
-            : ''
+          prevTournament.name !== tournament.name &&
+          `<mj-section>
+            <mj-column>
+              <mj-text  mj-class="body" color="red" text-decoration="line-through">${prevTournament.name}</mj-text>
+            </mj-column>
+            <mj-column>
+              <mj-text font-size="20px" align="center">➝</mj-text>
+            </mj-column>
+            <mj-column>
+              <mj-text mj-class="body">
+                ${tournament.name}
+              </mj-text>
+            </mj-column>
+          </mj-section>`
         }
-        </mj-text>
-        <mj-text>
         ${
-          prevTournament.locationName !== tournament.locationName
-            ? tournament.locationName
-            : ''
+          !isEqual(
+            new Date(prevTournament.startDate),
+            new Date(tournament.startDate)
+          ) &&
+          `<mj-section>
+            <mj-column>
+              <mj-text  mj-class="body" color="red" text-decoration="line-through">${format(
+                new Date(prevTournament.startDate),
+                'PPpp'
+              )}</mj-text>
+            </mj-column>
+            <mj-column>
+              <mj-text font-size="20px" align="center">➝</mj-text>
+            </mj-column>
+            <mj-column>
+              <mj-text mj-class="body">
+              ${format(new Date(tournament.startDate), 'PPpp')}
+              </mj-text>
+            </mj-column>
+          </mj-section>`
         }
-        </mj-text>
+        ${
+          prevTournament.locationName !== tournament.locationName &&
+          `<mj-section>
+            <mj-column>
+              <mj-text  mj-class="body" color="red" text-decoration="line-through">${prevTournament.locationName}</mj-text>
+            </mj-column>
+            <mj-column>
+              <mj-text font-size="20px" align="center">➝</mj-text>
+            </mj-column>
+            <mj-column>
+              <mj-text mj-class="body">
+              ${tournament.locationName}
+              </mj-text>
+            </mj-column>
+          </mj-section>`
+        }
         <mj-text mj-class="body">
           Visit the following link to view the tournament details in full
         </mj-text>

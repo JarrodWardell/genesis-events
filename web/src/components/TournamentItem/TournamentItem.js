@@ -45,41 +45,41 @@ const TournamentItem = ({ tournament, full = false, index }) => {
       {full ? (
         <div className="flex flex-col sm:grid sm:grid-cols-5 sm:gap-4 text-gray-400 text-sm">
           <div className="col-span-1 flex flex-col">
-            <p className="flex items-center">
+            <div className="flex items-center">
               <div className="w-6 h-6 flex font-bold">
                 <CalendarIcon />
               </div>{' '}
               <span className="ml-1">
                 {new Date(startDate).toLocaleString().split(',')[0]}
               </span>
-            </p>
-            <p className="flex items-center">
+            </div>
+            <div className="flex items-center">
               <div className="w-6 h-6 flex font-bold">
                 <ClockIcon />
               </div>{' '}
               <span className="ml-1">
                 {format(new Date(startDate), 'p zzzz')}
               </span>
-            </p>
+            </div>
           </div>
           <div className="col-span-1">
-            <p className="flex items-center">
+            <div className="flex items-center">
               <div className="w-6 h-6 flex font-bold">
                 <PlayersIcon />
               </div>{' '}
               <span className="ml-1">
                 {players?.length}/{maxPlayers} Players Registered
               </span>
-            </p>
+            </div>
             {tournament.street1 && (
-              <p className="flex items-center">
+              <div className="flex items-center">
                 <div className="w-6 h-6 flex font-bold">
                   <LocationIcon />
                 </div>{' '}
                 <span className="ml-1">
                   {city}, {state}, {country}
                 </span>
-              </p>
+              </div>
             )}
           </div>
           <div className="col-span-2 mt-4 sm:mt-0">
@@ -120,58 +120,58 @@ const TournamentItem = ({ tournament, full = false, index }) => {
         </div>
       ) : (
         <div className="flex flex-col text-gray-400 text-sm">
-          <p className="flex items-center">
+          <div className="flex items-center">
             <div className="w-6 h-6 flex font-bold">
               <CalendarIcon />
             </div>{' '}
             <span className="ml-1">
               {new Date(startDate).toLocaleString().split(',')[0]}
             </span>
-          </p>
-          <p className="flex items-center">
+          </div>
+          <div className="flex items-center">
             <div className="w-6 h-6 flex font-bold">
               <ClockIcon />
             </div>{' '}
             <span className="ml-1">
               {format(new Date(startDate), 'p zzzz')}
             </span>
-          </p>
-          <p className="flex items-center">
+          </div>
+          <div className="flex items-center">
             <div className="w-6 h-6 flex font-bold">
               <PlayersIcon />
             </div>{' '}
             <span className="ml-1">
               {players?.length}/{maxPlayers} Players Registered
             </span>
-          </p>
-          <p className="flex items-center">
+          </div>
+          <div className="flex items-center">
             <div className="w-6 h-6 flex font-bold">
               <HomeIcon />
             </div>{' '}
             <span className="ml-1">{locationName}</span>
-          </p>
+          </div>
           {tournament.street1 && (
-            <p className="flex items-center">
+            <div className="flex items-center">
               <div className="w-6 h-6 flex font-bold">
                 <LocationIcon />
               </div>{' '}
               <span className="ml-1">{street1}</span>
-            </p>
+            </div>
           )}
           {tournament.winners.length > 0 && (
-            <p className="flex items-center font-bold ">
+            <div className="flex items-center font-bold ">
               <div className="w-6 h-6 flex justify-center items-center">
                 <TrophyIcon />
               </div>{' '}
               <span className="ml-1">
                 {tournament.winners.map((winner, index) => (
-                  <span key={`winner-${winner.id}`}>
+                  <span key={`winner-${tournament.id}-${winner.playerId}`}>
                     {index > 0 && ', '}
                     {winner.player.nickname}
                   </span>
                 ))}
               </span>
-            </p>
+            </div>
           )}
         </div>
       )}

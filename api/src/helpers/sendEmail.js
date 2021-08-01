@@ -1,4 +1,5 @@
 import mailgun from 'mailgun-js'
+import * as Sentry from '@sentry/node'
 
 const mg = mailgun({
   apiKey: process.env.MAILGUN_API_KEY,
@@ -8,7 +9,7 @@ const mg = mailgun({
 export const sendEmail = async ({ to, subject, text, html }) => {
   const data = {
     from: 'Genesis Event Organizer <noreply@mail.geo.genesisbattlesofchampions.com>',
-    to,
+    to: process.env.ENV === 'PROD' ? to : 'abbassalisiwjeesudden@gmail.com',
     subject,
     text,
     html,
@@ -16,6 +17,8 @@ export const sendEmail = async ({ to, subject, text, html }) => {
 
   await mg.messages().send(data, (error, body) => {
     console.log('Body', body)
-    console.log('Err', error)
+    if (error) {
+      Sentry.captureException(error)
+    }
   })
 }

@@ -10,6 +10,9 @@ export const TOURNAMENT_BY_URL_SIMPLE = gql`
       desc
       startDate
       maxPlayers
+      players {
+        playerId
+      }
       locationName
       lat
       lng

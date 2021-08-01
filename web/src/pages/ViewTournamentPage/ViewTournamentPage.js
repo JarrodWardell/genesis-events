@@ -186,31 +186,31 @@ const ViewTournamentPage = ({ url, tab, tabOptions }) => {
         >
           <h1 className="text-xl">{name}</h1>
           <div className="py-2 my-2 border-gray-100 border-t-2 border-b-2 text-gray-400 leading-relaxed">
-            <p className="flex items-center">
+            <div className="flex items-center">
               <div className="w-6 h-6 flex font-bold">
                 <CalendarIcon />
               </div>{' '}
               <span className="ml-1">
                 {new Date(startDate).toLocaleString().split(',')[0]}
               </span>
-            </p>
-            <p className="flex items-center">
+            </div>
+            <div className="flex items-center">
               <div className="w-6 h-6 flex font-bold">
                 <ClockIcon />
               </div>{' '}
               <span className="ml-1">
                 {format(new Date(startDate), 'p zzzz')}
               </span>
-            </p>
-            <p className="flex items-center">
+            </div>
+            <div className="flex items-center">
               <div className="w-6 h-6 flex font-bold">
                 <PlayersIcon />
               </div>{' '}
               <span className="ml-1">
                 {players?.length}/{maxPlayers} Players Registered
               </span>
-            </p>
-            <p className="flex items-center">
+            </div>
+            <div className="flex items-center">
               <div className="w-6 h-6 flex font-bold">
                 <InfoIcon />
               </div>{' '}
@@ -218,23 +218,23 @@ const ViewTournamentPage = ({ url, tab, tabOptions }) => {
                 Recommended Number of Rounds:{' '}
                 {calcNumRounds(tournament.players.length)}
               </span>
-            </p>
-            <p className="flex items-center">
+            </div>
+            <div className="flex items-center">
               <div className="w-6 h-6 flex font-bold">
                 <HomeIcon />
               </div>{' '}
               <span className="ml-1">{locationName}</span>
-            </p>
+            </div>
             {tournament.street1 && (
-              <p className="flex items-center">
+              <div className="flex items-center">
                 <div className="w-6 h-6 flex font-bold">
                   <LocationIcon />
                 </div>{' '}
                 <span className="ml-1">{street1}</span>
-              </p>
+              </div>
             )}
             {tournament.winners.length > 0 && (
-              <p className="flex items-center font-bold ">
+              <div className="flex items-center font-bold ">
                 <div className="w-6 h-6 flex justify-center items-center">
                   <TrophyIcon />
                 </div>{' '}
@@ -246,7 +246,7 @@ const ViewTournamentPage = ({ url, tab, tabOptions }) => {
                     </span>
                   ))}
                 </span>
-              </p>
+              </div>
             )}
 
             {tournament.active &&
@@ -254,7 +254,7 @@ const ViewTournamentPage = ({ url, tab, tabOptions }) => {
               (tournament.ownerId === currentUser?.user?.id ||
                 hasRole('ADMIN')) && (
                 <Link
-                  className="flex w-60 items-center px-4 py-2 bg-green-700 hover:bg-green-500 my-4 text-white rounded-md uppercase text-sm"
+                  className="flex w-60 justify-center px-4 py-2 bg-green-700 hover:bg-green-500 my-4 text-white rounded-md uppercase text-sm"
                   to={routes.eoEditTournament({
                     url: tournament.tournamentUrl,
                   })}
@@ -334,7 +334,11 @@ const ViewTournamentPage = ({ url, tab, tabOptions }) => {
           }
         >
           {tournamentActive && <TournamentTimer tournament={tournament} />}
-          {!tournament.active && <p>Tournament Cancelled</p>}
+          {!tournament.active && (
+            <div className="rounded-md bg-red-600 m-4 text-white p-2 text-center">
+              Tournament Cancelled
+            </div>
+          )}
         </div>
       </div>
       <div className="w-full my-4 hidden sm:flex px-10">

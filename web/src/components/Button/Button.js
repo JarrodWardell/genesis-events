@@ -8,12 +8,19 @@ const Button = ({
   className = '',
   color = 'green',
   my = '8',
+  py = 2,
+  px = 4,
+  colorWeight = 700,
 }) => {
   return (
     <button
       type={type}
-      className={`my-${my} flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2 ${className} bg-${color}-700 focus:ring-${color}-500 ${
-        disabled ? 'bg-opacity-50 cursor-not-allowed' : `hover:bg-${color}-900`
+      className={`my-${my} flex justify-center py-${py} px-${px} border border-transparent rounded-md shadow-sm text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2 ${className} bg-${color}-${colorWeight} focus:ring-${color}-${
+        colorWeight - 200
+      } ${
+        disabled
+          ? 'bg-opacity-50 cursor-not-allowed'
+          : `hover:bg-${color}-${colorWeight + 200}`
       } ${full ? 'w-full' : ''}`}
       onClick={onClick}
       disabled={disabled || loading}

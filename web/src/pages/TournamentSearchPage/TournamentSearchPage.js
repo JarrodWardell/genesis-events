@@ -489,7 +489,9 @@ const TournamentSearchPage = () => {
                           </div>{' '}
                           <span className="ml-1">
                             {tournament.winners.map((winner, index) => (
-                              <span key={`winner-${winner.id}`}>
+                              <span
+                                key={`winner-${tournament.id}-${winner.playerId}`}
+                              >
                                 {index > 0 && ', '}
                                 {winner.player.nickname}
                               </span>

@@ -6,6 +6,7 @@ import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import { checkTournamentPermissions } from 'src/helpers/tournamentHelper'
 import { TOURNAMENT_BY_URL } from 'src/pages/ViewTournamentPage/ViewTournamentPage'
+import Button from '../Button/Button'
 import PlayerProfileItem from '../PlayerProfileItem/PlayerProfileItem'
 
 const SUBMIT_MATCH_DETAILS = gql`
@@ -269,9 +270,15 @@ const MatchDetails = ({ index, match, tournament }) => {
 
         <div className="col-span-1 flex justify-center items-center">
           {(player1 || player2) && !scoreSubmitted(match.players[0].score) && (
-            <Submit
-              className="rounded-full bg-green-400 cursor-pointer hover:bg-green-500 flex justify-center items-center text-white p-2"
-              disabled={addMatchScoreLoading}
+            <Button
+              type="submit"
+              loading={addMatchScoreLoading}
+              className="rounded-full"
+              my="0"
+              py="2"
+              px="2"
+              full={false}
+              colorWeight={400}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -287,7 +294,7 @@ const MatchDetails = ({ index, match, tournament }) => {
                   d="M5 13l4 4L19 7"
                 />
               </svg>
-            </Submit>
+            </Button>
           )}
         </div>
       </Form>

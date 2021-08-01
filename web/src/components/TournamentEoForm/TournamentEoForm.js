@@ -25,6 +25,7 @@ import ReactDatePicker from 'react-datepicker'
 
 import 'react-datepicker/dist/react-datepicker.css'
 import Button from '../Button/Button'
+import { setHours } from 'date-fns/esm'
 
 const CREATE_TOURNAMENT = gql`
   mutation CreateTournamentMutation($input: CreateTournamentInput!) {
@@ -126,7 +127,7 @@ const TournamentEOForm = ({ tournament }) => {
     CANCEL_TOURNAMENT,
     {
       onCompleted: ({ cancelTournament }) => {
-        toast(`Successfully cancelled ${cancelTournament.name} Tournament`)
+        toast(`Successfully cancelled ${tournament.name} Tournament`)
         navigate(`/tournament/${cancelTournament.tournamentUrl}/rounds`)
       },
       refetchQueries: [
@@ -215,25 +216,23 @@ const TournamentEOForm = ({ tournament }) => {
   if (confirmCancel) {
     return (
       <div className="min-h-screen flex flex-col justify-center">
-        <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-3xl">
+        <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-3xl text-center text-xl font-bold">
           Are you sure you would like to cancel this tournament. This cannot be
           undone.
-          <div className="rw-button-group">
-            <button
-              className="rw-button rw-button-green"
-              onClick={() => setConfirmCancel(false)}
-            >
-              Nevermind
-            </button>
-            <Submit
-              disabled={cancelTournamentLoading}
-              className="rw-button rw-button-red"
+          <div className="grid grid-cols-2 gap-x-4">
+            <Button color="green" onClick={() => setConfirmCancel(false)}>
+              Go Back
+            </Button>
+            <Button
+              loading={cancelTournamentLoading}
+              color="red"
+              type="submit"
               onClick={() =>
                 cancelTournament({ variables: { id: tournament.id } })
               }
             >
               Cancel Tournament
-            </Submit>
+            </Button>
           </div>
         </div>
       </div>
@@ -313,7 +312,19 @@ const TournamentEOForm = ({ tournament }) => {
               className="rw-input"
               errorClassName="rw-input rw-input-error"
               min={0}
-              validation={{ required: true, validate: () => {} }}
+              validation={{
+                required: true,
+                validate: (value) => {
+                  if (value <= 1) {
+                    return 'A minimum of 2 players is required for a tournament'
+                  }
+
+                  if (tournament?.players?.length > value) {
+                    console.log('i validate')
+                    return 'There are more players registered than this amount'
+                  }
+                },
+              }}
             />
             <FieldError name="maxPlayers" className="rw-field-error" />
           </div>
@@ -465,14 +476,11 @@ const TournamentEOForm = ({ tournament }) => {
           <HiddenField name="lng" />
           <HiddenField name="storeId" />
 
-          <div className="col-span-2 flex justify-center">
+          <div className="col-span-2 flex justify-center gap-2">
             {tournament?.id && (
-              <div
-                className="w-full mr-4 text-center py-4 px-4 h-14 sm:h-auto border rounded-md text-white bg-red-700 hover:bg-red-800 justify-center items-center flex flex-col sm:flex-row"
-                onClick={() => setConfirmCancel(true)}
-              >
+              <Button onClick={() => setConfirmCancel(true)} color="red">
                 Cancel Tournament
-              </div>
+              </Button>
             )}
             <Button
               loading={createTournamentLoading || updateTournamentLoading}

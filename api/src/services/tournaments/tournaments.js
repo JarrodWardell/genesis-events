@@ -12,6 +12,8 @@ import {
   randomWordGenerator,
 } from 'src/helpers/tournamentHelpers'
 import { db } from 'src/lib/db'
+import * as Sentry from '@sentry/node'
+import { isEqual } from 'date-fns'
 
 export const tournament = ({ id }) => {
   return db.tournament.findUnique({
@@ -20,121 +22,137 @@ export const tournament = ({ id }) => {
 }
 
 export const tournaments = ({ searchTerm }) => {
-  return db.tournament.findMany({
-    where: {
-      OR: [
-        {
-          name: {
-            contains: searchTerm,
-          },
-        },
-        {
-          tournamentUrl: {
-            contains: searchTerm,
-          },
-        },
-        {
-          locationName: {
-            contains: searchTerm,
-          },
-        },
-        {
-          street1: {
-            contains: searchTerm,
-          },
-        },
-      ],
-    },
-  })
-}
-
-export const myTournaments = ({}) => {
-  let currentUser = context.currentUser
-  if (currentUser) {
+  try {
     return db.tournament.findMany({
       where: {
-        AND: [
+        OR: [
           {
-            OR: [
-              { ownerId: currentUser?.user?.id },
-              { players: { some: { playerId: currentUser?.user?.id } } },
-            ],
+            name: {
+              contains: searchTerm,
+            },
           },
           {
-            OR: [
-              {
-                startDate: {
-                  gte: new Date(),
-                },
-              },
-              {
-                dateStarted: {
-                  lte: new Date(),
-                },
-              },
-            ],
+            tournamentUrl: {
+              contains: searchTerm,
+            },
           },
           {
-            dateEnded: {
-              equals: null,
+            locationName: {
+              contains: searchTerm,
+            },
+          },
+          {
+            street1: {
+              contains: searchTerm,
             },
           },
         ],
       },
     })
+  } catch (error) {
+    Sentry.captureException(error)
   }
-
-  return []
 }
 
-export const upcomingTournaments = ({ input, take = 6 }) => {
-  return db.tournament.findMany({
-    where: {
-      AND: [
-        {
-          dateEnded: {
-            equals: null,
-          },
-        },
-        {
-          startDate: {
-            gte: new Date(),
-          },
-        },
-      ],
-    },
-    orderBy: [
-      {
-        startDate: 'desc',
-      },
-      {
-        createdAt: 'desc',
-      },
-    ],
-    take,
-  })
-}
-
-export const finishedTournaments = ({ input, take = 6 }) => {
-  return db.tournament.findMany({
-    where: {
-      AND: [
-        {
-          OR: [
+export const myTournaments = ({}) => {
+  try {
+    let currentUser = context.currentUser
+    if (currentUser) {
+      return db.tournament.findMany({
+        where: {
+          AND: [
+            {
+              OR: [
+                { ownerId: currentUser?.user?.id },
+                { players: { some: { playerId: currentUser?.user?.id } } },
+              ],
+            },
+            {
+              OR: [
+                {
+                  startDate: {
+                    gte: new Date(),
+                  },
+                },
+                {
+                  dateStarted: {
+                    lte: new Date(),
+                  },
+                },
+              ],
+            },
             {
               dateEnded: {
-                lte: new Date(),
+                equals: null,
               },
             },
           ],
         },
+      })
+    }
+
+    return []
+  } catch (error) {
+    Sentry.captureException(error)
+  }
+}
+
+export const upcomingTournaments = ({ input, take = 6 }) => {
+  try {
+    return db.tournament.findMany({
+      where: {
+        AND: [
+          {
+            dateEnded: {
+              equals: null,
+            },
+          },
+          {
+            startDate: {
+              gte: new Date(),
+            },
+          },
+        ],
+      },
+      orderBy: [
+        {
+          startDate: 'desc',
+        },
+        {
+          createdAt: 'desc',
+        },
       ],
-    },
-    orderBy: {
-      dateEnded: 'desc',
-    },
-    take,
-  })
+      take,
+    })
+  } catch (error) {
+    Sentry.captureException(error)
+  }
+}
+
+export const finishedTournaments = ({ input, take = 6 }) => {
+  try {
+    return db.tournament.findMany({
+      where: {
+        AND: [
+          {
+            OR: [
+              {
+                dateEnded: {
+                  lte: new Date(),
+                },
+              },
+            ],
+          },
+        ],
+      },
+      orderBy: {
+        dateEnded: 'desc',
+      },
+      take,
+    })
+  } catch (error) {
+    Sentry.captureException(error)
+  }
 }
 
 export const searchTournaments = async ({ input }) => {
@@ -188,31 +206,37 @@ export const searchTournaments = async ({ input }) => {
     OFFSET ${input.skip};
   `
 
-  console.log(sqlQuery)
+  try {
+    const tournaments = await db.$queryRaw(sqlQuery)
 
-  const tournaments = await db.$queryRaw(sqlQuery)
-
-  return {
-    more: tournaments[0]?.full_count > input.take,
-    totalCount: tournaments[0]?.full_count,
-    tournaments,
+    return {
+      more: tournaments[0]?.full_count > input.take,
+      totalCount: tournaments[0]?.full_count,
+      tournaments,
+    }
+  } catch (error) {
+    Sentry.captureException(error)
   }
 }
 
 export const tournamentByUrl = ({ url }) => {
-  return db.tournament.findUnique({
-    where: { tournamentUrl: url },
-    include: {
-      players: {
-        orderBy: {
-          score: 'desc',
-        },
-        select: {
-          score: true,
+  try {
+    return db.tournament.findUnique({
+      where: { tournamentUrl: url },
+      include: {
+        players: {
+          orderBy: {
+            score: 'desc',
+          },
+          select: {
+            score: true,
+          },
         },
       },
-    },
-  })
+    })
+  } catch (error) {
+    Sentry.captureException(error)
+  }
 }
 
 export const createTournament = async ({ input }) => {
@@ -226,15 +250,19 @@ export const createTournament = async ({ input }) => {
     newInput['store'] = { connect: { id: storeId } }
   }
 
-  return db.tournament.create({
-    data: {
-      ...newInput,
-      tournamentUrl,
-      owner: {
-        connect: { id: currentUser.user.id },
+  try {
+    return db.tournament.create({
+      data: {
+        ...newInput,
+        tournamentUrl,
+        owner: {
+          connect: { id: currentUser.user.id },
+        },
       },
-    },
-  })
+    })
+  } catch (error) {
+    Sentry.captureException(error)
+  }
 }
 
 export const updateTournament = async ({ id, input }) => {
@@ -244,58 +272,80 @@ export const updateTournament = async ({ id, input }) => {
     delete newData.storeId
   }
 
-  const prevTournament = await db.tournament.findUnique({
-    where: { id },
-  })
-
-  const tournament = await db.tournament.update({
-    data: { ...newData, updatedAt: new Date() },
-    where: { id },
-  })
-
-  const owner = await db.tournament.findUnique({ where: { id } }).owner({})
-
-  const players = await db.tournament
-    .findUnique({ where: { id } })
-    .players({ where: { active: true } })
-
-  //Send emails to all players
-  players.forEach(async (player) => {
-    let html = `${
-      tournamentEditedPlayer({ tournament, player, prevTournament }).html
-    }`
-    let playerAccount = await db.user({ where: { id: player.playerId } })
-
-    sendEmail({
-      to: playerAccount.email,
-      subject: `GEO: Tournament ${tournament.name} has been updated`,
-      html,
-      text: `Tournament ${tournament.name} has been updated`,
+  try {
+    const prevTournament = await db.tournament.findUnique({
+      where: { id },
     })
-  })
 
-  let html = `${tournamentEditedEO({ tournament, owner, prevTournament }).html}`
+    const tournament = await db.tournament.update({
+      data: { ...newData, updatedAt: new Date() },
+      where: { id },
+    })
 
-  sendEmail({
-    to: owner.email,
-    subject: `GEO: Tournament ${tournament.name} has been updated`,
-    html,
-    text: `Tournament ${tournament.name} has been updated`,
-  })
+    const owner = await db.tournament.findUnique({ where: { id } }).owner({})
 
-  html = `${
-    tournamentEditedEO({ tournament, owner, prevTournament, adminEmail: true })
-      .html
-  }`
+    const players = await db.tournament
+      .findUnique({ where: { id } })
+      .players({ where: { active: true } })
 
-  sendEmail({
-    to: process.env.ADMIN_EMAILS,
-    subject: `GEO: Tournament ${tournament.name} has been updated`,
-    html,
-    text: `Tournament ${tournament.name} has been updated`,
-  })
+    if (
+      !isEqual(
+        new Date(prevTournament.startDate),
+        new Date(tournament.startDate)
+      ) ||
+      prevTournament.name !== tournament.name ||
+      prevTournament.street1 !== tournament.street1 ||
+      prevTournament.locationName !== tournament.locationName
+    ) {
+      //Send emails to all players
+      players.forEach(async (player) => {
+        let html = `${
+          tournamentEditedPlayer({ tournament, player, prevTournament }).html
+        }`
+        let playerAccount = await db.user.findUnique({
+          where: { id: player.playerId },
+        })
 
-  return tournament
+        await sendEmail({
+          to: playerAccount.email,
+          subject: `GEO: Tournament ${tournament.name} has been updated`,
+          html,
+          text: `Tournament ${tournament.name} has been updated`,
+        })
+      })
+
+      let html = `${
+        tournamentEditedEO({ tournament, owner, prevTournament }).html
+      }`
+
+      await sendEmail({
+        to: owner.email,
+        subject: `GEO: Tournament ${tournament.name} has been updated`,
+        html,
+        text: `Tournament ${tournament.name} has been updated`,
+      })
+
+      html = `${
+        tournamentEditedEO({
+          tournament,
+          owner,
+          prevTournament,
+          adminEmail: true,
+        }).html
+      }`
+
+      await sendEmail({
+        to: process.env.ADMIN_EMAILS,
+        subject: `GEO: Tournament ${tournament.name} has been updated`,
+        html,
+        text: `Tournament ${tournament.name} has been updated`,
+      })
+    }
+
+    return tournament
+  } catch (error) {
+    Sentry.captureException(error)
+  }
 }
 
 export const registerForTournament = async ({ id }) => {
@@ -341,7 +391,7 @@ export const registerForTournament = async ({ id }) => {
   }
 
   let html = `${newPlayerRegisteredEO({ tournament, player }).html}`
-  sendEmail({
+  await sendEmail({
     to: ownerEmail,
     subject: `GEO: New Player Registered for: ${tournament.name}`,
     html,
@@ -349,7 +399,7 @@ export const registerForTournament = async ({ id }) => {
   })
 
   html = `${newPlayerRegisteredPlayer({ tournament, player }).html}`
-  sendEmail({
+  await sendEmail({
     to: player.email,
     subject: `GEO: Thanks for Registering for: ${tournament.name}`,
     html,
@@ -565,9 +615,11 @@ export const cancelTournament = async ({ id }) => {
   //Send emails to all players
   players.forEach(async (player) => {
     let html = `${tournamentCancelledPlayer({ tournament, player }).html}`
-    let playerAccount = await db.user({ where: { id: player.playerId } })
+    let playerAccount = await db.user.findUnique({
+      where: { id: player.playerId },
+    })
 
-    sendEmail({
+    await sendEmail({
       to: playerAccount.email,
       subject: `GEO: Tournament ${tournament.name} has been cancelled`,
       html,
@@ -577,7 +629,7 @@ export const cancelTournament = async ({ id }) => {
 
   const owner = await db.tournament.findUnique({ where: { id } }).owner({})
   let html = `${tournamentCancelledEO({ tournament, owner }).html}`
-  sendEmail({
+  await sendEmail({
     to: owner.email,
     subject: `GEO: Tournament ${tournament.name} has been cancelled`,
     html,
@@ -587,7 +639,7 @@ export const cancelTournament = async ({ id }) => {
   html = `${
     tournamentCancelledEO({ tournament, owner, adminEmail: true }).html
   }`
-  sendEmail({
+  await sendEmail({
     to: owner.email,
     subject: `GEO: Tournament ${tournament.name} has been cancelled`,
     html,
@@ -661,7 +713,7 @@ export const addMatchScore = async ({ input }) => {
       })
     })
   } catch (err) {
-    console.log(err)
+    Sentry.captureException(err)
   }
 
   return match
@@ -703,7 +755,7 @@ export const removePlayer = async ({ id }) => {
 
     return 'SUCCESS'
   } catch (err) {
-    return err
+    Sentry.captureException(err)
   }
 }
 
@@ -731,7 +783,7 @@ export const leaveTournament = async ({ id }) => {
 
     return 'SUCCESS'
   } catch (err) {
-    return err
+    Sentry.captureException(err)
   }
 }
 
