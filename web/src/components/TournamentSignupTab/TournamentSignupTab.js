@@ -60,7 +60,9 @@ const TournamentSignupTab = ({ tournament }) => {
     // Tournament not full
     let tournamentNotFull = tournament.players.length < tournament.maxPlayers
 
-    if (tournamentNotFull && tournamentIsActive) {
+    let tournamentNotEnded = !tournament.dateEnded
+
+    if (tournamentNotFull && tournamentIsActive && tournamentNotEnded) {
       return true
     }
 
