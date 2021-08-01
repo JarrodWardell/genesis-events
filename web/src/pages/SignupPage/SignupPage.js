@@ -14,7 +14,7 @@ import { useForm, Controller } from 'react-hook-form'
 
 import { useAuth } from '@redwoodjs/auth'
 import { useMutation } from '@redwoodjs/web'
-import { navigate, routes, Redirect } from '@redwoodjs/router'
+import { navigate, routes, Redirect, useParams } from '@redwoodjs/router'
 
 import NicknameCheckField from 'src/components/NicknameCheckField/NicknameCheckField'
 import { getAddress } from 'src/helpers/formatAddress'
@@ -68,6 +68,7 @@ const SignupPage = ({ type }) => {
   const formMethods = useForm()
   const password = useRef()
   password.current = formMethods.watch('password', '')
+  const { redirectTo } = useParams()
 
   React.useEffect(() => {
     if (!type) {
@@ -201,7 +202,11 @@ const SignupPage = ({ type }) => {
       role,
     })
     setStep(2)
-    navigate(`/signup/${role.toLowerCase()}`)
+    navigate(
+      `/signup/${role.toLowerCase()}${
+        redirectTo ? '?redirectTo=' + redirectTo : ''
+      }`
+    )
   }
 
   const addToForm = (data) => {
@@ -836,7 +841,7 @@ const SignupPage = ({ type }) => {
       </div>
     )
   } else {
-    return <Redirect to="/" />
+    return <Redirect to={redirectTo ? redirectTo : '/'} />
   }
 }
 

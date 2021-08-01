@@ -1,5 +1,5 @@
 import { useAuth } from '@redwoodjs/auth'
-import { navigate, routes } from '@redwoodjs/router'
+import { Link, navigate, routes } from '@redwoodjs/router'
 import { useMutation } from '@redwoodjs/web'
 import toast from 'react-hot-toast'
 import { TOURNAMENT_BY_URL } from 'src/pages/ViewTournamentPage/ViewTournamentPage'
@@ -176,15 +176,37 @@ const TournamentSignupTab = ({ tournament }) => {
           <p className="text-center">Leave Tournament</p>
         </Button>
       )}
-      {checkIfSignupActive && !currentUser && (
-        <Button
-          onClick={() => navigate(routes.signup())}
-          loading={loading}
-          full={false}
-          className="w-1/2 sm:w-1/4 mb-0"
-        >
-          <p className="text-center v">Create an account here</p>
-        </Button>
+      {checkIfSignupActive() && !currentUser && (
+        <div className="grid gap-x-2 grid-cols-2">
+          <Button
+            onClick={() =>
+              navigate(
+                routes.login({
+                  redirectTo: `/tournament/${tournament.name}/signup`,
+                })
+              )
+            }
+            loading={loading}
+            full={true}
+            className="mb-0"
+          >
+            Login
+          </Button>
+          <Button
+            onClick={() =>
+              navigate(
+                routes.signup({
+                  redirectTo: `/tournament/${tournament.name}/signup`,
+                })
+              )
+            }
+            loading={loading}
+            full={true}
+            className="mb-0"
+          >
+            <p className="text-center v">Create an account here</p>
+          </Button>
+        </div>
       )}
       {checkIfCanSignup() && (
         <Button

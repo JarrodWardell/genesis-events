@@ -1,6 +1,6 @@
 import { Form, TextField, PasswordField, Submit, Label } from '@redwoodjs/forms'
 import { useAuth } from '@redwoodjs/auth'
-import { Redirect, routes, Link, navigate } from '@redwoodjs/router'
+import { Redirect, routes, Link, navigate, useParams } from '@redwoodjs/router'
 import { GoogleIcon } from 'src/components/Icons/Google'
 import { FacebookIcon } from 'src/components/Icons/Facebook'
 import { TwitterIcon } from 'src/components/Icons/Twitter'
@@ -10,6 +10,7 @@ import Button from 'src/components/Button/Button'
 const LoginPage = () => {
   const [error, setError] = React.useState(null)
   const { logIn, loading, currentUser, logOut, client } = useAuth()
+  const { redirectTo } = useParams()
 
   const onSubmit = async (data) => {
     await logIn({ ...data }).catch((error) => {
@@ -161,7 +162,7 @@ const LoginPage = () => {
       </div>
     )
   } else {
-    return <Redirect to="/" />
+    return <Redirect to={redirectTo ? redirectTo : '/'} />
   }
 }
 

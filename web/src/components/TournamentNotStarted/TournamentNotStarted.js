@@ -120,7 +120,7 @@ const TournamentNotStarted = ({ tournament }) => {
           ) : (
             tournament.players.length < 2 && (
               <div className="text-center text-white my-4">
-                Tournaments require a minimum of 2 players
+                Tournaments require a minimum of 2 players to Start
               </div>
             )
           )}

@@ -42,7 +42,7 @@ const TournamentRoundsTab = ({ tournament, roundNumber }) => {
     return (
       <Redirect
         to={`/tournament/${tournament?.tournamentUrl}/rounds/${
-          tournament?.round[tournament.round.length - 1].roundNumber
+          tournament?.round[tournament.round.length - 1]?.roundNumber
         }`}
       />
     )
@@ -106,7 +106,12 @@ const TournamentRoundsTab = ({ tournament, roundNumber }) => {
     if (round?.matches) {
       round.matches.map((match, index) => {
         matches.push(
-          <MatchDetails match={match} index={index} tournament={tournament} />
+          <MatchDetails
+            match={match}
+            index={index}
+            tournament={tournament}
+            key={`round-${round}-match-${match.id}`}
+          />
         )
       })
     }
