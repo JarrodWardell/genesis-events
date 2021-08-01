@@ -50,38 +50,41 @@ export const tournaments = ({ searchTerm }) => {
 
 export const myTournaments = ({}) => {
   let currentUser = context.currentUser
-
-  return db.tournament.findMany({
-    where: {
-      AND: [
-        {
-          OR: [
-            { ownerId: currentUser?.user?.id },
-            { players: { some: { playerId: currentUser?.user?.id } } },
-          ],
-        },
-        {
-          OR: [
-            {
-              startDate: {
-                gte: new Date(),
-              },
-            },
-            {
-              dateStarted: {
-                lte: new Date(),
-              },
-            },
-          ],
-        },
-        {
-          dateEnded: {
-            equals: null,
+  if (currentUser) {
+    return db.tournament.findMany({
+      where: {
+        AND: [
+          {
+            OR: [
+              { ownerId: currentUser?.user?.id },
+              { players: { some: { playerId: currentUser?.user?.id } } },
+            ],
           },
-        },
-      ],
-    },
-  })
+          {
+            OR: [
+              {
+                startDate: {
+                  gte: new Date(),
+                },
+              },
+              {
+                dateStarted: {
+                  lte: new Date(),
+                },
+              },
+            ],
+          },
+          {
+            dateEnded: {
+              equals: null,
+            },
+          },
+        ],
+      },
+    })
+  }
+
+  return []
 }
 
 export const upcomingTournaments = ({ input, take = 6 }) => {
