@@ -46,10 +46,8 @@ const PasswordCheck = ({
 
   const checkPasswordRules = () => {
     if (
-      passwordContainsUpperCase(password) &&
       passwordContainsNumber(password) &&
-      passwordContainsLowercase(password) &&
-      passwordContainsSymbol(password) &&
+      minLength(password) &&
       password === confirmPassword
     ) {
       return true
@@ -68,6 +66,14 @@ const PasswordCheck = ({
 
   const passwordContainsNumber = (value) => {
     if (/.*\d/.test(value)) {
+      return true
+    }
+
+    return false
+  }
+
+  const minLength = (value) => {
+    if (value.length >= 8) {
       return true
     }
 
@@ -131,21 +137,27 @@ const PasswordCheck = ({
       />
       <div className=" grid grid-cols-2 gap-2 sm:flex my-4 w-full">
         {passwordRuleDiv({
-          text: '1 lower case letter',
-          ruleFunction: passwordContainsLowercase,
-        })}
-        {passwordRuleDiv({
           text: '1 number',
           ruleFunction: passwordContainsNumber,
         })}
         {passwordRuleDiv({
-          text: '1 special character',
-          ruleFunction: passwordContainsSymbol,
+          text: 'Min 8 Characters',
+          ruleFunction: minLength,
         })}
-        {passwordRuleDiv({
-          text: '1 uppercase letter',
-          ruleFunction: passwordContainsUpperCase,
-        })}
+        {/*
+          {passwordRuleDiv({
+              text: '1 special character',
+              ruleFunction: passwordContainsSymbol,
+            })}
+            {passwordRuleDiv({
+              text: '1 uppercase letter',
+              ruleFunction: passwordContainsUpperCase,
+            })}
+            {passwordRuleDiv({
+              text: '1 lower case letter',
+              ruleFunction: passwordContainsLowercase,
+            })}
+          */}
       </div>
       <Label
         name="confirm_password"
