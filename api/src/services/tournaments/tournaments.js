@@ -86,6 +86,9 @@ export const myTournaments = ({}) => {
                 equals: null,
               },
             },
+            {
+              active: true,
+            },
           ],
         },
       })
@@ -111,6 +114,9 @@ export const upcomingTournaments = ({ input, take = 6 }) => {
             startDate: {
               gte: new Date(),
             },
+          },
+          {
+            active: true,
           },
         ],
       },
@@ -142,6 +148,9 @@ export const finishedTournaments = ({ input, take = 6 }) => {
                 },
               },
             ],
+          },
+          {
+            active: true,
           },
         ],
       },
