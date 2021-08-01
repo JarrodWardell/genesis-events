@@ -436,7 +436,13 @@ const TournamentSearchPage = () => {
             </div>
           ) : (
             <div className="flex flex-col p-4">
-              <p className="mb-4">{data.totalCount} search results found.</p>
+              <p className="mb-4">
+                {data.totalCount
+                  ? `${data.totalCount} search result${
+                      data.totalCount > 1 ? 's' : ''
+                    } found`
+                  : '0 search results found'}{' '}
+              </p>
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 sm:gap-12">
                 {data?.tournaments?.map((tournament) => (
                   <div
