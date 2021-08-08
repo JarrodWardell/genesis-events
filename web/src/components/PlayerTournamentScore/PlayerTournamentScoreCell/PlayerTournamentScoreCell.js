@@ -16,6 +16,13 @@ export const QUERY = gql`
       randomizer
       active
       wonTournament
+      player {
+        nickname
+        email
+      }
+      tournament {
+        name
+      }
     }
   }
 `

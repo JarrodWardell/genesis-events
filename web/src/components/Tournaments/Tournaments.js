@@ -82,7 +82,6 @@ const TournamentsList = ({ tournaments }) => {
             <th>Owner id</th>
             <th>Created at</th>
             <th>Updated at</th>
-            <th>User id</th>
             <th>Desc</th>
             <th>Active</th>
             <th>Starting timer in seconds</th>
@@ -116,7 +115,6 @@ const TournamentsList = ({ tournaments }) => {
               <td>{truncate(tournament.ownerId)}</td>
               <td>{timeTag(tournament.createdAt)}</td>
               <td>{timeTag(tournament.updatedAt)}</td>
-              <td>{truncate(tournament.userId)}</td>
               <td>{truncate(tournament.desc)}</td>
               <td>{checkboxInputTag(tournament.active)}</td>
               <td>{truncate(tournament.startingTimerInSeconds)}</td>

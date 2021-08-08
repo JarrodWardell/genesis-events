@@ -69,18 +69,17 @@ const PlayerTournamentScoresList = ({ playerTournamentScores }) => {
         <thead>
           <tr>
             <th>Id</th>
+            <th>Player Nickname</th>
+            <th>Tournament Name</th>
             <th>Wins</th>
             <th>Losses</th>
-            <th>Score</th>
-            <th>Player id</th>
-            <th>Tournament id</th>
-            <th>Created at</th>
-            <th>Updated at</th>
             <th>Draws</th>
             <th>Byes</th>
-            <th>Randomizer</th>
-            <th>Active</th>
+            <th>Score</th>
             <th>Won tournament</th>
+            <th>Created at</th>
+            <th>Updated at</th>
+            <th>Active</th>
             <th>&nbsp;</th>
           </tr>
         </thead>
@@ -88,18 +87,36 @@ const PlayerTournamentScoresList = ({ playerTournamentScores }) => {
           {playerTournamentScores.map((playerTournamentScore) => (
             <tr key={playerTournamentScore.id}>
               <td>{truncate(playerTournamentScore.id)}</td>
+              <td>
+                <Link
+                  to={routes.users({
+                    searchTerm: playerTournamentScore.player?.nickname,
+                  })}
+                  className="text-blue-500 cursor-pointer"
+                >
+                  {playerTournamentScore.player?.nickname}
+                </Link>
+              </td>
+              <td>
+                <Link
+                  to={routes.tournaments({
+                    searchTerm: playerTournamentScore.tournament?.name,
+                  })}
+                  className="text-blue-500 cursor-pointer"
+                >
+                  {playerTournamentScore.tournament?.name}
+                </Link>
+              </td>
+
               <td>{truncate(playerTournamentScore.wins)}</td>
               <td>{truncate(playerTournamentScore.losses)}</td>
-              <td>{truncate(playerTournamentScore.score)}</td>
-              <td>{truncate(playerTournamentScore.playerId)}</td>
-              <td>{truncate(playerTournamentScore.tournamentId)}</td>
-              <td>{timeTag(playerTournamentScore.createdAt)}</td>
-              <td>{timeTag(playerTournamentScore.updatedAt)}</td>
               <td>{truncate(playerTournamentScore.draws)}</td>
               <td>{truncate(playerTournamentScore.byes)}</td>
-              <td>{truncate(playerTournamentScore.randomizer)}</td>
-              <td>{checkboxInputTag(playerTournamentScore.active)}</td>
+              <td>{truncate(playerTournamentScore.score)}</td>
               <td>{checkboxInputTag(playerTournamentScore.wonTournament)}</td>
+              <td>{timeTag(playerTournamentScore.createdAt)}</td>
+              <td>{timeTag(playerTournamentScore.updatedAt)}</td>
+              <td>{checkboxInputTag(playerTournamentScore.active)}</td>
               <td>
                 <nav className="rw-table-actions">
                   <Link

@@ -3,6 +3,9 @@ import { toast } from '@redwoodjs/web/toast'
 import { Link, routes, navigate } from '@redwoodjs/router'
 
 import { QUERY } from 'src/components/TournamentsCell'
+import PlayerTournamentScoresList from '../PlayerTournamentScore/PlayerTournamentScores/PlayerTournamentScores'
+import StoresList from '../Stores/Stores'
+import UsersList from '../Users/Users'
 
 const DELETE_TOURNAMENT_MUTATION = gql`
   mutation DeleteTournamentMutation($id: Int!) {
@@ -141,10 +144,6 @@ const Tournament = ({ tournament }) => {
               <td>{timeTag(tournament.updatedAt)}</td>
             </tr>
             <tr>
-              <th>User id</th>
-              <td>{tournament.userId}</td>
-            </tr>
-            <tr>
               <th>Desc</th>
               <td>{tournament.desc}</td>
             </tr>
@@ -186,6 +185,38 @@ const Tournament = ({ tournament }) => {
           Delete
         </a>
       </nav>
+      {tournament.owner && (
+        <div className="mt-4">
+          <header className="">
+            <h2 className="rw-heading rw-heading-secondary">
+              {tournament.name} Owner
+            </h2>
+          </header>
+          <UsersList users={[tournament.owner]} />
+        </div>
+      )}
+      {tournament.store && (
+        <div className="mt-4">
+          <header className="">
+            <h2 className="rw-heading rw-heading-secondary">
+              {tournament.name} Store
+            </h2>
+          </header>
+          <StoresList stores={[tournament.store]} />
+        </div>
+      )}
+      {tournament.players && (
+        <div className="mt-4">
+          <header className="">
+            <h2 className="rw-heading rw-heading-secondary">
+              {tournament.name} Players
+            </h2>
+          </header>
+          <PlayerTournamentScoresList
+            playerTournamentScores={tournament.players}
+          />
+        </div>
+      )}
     </>
   )
 }

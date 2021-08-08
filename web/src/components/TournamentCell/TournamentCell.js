@@ -31,6 +31,72 @@ export const QUERY = gql`
       timerLeftInSeconds
       timerStatus
       timerLastUpdated
+      owner {
+        id
+        firstname
+        lastname
+        gender
+        phone
+        city
+        state
+        country
+        zip
+        createdAt
+        updatedAt
+        howHeard
+        flags
+        adminComments
+        disabled
+        disabledOn
+        nickname
+        userPictureId
+        disabledBy
+        email
+        dob
+        active
+      }
+      players {
+        id
+        wins
+        losses
+        score
+        playerId
+        tournamentId
+        createdAt
+        updatedAt
+        draws
+        byes
+        active
+        wonTournament
+        player {
+          nickname
+        }
+        tournament {
+          name
+        }
+      }
+      store {
+        id
+        name
+        ownerId
+        email
+        phone
+        lat
+        lng
+        street1
+        street2
+        city
+        country
+        state
+        zip
+        distributor
+        approved
+        approvedOn
+        owner {
+          nickname
+          email
+        }
+      }
     }
   }
 `

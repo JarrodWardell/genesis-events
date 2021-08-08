@@ -18,6 +18,12 @@ export const QUERY = gql`
       randomizer
       active
       wonTournament
+      player {
+        nickname
+      }
+      tournament {
+        name
+      }
     }
   }
 `
