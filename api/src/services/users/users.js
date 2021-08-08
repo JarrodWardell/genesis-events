@@ -7,6 +7,11 @@ export const users = ({ searchTerm }) => {
     where: {
       OR: [
         {
+          id: {
+            contains: searchTerm,
+          },
+        },
+        {
           nickname: {
             contains: searchTerm,
           },

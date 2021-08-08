@@ -1,8 +1,17 @@
 import UsersLayout from 'src/layouts/UsersLayout'
 import UsersCell from 'src/components/UsersCell'
+import { useLocation } from '@redwoodjs/router'
 
 const UsersPage = () => {
+  const { pathname, search } = useLocation()
   const [searchTerm, setSearchTerm] = React.useState('')
+
+  React.useEffect(() => {
+    let brokenSearch = new URLSearchParams(search)
+    if (brokenSearch.has('searchTerm')) {
+      setSearchTerm(brokenSearch.get('searchTerm'))
+    }
+  }, [search])
 
   return (
     <UsersLayout>

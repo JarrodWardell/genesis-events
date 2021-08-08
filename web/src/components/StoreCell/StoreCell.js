@@ -19,6 +19,40 @@ export const QUERY = gql`
       distributor
       approved
       approvedOn
+      owner {
+        email
+        nickname
+      }
+      tournaments {
+        id
+        name
+        tournamentUrl
+        startDate
+        dateStarted
+        dateEnded
+        maxPlayers
+        locationName
+        infoUrl
+        street1
+        street2
+        city
+        country
+        state
+        zip
+        lat
+        lng
+        storeId
+        ownerId
+        createdAt
+        updatedAt
+        userId
+        desc
+        active
+        startingTimerInSeconds
+        timerLeftInSeconds
+        timerStatus
+        timerLastUpdated
+      }
     }
   }
 `

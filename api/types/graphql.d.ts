@@ -687,6 +687,11 @@ export type QueryStoreArgs = {
 };
 
 
+export type QueryStoresArgs = {
+  searchTerm?: Maybe<Scalars['String']>;
+};
+
+
 export type QueryTournamentArgs = {
   id: Scalars['Int'];
 };
@@ -1460,7 +1465,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   rounds?: Resolver<Array<ResolversTypes['Round']>, ParentType, ContextType>;
   searchTournaments?: Resolver<ResolversTypes['PaginatedTournaments'], ParentType, ContextType, RequireFields<QuerySearchTournamentsArgs, 'input'>>;
   store?: Resolver<Maybe<ResolversTypes['Store']>, ParentType, ContextType, RequireFields<QueryStoreArgs, 'id'>>;
-  stores?: Resolver<Array<ResolversTypes['Store']>, ParentType, ContextType>;
+  stores?: Resolver<Array<ResolversTypes['Store']>, ParentType, ContextType, RequireFields<QueryStoresArgs, never>>;
   tournament?: Resolver<Maybe<ResolversTypes['Tournament']>, ParentType, ContextType, RequireFields<QueryTournamentArgs, 'id'>>;
   tournamentByUrl?: Resolver<Maybe<ResolversTypes['Tournament']>, ParentType, ContextType, RequireFields<QueryTournamentByUrlArgs, never>>;
   tournaments?: Resolver<Array<ResolversTypes['Tournament']>, ParentType, ContextType, RequireFields<QueryTournamentsArgs, never>>;

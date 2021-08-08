@@ -2,9 +2,13 @@ import { Link, routes } from '@redwoodjs/router'
 
 import Stores from 'src/components/Stores'
 
+export const beforeQuery = (props) => {
+  return { variables: props }
+}
+
 export const QUERY = gql`
-  query STORES {
-    stores {
+  query ($searchTerm: String) {
+    stores(searchTerm: $searchTerm) {
       id
       name
       ownerId
@@ -21,6 +25,10 @@ export const QUERY = gql`
       distributor
       approved
       approvedOn
+      owner {
+        nickname
+        email
+      }
     }
   }
 `

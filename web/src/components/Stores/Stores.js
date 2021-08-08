@@ -63,7 +63,7 @@ const StoresList = ({ stores }) => {
           <tr>
             <th>Id</th>
             <th>Name</th>
-            <th>Owner id</th>
+            <th>Owner</th>
             <th>Email</th>
             <th>Phone</th>
             <th>Lat</th>
@@ -85,7 +85,14 @@ const StoresList = ({ stores }) => {
             <tr key={store.id}>
               <td>{truncate(store.id)}</td>
               <td>{truncate(store.name)}</td>
-              <td>{truncate(store.ownerId)}</td>
+              <td>
+                <Link
+                  to={routes.users({ searchTerm: store.owner?.nickname })}
+                  className="text-blue-500 cursor-pointer"
+                >
+                  {store.owner?.nickname}
+                </Link>
+              </td>
               <td>{truncate(store.email)}</td>
               <td>{truncate(store.phone)}</td>
               <td>{truncate(store.lat)}</td>

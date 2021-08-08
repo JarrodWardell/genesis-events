@@ -38,16 +38,6 @@ const TournamentRoundsTab = ({ tournament, roundNumber }) => {
   const componentRef = React.useRef()
   const { hasRole, currentUser } = useAuth()
 
-  if ((!roundNumber || roundNumber === '') && tournament?.round?.length > 0) {
-    return (
-      <Redirect
-        to={`/tournament/${tournament?.tournamentUrl}/rounds/${
-          tournament?.round[tournament.round.length - 1]?.roundNumber
-        }`}
-      />
-    )
-  }
-
   const [
     advanceRound,
     { loading: loadingAdvanceRound, error: errorAdvanceRound },
@@ -83,14 +73,10 @@ const TournamentRoundsTab = ({ tournament, roundNumber }) => {
     ],
   })
 
-  if (!tournament.dateStarted) {
-    return <TournamentNotStarted tournament={tournament} />
-  }
-
   const grabRound = () => {
     let round = {}
 
-    tournament.round.map((rnd) => {
+    tournament?.round?.map((rnd) => {
       if (rnd.roundNumber === roundNumber) {
         round = { ...rnd }
       }
@@ -134,11 +120,25 @@ const TournamentRoundsTab = ({ tournament, roundNumber }) => {
     return scoresSubmitted
   }
 
+  if ((!roundNumber || roundNumber === '') && tournament?.round?.length > 0) {
+    return (
+      <Redirect
+        to={`/tournament/${tournament?.tournamentUrl}/rounds/${
+          tournament?.round[tournament.round.length - 1]?.roundNumber
+        }`}
+      />
+    )
+  }
+
+  if (!tournament.dateStarted) {
+    return <TournamentNotStarted tournament={tournament} />
+  }
+
   return (
     <div className="w-full">
       <div className="w-full flex border-b border-gray-500">
         <div className="flex sm:w-10/12 overflow-x-auto">
-          {tournament.round?.map((round) => {
+          {tournament?.round?.map((round) => {
             return (
               <div
                 key={round.id}

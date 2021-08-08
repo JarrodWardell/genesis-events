@@ -3,6 +3,8 @@ import { toast } from '@redwoodjs/web/toast'
 import { Link, routes, navigate } from '@redwoodjs/router'
 
 import { QUERY } from 'src/components/StoresCell'
+import Tournament from '../Tournament/Tournament'
+import TournamentsList from '../Tournaments/Tournaments'
 
 const DELETE_STORE_MUTATION = gql`
   mutation DeleteStoreMutation($id: String!) {
@@ -51,7 +53,7 @@ const Store = ({ store }) => {
       <div className="rw-segment">
         <header className="rw-segment-header">
           <h2 className="rw-heading rw-heading-secondary">
-            Store {store.id} Detail
+            Store {store.name} Details Page
           </h2>
         </header>
         <table className="rw-table">
@@ -65,8 +67,16 @@ const Store = ({ store }) => {
               <td>{store.name}</td>
             </tr>
             <tr>
-              <th>Owner id</th>
-              <td>{store.ownerId}</td>
+              <th>Owner</th>
+              <td>
+                {' '}
+                <Link
+                  to={routes.users({ searchTerm: store.owner?.nickname })}
+                  className="text-blue-500 cursor-pointer"
+                >
+                  {store.owner?.nickname}
+                </Link>
+              </td>
             </tr>
             <tr>
               <th>Email</th>
@@ -138,6 +148,16 @@ const Store = ({ store }) => {
           Delete
         </a>
       </nav>
+      {store.tournaments && (
+        <div className="mt-4">
+          <header className="">
+            <h2 className="rw-heading rw-heading-secondary">
+              Store {store.name} Tournaments
+            </h2>
+          </header>
+          <TournamentsList tournaments={store.tournaments} />
+        </div>
+      )}
     </>
   )
 }

@@ -21,7 +21,7 @@ export const tournament = ({ id }) => {
   })
 }
 
-export const tournaments = ({ searchTerm }) => {
+export const tournaments = ({ searchTerm, id }) => {
   try {
     return db.tournament.findMany({
       where: {

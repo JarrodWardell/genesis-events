@@ -1,8 +1,17 @@
 import TournamentsLayout from 'src/layouts/TournamentsLayout'
 import TournamentsCell from 'src/components/TournamentsCell'
+import { useLocation } from '@redwoodjs/router'
 
 const TournamentsPage = () => {
+  const { search } = useLocation()
   const [searchTerm, setSearchTerm] = React.useState('')
+
+  React.useEffect(() => {
+    let brokenSearch = new URLSearchParams(search)
+    if (brokenSearch.has('searchTerm')) {
+      setSearchTerm(brokenSearch.get('searchTerm'))
+    }
+  }, [search])
 
   return (
     <TournamentsLayout>

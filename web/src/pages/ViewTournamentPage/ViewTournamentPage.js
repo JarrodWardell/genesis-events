@@ -113,7 +113,6 @@ const ViewTournamentPage = ({ url, tab, tabOptions }) => {
   const TABS = ['rounds', 'leaderboard', 'matches', 'signup']
   const { currentUser, hasRole } = useAuth()
   const [expandedDesc, setExpandedDesc] = React.useState(false)
-  const [isTruncated, setIsTruncated] = React.useState(false)
 
   if (!tab || tab === '' || TABS.indexOf(tab) === -1) {
     return <Redirect to={`/tournament/${url}/${TABS[0]}`} />
@@ -362,7 +361,11 @@ const ViewTournamentPage = ({ url, tab, tabOptions }) => {
           onChange={(e) => navigate(`/tournament/${url}/${e.target.value}`)}
         >
           {TABS.map((tabOption) => (
-            <option value={tabOption} key={tabOption}>
+            <option
+              value={tabOption}
+              key={tabOption}
+              label={tabOption.charAt(0).toUpperCase() + tabOption.slice(1)}
+            >
               {tabOption}
             </option>
           ))}

@@ -21,7 +21,7 @@ export const schema = gql`
   }
 
   type Query {
-    stores: [Store!]!
+    stores(searchTerm: String): [Store!]!
     store(id: String!): Store
   }
 
