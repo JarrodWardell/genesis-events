@@ -289,6 +289,8 @@ export type Mutation = {
   leaveTournament: Scalars['String'];
   registerForTournament: Scalars['String'];
   removePlayer: Scalars['String'];
+  seedSingleTournament?: Maybe<Tournament>;
+  seedTournaments: Array<Maybe<Tournament>>;
   startTournament: Tournament;
   updateBanner: Banner;
   updateContact: Contact;
@@ -449,6 +451,18 @@ export type MutationRegisterForTournamentArgs = {
 
 export type MutationRemovePlayerArgs = {
   id: Scalars['Int'];
+};
+
+
+export type MutationSeedSingleTournamentArgs = {
+  id: Scalars['Int'];
+  numPlayers?: Maybe<Scalars['Int']>;
+};
+
+
+export type MutationSeedTournamentsArgs = {
+  country?: Maybe<Scalars['String']>;
+  numTournaments?: Maybe<Scalars['Int']>;
 };
 
 
@@ -1367,6 +1381,8 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   leaveTournament?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationLeaveTournamentArgs, 'id'>>;
   registerForTournament?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationRegisterForTournamentArgs, 'id'>>;
   removePlayer?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationRemovePlayerArgs, 'id'>>;
+  seedSingleTournament?: Resolver<Maybe<ResolversTypes['Tournament']>, ParentType, ContextType, RequireFields<MutationSeedSingleTournamentArgs, 'id'>>;
+  seedTournaments?: Resolver<Array<Maybe<ResolversTypes['Tournament']>>, ParentType, ContextType, RequireFields<MutationSeedTournamentsArgs, never>>;
   startTournament?: Resolver<ResolversTypes['Tournament'], ParentType, ContextType, RequireFields<MutationStartTournamentArgs, 'id'>>;
   updateBanner?: Resolver<ResolversTypes['Banner'], ParentType, ContextType, RequireFields<MutationUpdateBannerArgs, 'id' | 'input'>>;
   updateContact?: Resolver<ResolversTypes['Contact'], ParentType, ContextType, RequireFields<MutationUpdateContactArgs, 'id' | 'input'>>;

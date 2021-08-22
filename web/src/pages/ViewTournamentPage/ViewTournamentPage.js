@@ -110,12 +110,29 @@ export const TOURNAMENT_BY_URL = gql`
 `
 
 const ViewTournamentPage = ({ url, tab, tabOptions }) => {
-  const TABS = ['rounds', 'leaderboard', 'matches', 'signup']
+  const TABS = {
+    rounds: {
+      text: 'Rounds',
+      path: 'rounds',
+    },
+    leaderboard: {
+      text: 'Leaderboard',
+      path: 'leaderboard',
+    },
+    matches: {
+      text: 'Matches',
+      path: 'matches',
+    },
+    signup: {
+      text: 'Sign Up',
+      path: 'signup',
+    },
+  }
   const { currentUser, hasRole } = useAuth()
   const [expandedDesc, setExpandedDesc] = React.useState(false)
 
-  if (!tab || tab === '' || TABS.indexOf(tab) === -1) {
-    return <Redirect to={`/tournament/${url}/${TABS[0]}`} />
+  if (!tab || tab === '' || !(tab in TABS)) {
+    return <Redirect to={`/tournament/${url}/${TABS.rounds.path}`} />
   }
 
   const {
@@ -128,34 +145,38 @@ const ViewTournamentPage = ({ url, tab, tabOptions }) => {
   })
 
   const renderTabNav = () => {
-    return TABS.map((tabOption) => (
-      <div
-        className={
-          'border-gray-50 border-2 rounded hover:bg-green-500 cursor-pointer py-4 px-8 w-4/12 text-center capitalize' +
-          (tab === tabOption ? ' bg-green-100' : '')
-        }
-        key={`tab-${tabOption}`}
-        onClick={() => navigate(`/tournament/${url}/${tabOption}`)}
-      >
-        {tabOption}
-      </div>
-    ))
+    return Object.keys(TABS).map((tabKey) => {
+      let tabOption = TABS[tabKey]
+
+      return (
+        <button
+          className={
+            'border-gray-50 border-2 rounded hover:bg-green-500 cursor-pointer py-4 px-8 w-4/12 text-center capitalize' +
+            (tab === tabOption.path ? ' bg-green-100' : '')
+          }
+          key={`tab-${tabOption.path}`}
+          onClick={() => navigate(`/tournament/${url}/${tabOption.path}`)}
+        >
+          {tabOption.text}
+        </button>
+      )
+    })
   }
 
   const renderTab = () => {
     switch (tab) {
-      case TABS[0]:
+      case TABS.rounds.path:
         return (
           <TournamentRoundsTab
             tournament={tournament}
             roundNumber={tabOptions}
           />
         )
-      case TABS[1]:
+      case TABS.leaderboard.path:
         return <TournamentLeaderboardTab tournament={tournament} />
-      case TABS[2]:
+      case TABS.matches.path:
         return <TournamentMatchesTab tournament={tournament} />
-      case TABS[3]:
+      case TABS.signup.path:
         return <TournamentSignupTab tournament={tournament} />
     }
   }
@@ -360,15 +381,14 @@ const ViewTournamentPage = ({ url, tab, tabOptions }) => {
           value={tab}
           onChange={(e) => navigate(`/tournament/${url}/${e.target.value}`)}
         >
-          {TABS.map((tabOption) => (
-            <option
-              value={tabOption}
-              key={tabOption}
-              label={tabOption.charAt(0).toUpperCase() + tabOption.slice(1)}
-            >
-              {tabOption}
-            </option>
-          ))}
+          {Object.keys(TABS).map((tabOptionKey) => {
+            let tabOption = TABS[tabOptionKey]
+            return (
+              <option value={tabOption.path} key={tabOption.path}>
+                {tabOption.text}
+              </option>
+            )
+          })}
         </select>
         <div className="flex w-full px-2 pb-8 sm:px-10 sm:pb-2">
           {renderTab()}

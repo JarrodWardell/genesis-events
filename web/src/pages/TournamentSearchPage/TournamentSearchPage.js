@@ -13,6 +13,7 @@ import Button from 'src/components/Button/Button'
 import DatePicker from 'react-datepicker'
 
 import 'react-datepicker/dist/react-datepicker.css'
+import { logError } from 'src/helpers/errorLogger'
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
@@ -87,6 +88,13 @@ const TournamentSearchPage = () => {
     {
       onCompleted: (res) => {
         setData(res.searchTournaments)
+      },
+      onError: (error) => {
+        logError({
+          error,
+          log: true,
+          showToast: true,
+        })
       },
     }
   )

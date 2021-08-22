@@ -5,6 +5,7 @@ import { checkTournamentPermissions } from 'src/helpers/tournamentHelper'
 import { TOURNAMENT_BY_URL } from 'src/pages/ViewTournamentPage/ViewTournamentPage'
 import PlayerProfileItem from '../PlayerProfileItem/PlayerProfileItem'
 import Button from '../Button/Button'
+import { logError } from 'src/helpers/errorLogger'
 
 export const REMOVE_PLAYER = gql`
   mutation removePlayer($id: Int!) {
@@ -21,6 +22,13 @@ const TournamentLeaderboardTab = ({ tournament }) => {
   ] = useMutation(REMOVE_PLAYER, {
     onCompleted: () => {
       toast.success('Successfully Removed Player')
+    },
+    onError: (error) => {
+      logError({
+        error,
+        log: true,
+        showToast: true,
+      })
     },
     refetchQueries: [
       {

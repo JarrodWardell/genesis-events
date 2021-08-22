@@ -1,6 +1,8 @@
 import { useAuth } from '@redwoodjs/auth'
+import { navigate } from '@redwoodjs/router'
 import { useMutation } from '@redwoodjs/web'
 import toast from 'react-hot-toast'
+import { logError } from 'src/helpers/errorLogger'
 import {
   checkTournamentPermissions,
   timeUntilTournament,
@@ -29,6 +31,13 @@ const TournamentNotStarted = ({ tournament }) => {
     {
       onCompleted: () => {
         toast.success('Tournament started!')
+      },
+      onError: (error) => {
+        logError({
+          error,
+          log: true,
+          showToast: true,
+        })
       },
       refetchQueries: [
         {
@@ -118,11 +127,23 @@ const TournamentNotStarted = ({ tournament }) => {
               Start
             </button>
           ) : (
+            checkTournamentPermissions({ hasRole, currentUser, tournament }) &&
             tournament.players.length < 2 && (
               <div className="text-center text-white my-4">
                 Tournaments require a minimum of 2 players to Start
               </div>
             )
+          )}
+
+          {!hasRole(['Admin', 'EO']) && (
+            <button
+              className="flex items-center mx-auto py-2 px-8 text-center bg-white rounded-md border-2 cursor-pointer hover:bg-green-600 uppercase"
+              onClick={() =>
+                navigate(`/tournament/${tournament.tournamentUrl}/signup`)
+              }
+            >
+              Sign Up Here
+            </button>
           )}
         </div>
       )}
