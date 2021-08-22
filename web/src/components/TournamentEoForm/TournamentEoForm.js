@@ -26,6 +26,7 @@ import ReactDatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
 import Button from '../Button/Button'
 import { setHours } from 'date-fns/esm'
+import { logError } from 'src/helpers/errorLogger'
 
 const CREATE_TOURNAMENT = gql`
   mutation CreateTournamentMutation($input: CreateTournamentInput!) {
@@ -102,6 +103,13 @@ const TournamentEOForm = ({ tournament }) => {
         )
         navigate(`/tournament/${createTournament.tournamentUrl}/rounds`)
       },
+      onError: (error) => {
+        logError({
+          error,
+          log: true,
+          showToast: true,
+        })
+      },
     }
   )
 
@@ -113,6 +121,13 @@ const TournamentEOForm = ({ tournament }) => {
           `Successfully updated ${updateTournament.name} Tournament`
         )
         navigate(`/tournament/${updateTournament.tournamentUrl}/rounds`)
+      },
+      onError: (error) => {
+        logError({
+          error,
+          log: true,
+          showToast: true,
+        })
       },
       refetchQueries: [
         {
@@ -127,8 +142,15 @@ const TournamentEOForm = ({ tournament }) => {
     CANCEL_TOURNAMENT,
     {
       onCompleted: ({ cancelTournament }) => {
-        toast(`Successfully cancelled ${tournament.name} Tournament`)
+        toast.success(`Successfully cancelled ${tournament.name} Tournament`)
         navigate(`/tournament/${cancelTournament.tournamentUrl}/rounds`)
+      },
+      onError: (error) => {
+        logError({
+          error,
+          log: true,
+          showToast: true,
+        })
       },
       refetchQueries: [
         {
@@ -296,6 +318,7 @@ const TournamentEOForm = ({ tournament }) => {
                   peekNextMonth
                   dateFormat="MMMM d, yyyy h:mm aa"
                   calendarClassName="z-10"
+                  autoComplete="false"
                 />
               )}
             />

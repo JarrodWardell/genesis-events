@@ -2,6 +2,7 @@ import { useAuth } from '@redwoodjs/auth'
 import { Link, navigate, routes } from '@redwoodjs/router'
 import { useMutation } from '@redwoodjs/web'
 import toast from 'react-hot-toast'
+import { logError } from 'src/helpers/errorLogger'
 import { TOURNAMENT_BY_URL } from 'src/pages/ViewTournamentPage/ViewTournamentPage'
 import Button from '../Button/Button'
 import { FacebookIcon } from '../Icons/Facebook'
@@ -28,6 +29,13 @@ const TournamentSignupTab = ({ tournament }) => {
         toast.success('Successfully Registered for Tournament')
         navigate(`/tournament/${tournament.tournamentUrl}/rounds`)
       },
+      onError: (error) => {
+        logError({
+          error,
+          log: true,
+          showToast: true,
+        })
+      },
       refetchQueries: [
         {
           query: TOURNAMENT_BY_URL,
@@ -45,6 +53,13 @@ const TournamentSignupTab = ({ tournament }) => {
       toast.success('Successfully Left Tournament')
       navigate(`/tournament/${tournament.tournamentUrl}/rounds`)
     },
+    onError: (error) => {
+      logError({
+        error,
+        log: true,
+        showToast: true,
+      })
+    },
     refetchQueries: [
       {
         query: TOURNAMENT_BY_URL,
@@ -53,14 +68,14 @@ const TournamentSignupTab = ({ tournament }) => {
     ],
   })
 
-  const checkIfSignupActive = () => {
+  const checkIfSignupActive = (tourney) => {
     // Tournament is active
-    let tournamentIsActive = tournament.active
+    let tournamentIsActive = tourney.active
 
     // Tournament not full
-    let tournamentNotFull = tournament.players.length < tournament.maxPlayers
+    let tournamentNotFull = tourney.players.length < tourney.maxPlayers
 
-    let tournamentNotEnded = !tournament.dateEnded
+    let tournamentNotEnded = !tourney.dateEnded
 
     if (tournamentNotFull && tournamentIsActive && tournamentNotEnded) {
       return true
@@ -69,56 +84,89 @@ const TournamentSignupTab = ({ tournament }) => {
     return false
   }
 
-  const checkIfCanSignup = () => {
+  const checkIfCanSignup = (tourney, currUser) => {
     // Can sign up if:
+
+    //Not previously in tournament
+    let notJoinedBefore = !hasBeenInTournament(tourney, currUser)
+
     // Not in Tournament
-    let notInTournament = !isInTournament()
+    let notInTournament = !isInTournament(tourney, currUser)
 
     // User is a player (and signed in)
     let userEligible = currentUser?.user.id && hasRole('PLAYER')
 
-    if (notInTournament && userEligible && checkIfSignupActive()) {
+    if (
+      notJoinedBefore &&
+      notInTournament &&
+      userEligible &&
+      checkIfSignupActive(tourney)
+    ) {
       return true
     }
 
     return false
   }
 
-  const returnInfoText = () => {
+  const returnInfoText = (tourney, currUser) => {
     // Tournament has been cancelled
-    if (!tournament.active) return 'Event has been cancelled'
+    if (!tourney.active) return 'Event has been cancelled'
     // Tournament has Ended
-    if (tournament.dateEnded) return 'Event has already ended'
+    if (tourney.dateEnded) return 'Event has already ended'
     // Not a player
     if (!hasRole('PLAYER')) return 'Only players may register for this event'
+    // Wants to rejoin
+    if (hasBeenInTournament(tourney, currUser))
+      return 'You cannot rejoin a tournament'
     // Already registered
-    if (isInTournament()) return 'You have already registered for this event'
+    if (isInTournament(tourney, currUser))
+      return 'You have already registered for this event'
     // Tournament full
-    if (tournament.players.length >= tournament.maxPlayers)
-      return 'Event is full'
+    if (tourney.players.length >= tourney.maxPlayers) return 'Event is full'
 
     return 'You have not signed up for this event'
   }
 
   //Check if applicable to register
-  const isInTournament = () => {
+  const isInTournament = (tourney, currUser) => {
     var playerList = {}
-    tournament.players?.forEach(
+    tourney.players?.forEach(
       ({ player }) => (playerList[player.id] = { ...player })
     )
 
-    if (playerList && currentUser?.user?.id in playerList) {
+    if (
+      playerList &&
+      currUser?.user?.id in playerList &&
+      playerList[currUser?.user?.id].active
+    ) {
       return true
     }
 
     return false
   }
 
-  const generateUrl = (stringify = true) => {
+  const hasBeenInTournament = (tourney, currUser) => {
+    var playerList = {}
+    tourney.players?.forEach(
+      ({ player }) => (playerList[player.id] = { ...player })
+    )
+
+    if (
+      playerList &&
+      currUser?.user?.id in playerList &&
+      !playerList[currUser?.user?.id].active
+    ) {
+      return true
+    }
+
+    return false
+  }
+
+  const generateUrl = (tourney, stringify = true) => {
     let url =
       process.env.FRONTEND_URL +
       '/tournament/' +
-      tournament.tournamentUrl +
+      tourney.tournamentUrl +
       '/signup'
 
     if (stringify) {
@@ -129,13 +177,13 @@ const TournamentSignupTab = ({ tournament }) => {
     return url
   }
 
-  const generateUrlText = () => {
-    let text = `Signup for the ${tournament.name} genesis tournament here!`
+  const generateUrlText = (tourney) => {
+    let text = `Signup for the ${tourney.name} genesis tournament here!`
     return text.replaceAll(' ', '%20')
   }
 
-  const copyText = () => {
-    let text = generateUrl(false)
+  const copyText = (tourney) => {
+    let text = generateUrl(tourney, false)
 
     navigator.clipboard.writeText(text).then(
       function () {
@@ -162,10 +210,10 @@ const TournamentSignupTab = ({ tournament }) => {
       </h2>
       <p className="text-gray-500 mb-6">
         Signups for this event are{' '}
-        <strong>{checkIfSignupActive() ? 'open' : 'closed'}</strong>.
+        <strong>{checkIfSignupActive(tournament) ? 'open' : 'closed'}</strong>.
       </p>
-      <p className="text-gray-500">{returnInfoText()}</p>
-      {isInTournament() && (
+      <p className="text-gray-500">{returnInfoText(tournament, currentUser)}</p>
+      {isInTournament(tournament, currentUser) && (
         <Button
           onClick={() => confirmLeaveTournament()}
           loading={loadingLeaveTournament}
@@ -176,13 +224,13 @@ const TournamentSignupTab = ({ tournament }) => {
           <p className="text-center">Leave Tournament</p>
         </Button>
       )}
-      {checkIfSignupActive() && !currentUser && (
+      {checkIfSignupActive(tournament) && !currentUser && (
         <div className="grid gap-x-2 grid-cols-2">
           <Button
             onClick={() =>
               navigate(
                 routes.login({
-                  redirectTo: `/tournament/${tournament.name}/signup`,
+                  redirectTo: `/tournament/${tournament.tournamentUrl}/signup`,
                 })
               )
             }
@@ -196,7 +244,7 @@ const TournamentSignupTab = ({ tournament }) => {
             onClick={() =>
               navigate(
                 routes.signup({
-                  redirectTo: `/tournament/${tournament.name}/signup`,
+                  redirectTo: `/tournament/${tournament.tournamentUrl}/signup`,
                 })
               )
             }
@@ -208,7 +256,7 @@ const TournamentSignupTab = ({ tournament }) => {
           </Button>
         </div>
       )}
-      {checkIfCanSignup() && (
+      {checkIfCanSignup(tournament, currentUser) && (
         <Button
           onClick={() =>
             registerForTournament({ variables: { id: tournament.id } })
@@ -232,7 +280,9 @@ const TournamentSignupTab = ({ tournament }) => {
         <div className="mt-8 grid grid-cols-3 gap-3">
           <div>
             <a
-              href={`https://www.facebook.com/sharer/sharer.php?u=${generateUrl()}`}
+              href={`https://www.facebook.com/sharer/sharer.php?u=${generateUrl(
+                tournament
+              )}`}
               target="_blank"
               className="h-10 w-full inline-flex justify-center py-2 px-10 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
               rel="noreferrer"
@@ -244,7 +294,11 @@ const TournamentSignupTab = ({ tournament }) => {
 
           <div>
             <a
-              href={`https://twitter.com/intent/tweet?url=${generateUrl()}&text=${generateUrlText()}&hashtags=Genesis%2CTournament`}
+              href={`https://twitter.com/intent/tweet?url=${generateUrl(
+                tournament
+              )}&text=${generateUrlText(
+                tournament
+              )}&hashtags=Genesis%2CTournament`}
               target="_blank"
               className="h-10 w-full inline-flex justify-center py-2 px-10 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
               rel="noreferrer"
@@ -256,7 +310,7 @@ const TournamentSignupTab = ({ tournament }) => {
 
           <div>
             <button
-              onClick={async () => copyText()}
+              onClick={async () => copyText(tournament)}
               className="h-10 w-full inline-flex justify-center py-2 px-10 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
             >
               <span className="sr-only">Copy Link</span>

@@ -12,6 +12,7 @@ import { useMutation } from '@redwoodjs/web'
 import toast from 'react-hot-toast'
 import { useForm } from 'react-hook-form'
 import Button from 'src/components/Button/Button'
+import { logError } from 'src/helpers/errorLogger'
 
 const CREATE_CONTACT_MUTATION = gql`
   mutation CreateContactMutation($input: CreateContactInput!) {
@@ -31,6 +32,13 @@ const UserContactPage = () => {
       onCompleted: () => {
         toast.success('Your form has been submitted!')
         formMethods.reset()
+      },
+      onError: (error) => {
+        logError({
+          error,
+          log: true,
+          showToast: true,
+        })
       },
     }
   )

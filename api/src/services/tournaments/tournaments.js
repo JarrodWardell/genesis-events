@@ -723,6 +723,7 @@ export const addMatchScore = async ({ input }) => {
     })
   } catch (err) {
     Sentry.captureException(err)
+    return err
   }
 
   return match

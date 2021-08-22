@@ -9,6 +9,7 @@ import TournamentNotStarted from '../TournamentNotStarted/TournamentNotStarted'
 import Button from '../Button/Button'
 import ReactToPrint from 'react-to-print'
 import PrintRound from '../PrintRound/PrintRound'
+import { logError } from 'src/helpers/errorLogger'
 
 export const ADVANCE_ROUND = gql`
   mutation advanceRound($id: Int!, $roundNumber: Int!) {
@@ -49,6 +50,13 @@ const TournamentRoundsTab = ({ tournament, roundNumber }) => {
       toast.success(`Tournament has advanced to round ${newRound}`)
       navigate(`/tournament/${tournament?.tournamentUrl}/rounds/${newRound}`)
     },
+    onError: (error) => {
+      logError({
+        error,
+        log: true,
+        showToast: true,
+      })
+    },
     refetchQueries: [
       {
         query: TOURNAMENT_BY_URL,
@@ -64,6 +72,13 @@ const TournamentRoundsTab = ({ tournament, roundNumber }) => {
     onCompleted: (data) => {
       toast.success(`Tournament has ended!`)
       navigate(`/tournament/${tournament?.tournamentUrl}/leaderboard`)
+    },
+    onError: (error) => {
+      logError({
+        error,
+        log: true,
+        showToast: true,
+      })
     },
     refetchQueries: [
       {
