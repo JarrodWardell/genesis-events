@@ -197,7 +197,7 @@ const Header = () => {
                 className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
                 activeClassName="border-indigo-500 text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
               >
-                Signup
+                Sign Up
               </NavLink>
             </div>
           )}
@@ -249,7 +249,7 @@ const Header = () => {
                     onClick={() => navigateMobile(routes.signup())}
                     className="block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100 sm:px-6"
                   >
-                    Signup
+                    Sign Up
                   </button>
                 </>
               )}
