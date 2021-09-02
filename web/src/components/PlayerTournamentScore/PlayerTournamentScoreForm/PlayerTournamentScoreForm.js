@@ -144,22 +144,6 @@ const PlayerTournamentScoreForm = (props) => {
         <FieldError name="byes" className="rw-field-error" />
 
         <Label
-          name="randomizer"
-          className="rw-label"
-          errorClassName="rw-label rw-label-error"
-        >
-          Randomizer
-        </Label>
-        <TextField
-          name="randomizer"
-          defaultValue={props.playerTournamentScore?.randomizer}
-          className="rw-input"
-          errorClassName="rw-input rw-input-error"
-          validation={{ required: true }}
-        />
-        <FieldError name="randomizer" className="rw-field-error" />
-
-        <Label
           name="active"
           className="rw-label"
           errorClassName="rw-label rw-label-error"

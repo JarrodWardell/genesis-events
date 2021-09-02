@@ -108,6 +108,13 @@ export const generateMatches = async ({ roundNumber = 1, db, id }) => {
         }
       })
 
+      console.log('Score obj diff', scoreObj)
+      console.log('Score dif to check', scoreDifToCheck)
+
+      let preferredPlayers = scoreObj[scoreDifToCheck]
+
+      console.log(preferredPlayers)
+
       //Players that player cannot play against include players who have been given matches
       playersGivenMatches.push(player)
 
@@ -118,6 +125,7 @@ export const generateMatches = async ({ roundNumber = 1, db, id }) => {
 
       console.log('Player', player)
       let opponent = findOpponent({
+        preferredPlayers,
         playersNotGivenMatches,
         playersToAvoid,
         playersProhibited,
@@ -156,6 +164,7 @@ const randomizedArray = (arr) =>
     .map((a) => a.value)
 
 const findOpponent = ({
+  preferredPlayers = [],
   playersNotGivenMatches = [],
   playersToAvoid = [],
   playersProhibited = [],
@@ -165,16 +174,30 @@ const findOpponent = ({
 
   //We will go through the playersNotGivenMatches and try to find a player that is not in the playersProhibited array and playersToAvoid array
   if (playersNotGivenMatches.length > 0) {
+    //If player is in preferred list and not prohibited or to avoid, match them
     playersNotGivenMatches.forEach((possOpp) => {
       if (
+        preferredPlayers.indexOf(possOpp) !== -1 &&
         playersProhibited.indexOf(possOpp) == -1 &&
         playersToAvoid.indexOf(possOpp) == -1 &&
-        playersPlayedAgainst.indexOf(possOpp) === -1 &&
         !chosenOpponent
       ) {
         chosenOpponent = possOpp
       }
     })
+
+    if (!chosenOpponent) {
+      playersNotGivenMatches.forEach((possOpp) => {
+        if (
+          playersProhibited.indexOf(possOpp) == -1 &&
+          playersToAvoid.indexOf(possOpp) == -1 &&
+          playersPlayedAgainst.indexOf(possOpp) === -1 &&
+          !chosenOpponent
+        ) {
+          chosenOpponent = possOpp
+        }
+      })
+    }
 
     //If none is found, pick the top players from playersToAvoid that is not in playersProhibited AND  not in players played against
     if (!chosenOpponent) {

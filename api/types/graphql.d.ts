@@ -119,7 +119,6 @@ export type CreatePlayerTournamentScoreInput = {
   tournamentId: Scalars['Int'];
   draws: Scalars['Int'];
   byes: Scalars['Int'];
-  randomizer?: Maybe<Scalars['String']>;
   active: Scalars['Boolean'];
   wonTournament: Scalars['Boolean'];
 };
@@ -591,7 +590,6 @@ export type PlayerTournamentScore = {
   updatedAt: Scalars['DateTime'];
   draws: Scalars['Int'];
   byes: Scalars['Int'];
-  randomizer?: Maybe<Scalars['String']>;
   active: Scalars['Boolean'];
   wonTournament: Scalars['Boolean'];
   player: User;
@@ -922,7 +920,6 @@ export type UpdatePlayerTournamentScoreInput = {
   tournamentId?: Maybe<Scalars['Int']>;
   draws?: Maybe<Scalars['Int']>;
   byes?: Maybe<Scalars['Int']>;
-  randomizer?: Maybe<Scalars['String']>;
   active?: Maybe<Scalars['Boolean']>;
   wonTournament?: Maybe<Scalars['Boolean']>;
 };
@@ -1442,7 +1439,6 @@ export type PlayerTournamentScoreResolvers<ContextType = any, ParentType extends
   updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   draws?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   byes?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  randomizer?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   active?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   wonTournament?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   player?: Resolver<ResolversTypes['User'], ParentType, ContextType>;

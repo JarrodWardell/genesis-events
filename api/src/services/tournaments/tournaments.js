@@ -368,7 +368,6 @@ export const registerForTournament = async ({ id }) => {
       tournament: {
         connect: { id },
       },
-      randomizer: randomWordGenerator(10),
     },
   })
 
@@ -536,7 +535,7 @@ export const endTournament = async ({ id }) => {
   })
 
   const winners = [players[0]]
-  players.map((player) => {
+  players.forEach((player) => {
     if (
       player.score === players[0].score &&
       player.wins === players[0].wins &&
@@ -592,7 +591,7 @@ export const endTournament = async ({ id }) => {
     },
   })
 
-  await winners.map(async (winner) => {
+  await winners.forEach(async (winner) => {
     await db.playerTournamentScore.update({
       data: {
         wonTournament: true,
@@ -668,7 +667,7 @@ export const addMatchScore = async ({ input }) => {
   const match = await db.match.findUnique({ where: { id: input.matchId } })
 
   try {
-    await input.matches.map(async (playerMatch) => {
+    await input.matches.forEach(async (playerMatch) => {
       await db.playerMatchScore.update({
         data: {
           score: playerMatch.score,
@@ -766,6 +765,7 @@ export const removePlayer = async ({ id }) => {
     return 'SUCCESS'
   } catch (err) {
     Sentry.captureException(err)
+    return err
   }
 }
 
@@ -794,6 +794,7 @@ export const leaveTournament = async ({ id }) => {
     return 'SUCCESS'
   } catch (err) {
     Sentry.captureException(err)
+    return err
   }
 }
 
