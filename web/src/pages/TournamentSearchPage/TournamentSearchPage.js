@@ -426,7 +426,9 @@ const TournamentSearchPage = () => {
               </Switch.Group>
             </div>
             <Button
-              disabled={JSON.stringify(filters) === JSON.stringify(newFilters)}
+              disabled={
+                called && JSON.stringify(filters) === JSON.stringify(newFilters)
+              }
               loading={loading || loadingLocation}
               onClick={searchTourneys}
               className="my-2 sm:m-4 px-4 py-2"
