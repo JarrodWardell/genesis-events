@@ -395,9 +395,6 @@ const SignupPage = ({ type }) => {
                 className="border-2 p-2 mt-2 w-full"
                 errorClassName="border-2 p-2 mt-2 w-full border-red-500"
                 defaultValue={form['gender']}
-                validation={{
-                  required: true,
-                }}
               />
             </div>
             <div className="flex flex-col w-full">
