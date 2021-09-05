@@ -307,21 +307,23 @@ export const updateTournament = async ({ id, input }) => {
       prevTournament.locationName !== tournament.locationName
     ) {
       //Send emails to all players
-      players.forEach(async (player) => {
-        let html = `${
-          tournamentEditedPlayer({ tournament, player, prevTournament }).html
-        }`
-        let playerAccount = await db.user.findUnique({
-          where: { id: player.playerId },
-        })
+      await await Promise.all(
+        players.map(async (player) => {
+          let html = `${
+            tournamentEditedPlayer({ tournament, player, prevTournament }).html
+          }`
+          let playerAccount = await db.user.findUnique({
+            where: { id: player.playerId },
+          })
 
-        await sendEmail({
-          to: playerAccount.email,
-          subject: `GEO: Tournament ${tournament.name} has been updated`,
-          html,
-          text: `Tournament ${tournament.name} has been updated`,
+          await sendEmail({
+            to: playerAccount.email,
+            subject: `GEO: Tournament ${tournament.name} has been updated`,
+            html,
+            text: `Tournament ${tournament.name} has been updated`,
+          })
         })
-      })
+      )
 
       let html = `${
         tournamentEditedEO({ tournament, owner, prevTournament }).html
@@ -535,15 +537,17 @@ export const endTournament = async ({ id }) => {
   })
 
   const winners = [players[0]]
-  players.forEach((player) => {
-    if (
-      player.score === players[0].score &&
-      player.wins === players[0].wins &&
-      player.draws === players[0].draws
-    ) {
-      winners.push(player)
-    }
-  })
+  await Promise.all(
+    players.map((player) => {
+      if (
+        player.score === players[0].score &&
+        player.wins === players[0].wins &&
+        player.draws === players[0].draws
+      ) {
+        winners.push(player)
+      }
+    })
+  )
 
   const lastRound = await db.round.findFirst({
     where: { tournamentId: id },
@@ -591,16 +595,18 @@ export const endTournament = async ({ id }) => {
     },
   })
 
-  await winners.forEach(async (winner) => {
-    await db.playerTournamentScore.update({
-      data: {
-        wonTournament: true,
-      },
-      where: {
-        id: winner.id,
-      },
+  await Promise.all(
+    winners.map(async (winner) => {
+      await db.playerTournamentScore.update({
+        data: {
+          wonTournament: true,
+        },
+        where: {
+          id: winner.id,
+        },
+      })
     })
-  })
+  )
 
   return tournament
 }
@@ -621,19 +627,21 @@ export const cancelTournament = async ({ id }) => {
   })
 
   //Send emails to all players
-  players.forEach(async (player) => {
-    let html = `${tournamentCancelledPlayer({ tournament, player }).html}`
-    let playerAccount = await db.user.findUnique({
-      where: { id: player.playerId },
-    })
+  await Promise.all(
+    players.map(async (player) => {
+      let html = `${tournamentCancelledPlayer({ tournament, player }).html}`
+      let playerAccount = await db.user.findUnique({
+        where: { id: player.playerId },
+      })
 
-    await sendEmail({
-      to: playerAccount.email,
-      subject: `GEO: Tournament ${tournament.name} has been cancelled`,
-      html,
-      text: `Tournament ${tournament.name} has been cancelled`,
+      await sendEmail({
+        to: playerAccount.email,
+        subject: `GEO: Tournament ${tournament.name} has been cancelled`,
+        html,
+        text: `Tournament ${tournament.name} has been cancelled`,
+      })
     })
-  })
+  )
 
   const owner = await db.tournament.findUnique({ where: { id } }).owner({})
   let html = `${tournamentCancelledEO({ tournament, owner }).html}`
@@ -667,59 +675,61 @@ export const addMatchScore = async ({ input }) => {
   const match = await db.match.findUnique({ where: { id: input.matchId } })
 
   try {
-    await input.matches.forEach(async (playerMatch) => {
-      await db.playerMatchScore.update({
-        data: {
-          score: playerMatch.score,
-          wonMatch: playerMatch.result === 'WIN',
-          updatedAt: new Date(),
-        },
-        where: {
-          id: playerMatch.playerMatchScore,
-        },
-      })
+    await Promise.all(
+      input.matches.map(async (playerMatch) => {
+        await db.playerMatchScore.update({
+          data: {
+            score: playerMatch.score,
+            wonMatch: playerMatch.result === 'WIN',
+            updatedAt: new Date(),
+          },
+          where: {
+            id: playerMatch.playerMatchScore,
+          },
+        })
 
-      let playerTourneyScore = await db.playerTournamentScore.findFirst({
-        where: {
-          playerId: playerMatch.userId,
-          tournamentId: match.tournamentId,
-        },
-      })
+        let playerTourneyScore = await db.playerTournamentScore.findFirst({
+          where: {
+            playerId: playerMatch.userId,
+            tournamentId: match.tournamentId,
+          },
+        })
 
-      let updateData = {}
-      switch (playerMatch.result) {
-        case 'WIN':
-          updateData.wins = playerTourneyScore.wins + 1
-          updateData.score = playerTourneyScore.score += 1
-          break
-        case 'TIED':
-          updateData.draws = playerTourneyScore.draws + 1
-          updateData.score = playerTourneyScore.score += 0.5
-          break
-        case 'LOSS':
-          updateData.losses = playerTourneyScore.losses + 1
-          break
-      }
+        let updateData = {}
+        switch (playerMatch.result) {
+          case 'WIN':
+            updateData.wins = playerTourneyScore.wins + 1
+            updateData.score = playerTourneyScore.score += 1
+            break
+          case 'TIED':
+            updateData.draws = playerTourneyScore.draws + 1
+            updateData.score = playerTourneyScore.score += 0.5
+            break
+          case 'LOSS':
+            updateData.losses = playerTourneyScore.losses + 1
+            break
+        }
 
-      await db.playerTournamentScore.update({
-        data: {
-          ...updateData,
-          updatedAt: new Date(),
-        },
-        where: {
-          id: playerTourneyScore.id,
-        },
-      })
+        await db.playerTournamentScore.update({
+          data: {
+            ...updateData,
+            updatedAt: new Date(),
+          },
+          where: {
+            id: playerTourneyScore.id,
+          },
+        })
 
-      await db.match.update({
-        data: {
-          updatedAt: new Date(),
-        },
-        where: {
-          id: input.matchId,
-        },
+        await db.match.update({
+          data: {
+            updatedAt: new Date(),
+          },
+          where: {
+            id: input.matchId,
+          },
+        })
       })
-    })
+    )
   } catch (err) {
     Sentry.captureException(err)
     return err
@@ -800,59 +810,63 @@ export const leaveTournament = async ({ id }) => {
 
 const createMatches = async ({ proposedMatches, id, round }) => {
   //Create all matches
-  proposedMatches.forEach(async (proposedMatch) => {
-    const match = await db.match.create({
-      data: {
-        tournament: {
-          connect: {
-            id,
-          },
-        },
-        round: {
-          connect: {
-            id: round.id,
-          },
-        },
-      },
-    })
-
-    proposedMatch.forEach(async (proposedPlayer) => {
-      await db.playerMatchScore.create({
+  await Promise.all(
+    proposedMatches.map(async (proposedMatch) => {
+      const match = await db.match.create({
         data: {
-          bye: proposedMatch.length === 1 ? true : false,
-          match: {
+          tournament: {
             connect: {
-              id: match.id,
+              id,
             },
           },
-          user: {
+          round: {
             connect: {
-              id: proposedPlayer,
+              id: round.id,
             },
           },
         },
       })
 
-      if (proposedMatch.length === 1) {
-        let playerTourneyScore = await db.playerTournamentScore.findFirst({
-          where: {
-            playerId: proposedPlayer,
-            tournamentId: id,
-          },
-        })
+      await Promise.all(
+        proposedMatch.map(async (proposedPlayer) => {
+          await db.playerMatchScore.create({
+            data: {
+              bye: proposedMatch.length === 1 ? true : false,
+              match: {
+                connect: {
+                  id: match.id,
+                },
+              },
+              user: {
+                connect: {
+                  id: proposedPlayer,
+                },
+              },
+            },
+          })
 
-        await db.playerTournamentScore.update({
-          data: {
-            byes: playerTourneyScore.byes + 1,
-            score: playerTourneyScore.score + 1,
-          },
-          where: {
-            id: playerTourneyScore.id,
-          },
+          if (proposedMatch.length === 1) {
+            let playerTourneyScore = await db.playerTournamentScore.findFirst({
+              where: {
+                playerId: proposedPlayer,
+                tournamentId: id,
+              },
+            })
+
+            await db.playerTournamentScore.update({
+              data: {
+                byes: playerTourneyScore.byes + 1,
+                score: playerTourneyScore.score + 1,
+              },
+              where: {
+                id: playerTourneyScore.id,
+              },
+            })
+          }
         })
-      }
+      )
     })
-  })
+  )
 }
 
 export const Tournament = {
