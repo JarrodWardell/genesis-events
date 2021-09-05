@@ -387,17 +387,6 @@ const SignupPage = ({ type }) => {
               anyone.
             </div>
             <div className="flex flex-col w-full">
-              <Label name="gender" errorClassName="text-red-500">
-                Gender
-              </Label>
-              <TextField
-                name="gender"
-                className="border-2 p-2 mt-2 w-full"
-                errorClassName="border-2 p-2 mt-2 w-full border-red-500"
-                defaultValue={form['gender']}
-              />
-            </div>
-            <div className="flex flex-col w-full">
               <Label name="dob" errorClassName="text-red-500">
                 Date of Birth
               </Label>
@@ -423,6 +412,17 @@ const SignupPage = ({ type }) => {
                     dropdownMode="select"
                   />
                 )}
+              />
+            </div>
+            <div className="flex flex-col w-full">
+              <Label name="gender" errorClassName="text-red-500">
+                Gender (Optional)
+              </Label>
+              <TextField
+                name="gender"
+                className="border-2 p-2 mt-2 w-full"
+                errorClassName="border-2 p-2 mt-2 w-full border-red-500"
+                defaultValue={form['gender']}
               />
             </div>
             <div className="flex flex-col w-full">
