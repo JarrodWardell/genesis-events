@@ -13,7 +13,6 @@ export const QUERY = gql`
       updatedAt
       draws
       byes
-      randomizer
       active
       wonTournament
       player {

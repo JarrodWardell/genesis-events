@@ -178,7 +178,7 @@ const TournamentSignupTab = ({ tournament }) => {
   }
 
   const generateUrlText = (tourney) => {
-    let text = `Signup for the ${tourney.name} genesis tournament here!`
+    let text = `Sign Up for the ${tourney.name} genesis tournament here!`
     return text.replaceAll(' ', '%20')
   }
 
@@ -206,10 +206,10 @@ const TournamentSignupTab = ({ tournament }) => {
   return (
     <div className="w-full py-10 flex flex-col items-center justify-center">
       <h2 className="text-center text-2xl uppercase text-gray-900 mb-6 font-normal">
-        User Signups
+        User Sign Ups
       </h2>
       <p className="text-gray-500 mb-6">
-        Signups for this event are{' '}
+        Sign Ups for this event are{' '}
         <strong>{checkIfSignupActive(tournament) ? 'open' : 'closed'}</strong>.
       </p>
       <p className="text-gray-500">{returnInfoText(tournament, currentUser)}</p>

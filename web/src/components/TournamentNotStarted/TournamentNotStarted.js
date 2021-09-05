@@ -135,7 +135,7 @@ const TournamentNotStarted = ({ tournament }) => {
             )
           )}
 
-          {!hasRole(['Admin', 'EO']) && (
+          {hasRole(['PLAYER']) && (
             <button
               className="flex items-center mx-auto py-2 px-8 text-center bg-white rounded-md border-2 cursor-pointer hover:bg-green-600 uppercase"
               onClick={() =>
