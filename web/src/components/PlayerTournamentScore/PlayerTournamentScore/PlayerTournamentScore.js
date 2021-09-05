@@ -102,10 +102,6 @@ const PlayerTournamentScore = ({ playerTournamentScore }) => {
               <td>{playerTournamentScore.byes}</td>
             </tr>
             <tr>
-              <th>Randomizer</th>
-              <td>{playerTournamentScore.randomizer}</td>
-            </tr>
-            <tr>
               <th>Active</th>
               <td>{checkboxInputTag(playerTournamentScore.active)}</td>
             </tr>

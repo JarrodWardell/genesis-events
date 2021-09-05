@@ -16,7 +16,6 @@ export const QUERY = gql`
       updatedAt
       draws
       byes
-      randomizer
       active
       wonTournament
     }
@@ -38,7 +37,6 @@ const UPDATE_PLAYER_TOURNAMENT_SCORE_MUTATION = gql`
       updatedAt
       draws
       byes
-      randomizer
       active
       wonTournament
     }

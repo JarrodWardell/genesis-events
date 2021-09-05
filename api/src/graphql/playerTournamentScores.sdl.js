@@ -14,7 +14,6 @@ export const schema = gql`
     updatedAt: DateTime!
     draws: Int!
     byes: Int!
-    randomizer: String
     active: Boolean!
     wonTournament: Boolean!
     player: User!
@@ -45,7 +44,6 @@ export const schema = gql`
     tournamentId: Int!
     draws: Int!
     byes: Int!
-    randomizer: String
     active: Boolean!
     wonTournament: Boolean!
   }
@@ -58,7 +56,6 @@ export const schema = gql`
     tournamentId: Int
     draws: Int
     byes: Int
-    randomizer: String
     active: Boolean
     wonTournament: Boolean
   }

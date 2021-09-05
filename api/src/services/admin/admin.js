@@ -35,7 +35,6 @@ export const seedSingleTournament = async ({ id, numPlayers = 8 }) => {
           tournament: {
             connect: { id },
           },
-          randomizer: randomWordGenerator(10),
         },
       })
     }

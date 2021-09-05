@@ -318,7 +318,7 @@ const TournamentEOForm = ({ tournament }) => {
                   peekNextMonth
                   dateFormat="MMMM d, yyyy h:mm aa"
                   calendarClassName="z-10"
-                  autoComplete="false"
+                  autoComplete="off"
                 />
               )}
             />
