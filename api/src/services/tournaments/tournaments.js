@@ -9,7 +9,6 @@ import { sendEmail } from 'src/helpers/sendEmail'
 import {
   generateMatches,
   generateTournamentUrl,
-  randomWordGenerator,
 } from 'src/helpers/tournamentHelpers'
 import { db } from 'src/lib/db'
 import * as Sentry from '@sentry/node'
@@ -419,6 +418,23 @@ export const registerForTournament = async ({ id }) => {
   return 'Successfully Signed up for Tournament'
 }
 
+export const addPlayer = async ({ id, input }) => {
+  const tournament = await db.tournament.findUnique({ where: { id } })
+
+  await db.playerTournamentScore.create({
+    data: {
+      ...input,
+      tournament: {
+        connect: {
+          id,
+        },
+      },
+    },
+  })
+
+  return tournament
+}
+
 export const startTournament = async ({ id }) => {
   const tournament = await db.tournament.findUnique({ where: { id } })
 
@@ -806,6 +822,51 @@ export const leaveTournament = async ({ id }) => {
     Sentry.captureException(err)
     return err
   }
+}
+
+export const searchNonPlayers = async ({ id, searchTerm }) => {
+  let currentPlayers = await db.playerTournamentScore.findMany({
+    where: { tournamentId: id },
+  })
+
+  let playerIds = []
+
+  currentPlayers.forEach((player) => {
+    if (player.playerId) playerIds.push(player.playerId)
+  })
+
+  let playerUserRole = await db.userRole.findUnique({
+    where: { name: 'PLAYER' },
+  })
+
+  let nonSearchPlayers = await db.user.findMany({
+    where: {
+      AND: [
+        {
+          nickname: {
+            contains: searchTerm,
+          },
+        },
+        {
+          UserUserRole: {
+            some: {
+              userRoleId: { equals: playerUserRole.id },
+            },
+          },
+        },
+        {
+          id: {
+            notIn: playerIds,
+          },
+        },
+      ],
+    },
+    take: 20,
+  })
+
+  console.log(nonSearchPlayers)
+
+  return nonSearchPlayers
 }
 
 const createMatches = async ({ proposedMatches, id, round }) => {

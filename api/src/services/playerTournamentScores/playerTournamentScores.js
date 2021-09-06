@@ -71,7 +71,7 @@ export const deletePlayerTournamentScore = ({ id }) => {
 
 export const PlayerTournamentScore = {
   player: (_obj, { root }) =>
-    db.user.findUnique({ where: { id: root.playerId } }),
+    root.playerId ? db.user.findUnique({ where: { id: root.playerId } }) : null,
   tournament: (_obj, { root }) =>
     db.playerTournamentScore
       .findUnique({ where: { id: root.id } })

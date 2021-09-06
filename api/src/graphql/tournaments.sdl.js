@@ -85,6 +85,7 @@ export const schema = gql`
     myTournaments: [Tournament!]!
     upcomingTournaments(input: SearchTournamentInput): [Tournament!]!
     finishedTournaments(input: SearchTournamentInput): [Tournament!]!
+    searchNonPlayers(id: Int!, searchTerm: String): [User!]!
   }
 
   input CreateTournamentInput {
@@ -190,9 +191,20 @@ export const schema = gql`
     tournaments: [Tournament!]!
   }
 
+  input AddPlayerInput {
+    playerName: String!
+    playerId: String
+    wins: Int
+    losses: Int
+    byes: Int
+    draws: Int
+    score: Float
+  }
+
   type Mutation {
     createTournament(input: CreateTournamentInput!): Tournament!
     updateTournament(id: Int!, input: UpdateTournamentInput!): Tournament!
+    addPlayer(id: Int!, input: AddPlayerInput!): Tournament!
     deleteTournament(id: Int!): Tournament!
     registerForTournament(id: Int!): String!
     startTournament(id: Int!): Tournament!

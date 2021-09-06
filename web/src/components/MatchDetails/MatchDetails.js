@@ -191,7 +191,10 @@ const MatchDetails = ({ index, match, tournament }) => {
           {index + 1}.
         </div>
         <div className="col-span-3 flex justify-center items-center">
-          <PlayerProfileItem player={match.players[0].user} />
+          <PlayerProfileItem
+            player={match?.players[0]?.user || {}}
+            playerName={match?.players[0].playerName}
+          />
         </div>
         <div className="col-span-1 flex justify-center items-center">
           {!match.players[0].bye && (
@@ -273,7 +276,10 @@ const MatchDetails = ({ index, match, tournament }) => {
               )}
             </div>
             <div className="col-span-3 flex justify-center items-center">
-              <PlayerProfileItem player={match.players[1].user} />
+              <PlayerProfileItem
+                player={match?.players[1]?.user || {}}
+                playerName={match?.players[1].playerName}
+              />
             </div>
           </>
         )}

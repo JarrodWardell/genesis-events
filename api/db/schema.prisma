@@ -127,6 +127,7 @@ model Tournament {
   lng                    Float?
   storeId                String?
   ownerId                String?
+  publicRegistration     Boolean                 @default(true)
   createdAt              DateTime                @default(now())
   updatedAt              DateTime                @default(now())
   userId                 String?
@@ -162,7 +163,6 @@ model PlayerTournamentScore {
   wins          Int        @default(0)
   losses        Int        @default(0)
   score         Float      @default(0)
-  playerId      String
   tournamentId  Int
   createdAt     DateTime   @default(now())
   updatedAt     DateTime   @default(now())
@@ -171,7 +171,9 @@ model PlayerTournamentScore {
   randomizer    String?
   active        Boolean    @default(true)
   wonTournament Boolean    @default(false)
-  player        User       @relation(fields: [playerId], references: [id])
+  playerName  String?
+  playerId      String?
+  player        User?       @relation(fields: [playerId], references: [id])
   tournament    Tournament @relation(fields: [tournamentId], references: [id])
 
   @@unique([playerId, tournamentId], name: "PlayerTournamentScore.playerId_tournamentId_unique")

@@ -59,7 +59,11 @@ const TournamentLeaderboardTab = ({ tournament }) => {
           </tr>
           {tournament.players.map((playerScore, index) => (
             <tr
-              key={playerScore.player.id}
+              key={
+                playerScore.player
+                  ? playerScore.player.id
+                  : playerScore.playerName
+              }
               className="text-center py-2 border-black border-b-2 text-gray-900 text-sm"
             >
               <td className="text-center py-2">
@@ -75,7 +79,10 @@ const TournamentLeaderboardTab = ({ tournament }) => {
               </td>
               <td className=" py-2 ">
                 <div className="h-full justify-left items-left flex">
-                  <PlayerProfileItem player={playerScore.player} />
+                  <PlayerProfileItem
+                    player={playerScore.player || {}}
+                    playerName={playerScore.playerName}
+                  />
                 </div>
               </td>
               <td className="text-center py-2">{playerScore.wins}</td>
@@ -100,7 +107,11 @@ const TournamentLeaderboardTab = ({ tournament }) => {
                           onClick={() => {
                             if (
                               confirm(
-                                `Are you sure you would like to remove ${playerScore.player.nickname} from this tournament? This cannot be undone`
+                                `Are you sure you would like to remove ${
+                                  playerScore.player
+                                    ? playerScore.player.nickname
+                                    : playerScore.playerName
+                                } from this tournament? This cannot be undone`
                               )
                             ) {
                               removePlayer({
@@ -119,6 +130,18 @@ const TournamentLeaderboardTab = ({ tournament }) => {
                 )}
             </tr>
           ))}
+          {checkTournamentPermissions({ tournament, hasRole, currentUser }) && (
+            <tr className="text-center py-2 border-black border-b-2 text-gray-900 text-sm">
+              <td className="text-center py-2">+</td>
+              <td className="text-center py-2"></td>
+              <td className="text-center py-2"></td>
+              <td className="text-center py-2"></td>
+              <td className="text-center py-2"></td>
+              <td className="text-center py-2"></td>
+              <td className="text-center py-2"></td>
+              <td className="text-center py-2"></td>
+            </tr>
+          )}
         </table>
       ) : (
         <div className="text-gray-900 text-lg my-8 mx-auto text-center">
