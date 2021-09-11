@@ -35,7 +35,7 @@ export const generateMatches = async ({ roundNumber = 1, db, id }) => {
   const players = await db.tournament
     .findUnique({ where: { id } })
     .players({ where: { active: true } })
-  let playersNotGivenMatches = players.map((player) => player.playerId)
+  let playersNotGivenMatches = players.map((player) => player.id)
   let playersGivenMatches = []
   let playerScores = {}
 
@@ -47,11 +47,11 @@ export const generateMatches = async ({ roundNumber = 1, db, id }) => {
   players.forEach((player) => {
     let scoreDiff = player.wins - player.losses + 0.5 * player.draws
     if (scoreDiff in scoreObj) {
-      scoreObj[scoreDiff].push(player.playerId)
+      scoreObj[scoreDiff].push(player.id)
     } else {
-      scoreObj[scoreDiff] = [player.playerId]
+      scoreObj[scoreDiff] = [player.id]
     }
-    playerScores[player.playerId] = scoreDiff
+    playerScores[player.id] = scoreDiff
   })
 
   if (roundNumber > 1) {
@@ -89,7 +89,7 @@ export const generateMatches = async ({ roundNumber = 1, db, id }) => {
     players.filter((player) => player.byes === 0)
   )
   let playerList = [...playersWithByes, ...playersWithoutByes].map(
-    (player) => player.playerId
+    (player) => player.id
   )
 
   playerList.forEach((player) => {

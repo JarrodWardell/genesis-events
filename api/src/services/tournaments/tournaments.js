@@ -13,6 +13,7 @@ import {
 import { db } from 'src/lib/db'
 import * as Sentry from '@sentry/node'
 import { isEqual } from 'date-fns'
+import { playerTournamentScore } from '../playerTournamentScores/playerTournamentScores'
 
 export const tournament = ({ id }) => {
   return db.tournament.findUnique({
@@ -420,17 +421,41 @@ export const registerForTournament = async ({ id }) => {
 
 export const addPlayer = async ({ id, input }) => {
   const tournament = await db.tournament.findUnique({ where: { id } })
+  if (input.playerId) {
+    let playerId = input.playerId
+    let newInput = { ...input }
+    delete newInput.playerId
 
-  await db.playerTournamentScore.create({
-    data: {
-      ...input,
-      tournament: {
-        connect: {
-          id,
+    await db.playerTournamentScore.create({
+      data: {
+        ...newInput,
+        tournament: {
+          connect: {
+            id,
+          },
+        },
+        player: {
+          connect: {
+            id: playerId,
+          },
         },
       },
-    },
-  })
+    })
+  } else {
+    let newInput = { ...input }
+    delete newInput.playerId
+
+    await db.playerTournamentScore.create({
+      data: {
+        ...newInput,
+        tournament: {
+          connect: {
+            id,
+          },
+        },
+      },
+    })
+  }
 
   return tournament
 }
@@ -704,10 +729,21 @@ export const addMatchScore = async ({ input }) => {
           },
         })
 
+        let playerTournamentWhere = {
+          tournamentId: match.tournamentId,
+        }
+
+        console.log(playerMatch)
+
+        if (playerMatch.userId) {
+          playerTournamentWhere.playerId = playerMatch.userId
+        } else if (playerMatch.playerName) {
+          playerTournamentWhere.playerName = playerMatch.playerName
+        }
+
         let playerTourneyScore = await db.playerTournamentScore.findFirst({
           where: {
-            playerId: playerMatch.userId,
-            tournamentId: match.tournamentId,
+            ...playerTournamentWhere,
           },
         })
 
@@ -824,7 +860,7 @@ export const leaveTournament = async ({ id }) => {
   }
 }
 
-export const searchNonPlayers = async ({ id, searchTerm }) => {
+export const searchNonPlayers = async ({ id, searchTerm, take = 20 }) => {
   let currentPlayers = await db.playerTournamentScore.findMany({
     where: { tournamentId: id },
   })
@@ -861,10 +897,8 @@ export const searchNonPlayers = async ({ id, searchTerm }) => {
         },
       ],
     },
-    take: 20,
+    take,
   })
-
-  console.log(nonSearchPlayers)
 
   return nonSearchPlayers
 }
@@ -890,26 +924,39 @@ const createMatches = async ({ proposedMatches, id, round }) => {
 
       await Promise.all(
         proposedMatch.map(async (proposedPlayer) => {
-          await db.playerMatchScore.create({
+          let player = await db.playerTournamentScore.findUnique({
+            where: { id: proposedPlayer },
+            include: { player: true },
+          })
+
+          let playerMatchScore = {
             data: {
               bye: proposedMatch.length === 1 ? true : false,
+              playerName: player.playerName || player.player.nickname,
               match: {
                 connect: {
                   id: match.id,
                 },
               },
-              user: {
-                connect: {
-                  id: proposedPlayer,
-                },
-              },
             },
+          }
+
+          if (player.playerId) {
+            playerMatchScore.data.user = {
+              connect: {
+                id: player.playerId,
+              },
+            }
+          }
+
+          await db.playerMatchScore.create({
+            ...playerMatchScore,
           })
 
           if (proposedMatch.length === 1) {
             let playerTourneyScore = await db.playerTournamentScore.findFirst({
               where: {
-                playerId: proposedPlayer,
+                id: proposedPlayer,
                 tournamentId: id,
               },
             })

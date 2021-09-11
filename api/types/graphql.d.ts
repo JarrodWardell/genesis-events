@@ -114,7 +114,8 @@ export type CreateMatchInput = {
 
 export type CreatePlayerMatchScoreInput = {
   score?: Maybe<Scalars['Int']>;
-  userId: Scalars['String'];
+  userId?: Maybe<Scalars['String']>;
+  playerName?: Maybe<Scalars['String']>;
   matchId: Scalars['Int'];
   wonMatch: Scalars['Boolean'];
   bye: Scalars['Boolean'];
@@ -262,7 +263,8 @@ export type MatchResult =
   | 'LOSS';
 
 export type MatchScore = {
-  userId: Scalars['String'];
+  userId?: Maybe<Scalars['String']>;
+  playerName?: Maybe<Scalars['String']>;
   playerMatchScore: Scalars['Int'];
   score: Scalars['Int'];
   result: MatchResult;
@@ -581,7 +583,8 @@ export type PlayerMatchScore = {
   __typename?: 'PlayerMatchScore';
   id: Scalars['Int'];
   score?: Maybe<Scalars['Int']>;
-  userId: Scalars['String'];
+  userId?: Maybe<Scalars['String']>;
+  playerName?: Maybe<Scalars['String']>;
   matchId: Scalars['Int'];
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
@@ -589,7 +592,7 @@ export type PlayerMatchScore = {
   bye: Scalars['Boolean'];
   active: Scalars['Boolean'];
   match: Match;
-  user: User;
+  user?: Maybe<User>;
 };
 
 export type PlayerTournamentScore = {
@@ -645,7 +648,7 @@ export type Query = {
   redwood?: Maybe<Redwood>;
   round?: Maybe<Round>;
   rounds: Array<Round>;
-  searchNonPlayers?: Maybe<Tournament>;
+  searchNonPlayers: Array<User>;
   searchTournaments: PaginatedTournaments;
   store?: Maybe<Store>;
   stores: Array<Store>;
@@ -932,6 +935,7 @@ export type UpdateMatchInput = {
 export type UpdatePlayerMatchScoreInput = {
   score?: Maybe<Scalars['Int']>;
   userId?: Maybe<Scalars['String']>;
+  playerName?: Maybe<Scalars['String']>;
   matchId?: Maybe<Scalars['Int']>;
   wonMatch?: Maybe<Scalars['Boolean']>;
   bye?: Maybe<Scalars['Boolean']>;
@@ -1442,7 +1446,8 @@ export type PaginatedTournamentsResolvers<ContextType = any, ParentType extends 
 export type PlayerMatchScoreResolvers<ContextType = any, ParentType extends ResolversParentTypes['PlayerMatchScore'] = ResolversParentTypes['PlayerMatchScore']> = {
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   score?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  userId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  userId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  playerName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   matchId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
@@ -1450,7 +1455,7 @@ export type PlayerMatchScoreResolvers<ContextType = any, ParentType extends Reso
   bye?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   active?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   match?: Resolver<ResolversTypes['Match'], ParentType, ContextType>;
-  user?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
+  user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1506,7 +1511,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   redwood?: Resolver<Maybe<ResolversTypes['Redwood']>, ParentType, ContextType>;
   round?: Resolver<Maybe<ResolversTypes['Round']>, ParentType, ContextType, RequireFields<QueryRoundArgs, 'id'>>;
   rounds?: Resolver<Array<ResolversTypes['Round']>, ParentType, ContextType>;
-  searchNonPlayers?: Resolver<Maybe<ResolversTypes['Tournament']>, ParentType, ContextType, RequireFields<QuerySearchNonPlayersArgs, 'id'>>;
+  searchNonPlayers?: Resolver<Array<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QuerySearchNonPlayersArgs, 'id'>>;
   searchTournaments?: Resolver<ResolversTypes['PaginatedTournaments'], ParentType, ContextType, RequireFields<QuerySearchTournamentsArgs, 'input'>>;
   store?: Resolver<Maybe<ResolversTypes['Store']>, ParentType, ContextType, RequireFields<QueryStoreArgs, 'id'>>;
   stores?: Resolver<Array<ResolversTypes['Store']>, ParentType, ContextType, RequireFields<QueryStoresArgs, never>>;

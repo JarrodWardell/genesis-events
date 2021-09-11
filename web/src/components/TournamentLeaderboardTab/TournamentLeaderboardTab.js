@@ -6,6 +6,7 @@ import { TOURNAMENT_BY_URL } from 'src/pages/ViewTournamentPage/ViewTournamentPa
 import PlayerProfileItem from '../PlayerProfileItem/PlayerProfileItem'
 import Button from '../Button/Button'
 import { logError } from 'src/helpers/errorLogger'
+import AddTournamentPlayer from '../AddTournamentPlayer/AddTournamentPlayer'
 
 export const REMOVE_PLAYER = gql`
   mutation removePlayer($id: Int!) {
@@ -39,8 +40,13 @@ const TournamentLeaderboardTab = ({ tournament }) => {
   })
 
   return (
-    <div className="w-full overflow-x-auto">
-      {tournament.players.length > 0 ? (
+    <div className="w-full overflow-x-auto h-full pb-96">
+      {tournament.players.length > 0 ||
+      checkTournamentPermissions({
+        tournament,
+        hasRole,
+        currentUser,
+      }) ? (
         <table className="w-full">
           <tr className="bg-gray-100 w-full text-center text-xs text-gray-500 uppercase leading-4 font-normal">
             <th className="py-2">Rank</th>
@@ -130,18 +136,10 @@ const TournamentLeaderboardTab = ({ tournament }) => {
                 )}
             </tr>
           ))}
-          {checkTournamentPermissions({ tournament, hasRole, currentUser }) && (
-            <tr className="text-center py-2 border-black border-b-2 text-gray-900 text-sm">
-              <td className="text-center py-2">+</td>
-              <td className="text-center py-2"></td>
-              <td className="text-center py-2"></td>
-              <td className="text-center py-2"></td>
-              <td className="text-center py-2"></td>
-              <td className="text-center py-2"></td>
-              <td className="text-center py-2"></td>
-              <td className="text-center py-2"></td>
-            </tr>
-          )}
+          {checkTournamentPermissions({ tournament, hasRole, currentUser }) &&
+            !tournament.dateEnded && (
+              <AddTournamentPlayer tournament={tournament} />
+            )}
         </table>
       ) : (
         <div className="text-gray-900 text-lg my-8 mx-auto text-center">

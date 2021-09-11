@@ -130,9 +130,9 @@ const TournamentSignupTab = ({ tournament }) => {
   //Check if applicable to register
   const isInTournament = (tourney, currUser) => {
     var playerList = {}
-    tourney.players?.forEach(
-      ({ player }) => (playerList[player.id] = { ...player })
-    )
+    tourney.players?.forEach(({ player }) => {
+      if (player?.id) playerList[player.id] = { ...player }
+    })
 
     if (
       playerList &&
@@ -147,9 +147,9 @@ const TournamentSignupTab = ({ tournament }) => {
 
   const hasBeenInTournament = (tourney, currUser) => {
     var playerList = {}
-    tourney.players?.forEach(
-      ({ player }) => (playerList[player.id] = { ...player })
-    )
+    tourney.players?.forEach(({ player }) => {
+      if (player?.id) playerList[player.id] = { ...player }
+    })
 
     if (
       playerList &&

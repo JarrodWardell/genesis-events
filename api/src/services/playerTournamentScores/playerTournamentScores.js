@@ -23,6 +23,7 @@ export const playerLeaderboard = async ({
                     FROM "PlayerTournamentScore"
                     LEFT JOIN "User" ON "PlayerTournamentScore"."playerId" =  "User"."id"
                     where "PlayerTournamentScore"."active" = true
+                    and "PlayerTournamentScore"."playerId" IS NOT NULL
                     group by "playerId", "User".nickname
                     order by SUM(score) + count(*) desc
                   ) AS ranked

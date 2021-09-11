@@ -50,14 +50,16 @@ const MatchDetails = ({ index, match, tournament }) => {
       matchId: match.id,
       matches: [
         {
-          userId: match.players[0].user.id,
+          userId: match.players[0].user?.id,
+          playerName: match.players[0]?.playerName,
           playerMatchScore: match.players[0].id,
           score: data.player1,
           result: returnResult(data.player1, data.player2),
         },
         {
-          userId: match.players[1].user.id,
+          userId: match.players[1].user?.id,
           playerMatchScore: match.players[1].id,
+          playerName: match.players[1].playerName,
           score: data.player2,
           result: returnResult(data.player2, data.player1),
         },
@@ -193,7 +195,7 @@ const MatchDetails = ({ index, match, tournament }) => {
         <div className="col-span-3 flex justify-center items-center">
           <PlayerProfileItem
             player={match?.players[0]?.user || {}}
-            playerName={match?.players[0].playerName}
+            playerName={match?.players[0]?.playerName}
           />
         </div>
         <div className="col-span-1 flex justify-center items-center">
@@ -278,7 +280,7 @@ const MatchDetails = ({ index, match, tournament }) => {
             <div className="col-span-3 flex justify-center items-center">
               <PlayerProfileItem
                 player={match?.players[1]?.user || {}}
-                playerName={match?.players[1].playerName}
+                playerName={match?.players[1]?.playerName}
               />
             </div>
           </>

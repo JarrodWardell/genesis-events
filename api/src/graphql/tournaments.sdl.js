@@ -55,6 +55,7 @@ export const schema = gql`
       street1
     }
     winners {
+      playerName
       player {
         nickname
       }
@@ -150,7 +151,8 @@ export const schema = gql`
   }
 
   input MatchScore {
-    userId: String!
+    userId: String
+    playerName: String
     playerMatchScore: Int!
     score: Int!
     result: MatchResult!

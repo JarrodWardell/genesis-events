@@ -70,6 +70,7 @@ export const TOURNAMENT_BY_URL = gql`
       winners {
         id
         wonTournament
+        playerName
         score
         wins
         byes
@@ -88,6 +89,11 @@ export const TOURNAMENT_BY_URL = gql`
           id
           players {
             id
+            playerName
+            score
+            bye
+            wonMatch
+            userId
             user {
               id
               nickname
@@ -97,9 +103,6 @@ export const TOURNAMENT_BY_URL = gql`
                 name
               }
             }
-            score
-            bye
-            wonMatch
           }
           updatedAt
         }
@@ -271,7 +274,7 @@ const ViewTournamentPage = ({ url, tab, tabOptions }) => {
                     {tournament.winners.map((winner, index) => (
                       <span key={`winner-${winner.id}`}>
                         {index > 0 && ', '}
-                        {winner.player.nickname}
+                        {winner.player?.nickname || winner.playerName}
                       </span>
                     ))}
                   </span>
