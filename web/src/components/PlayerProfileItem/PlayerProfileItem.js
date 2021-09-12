@@ -9,7 +9,7 @@ const PlayerProfileItem = ({
   let { nickname, photo } = player
 
   return (
-    <div className={`flex items-center` + className}>
+    <div className={`flex items-start` + className}>
       {showPhoto && (
         <div className="mr-4">
           <ProfilePicture pic={photo} size="12" />

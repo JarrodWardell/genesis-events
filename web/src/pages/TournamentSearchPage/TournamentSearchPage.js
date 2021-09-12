@@ -74,6 +74,7 @@ const TournamentSearchPage = () => {
     dateStart: null,
     dateEnd: null,
     openSpotsOnly: false,
+    finishedTournaments: true,
   })
 
   const [newFilters, setNewFilters] = React.useState({
@@ -126,6 +127,8 @@ const TournamentSearchPage = () => {
           if (brokeParam[0] === 'location') val = val.replaceAll('%20', ' ')
 
           if (brokeParam[0] === 'openSpotsOnly') val = val === 'true'
+
+          if (brokeParam[0] === 'finishedTournaments') val = val === 'true'
           query[brokeParam[0]] = val
         }
       })
@@ -390,7 +393,7 @@ const TournamentSearchPage = () => {
             </div>
           </div>
           <div className="cols-span-1 grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4">
-            <div className="flex flex-col justify-center">
+            <div className="flex flex-col justify-around">
               <Switch.Group as="div" className="flex justify-between">
                 <span className="flex flex-col items-center">
                   <Switch.Label
@@ -418,6 +421,42 @@ const TournamentSearchPage = () => {
                     aria-hidden="true"
                     className={classNames(
                       newFilters.openSpotsOnly
+                        ? 'translate-x-5'
+                        : 'translate-x-0',
+                      'pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200'
+                    )}
+                  />
+                </Switch>
+              </Switch.Group>
+              <Switch.Group as="div" className="flex justify-between">
+                <span className="flex flex-col items-center">
+                  <Switch.Label
+                    as="span"
+                    className="text-sm font-medium text-gray-900"
+                    passive
+                  >
+                    Finished Tournaments
+                  </Switch.Label>
+                </span>
+                <Switch
+                  checked={newFilters.finishedTournaments}
+                  onChange={(e) =>
+                    setNewFilters({
+                      ...newFilters,
+                      finishedTournaments: e,
+                    })
+                  }
+                  className={classNames(
+                    newFilters.finishedTournaments
+                      ? 'bg-indigo-600'
+                      : 'bg-gray-200',
+                    'relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'
+                  )}
+                >
+                  <span
+                    aria-hidden="true"
+                    className={classNames(
+                      newFilters.finishedTournaments
                         ? 'translate-x-5'
                         : 'translate-x-0',
                       'pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200'

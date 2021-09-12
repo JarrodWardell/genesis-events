@@ -198,7 +198,11 @@ export const searchTournaments = async ({ input }) => {
           }'`
         : ``
     }
-    ${input.openSpotsOnly ? `AND "Tournament"."dateEnded" IS NULL` : ``}
+    ${
+      input.finishedTournaments
+        ? `AND "Tournament"."dateEnded" IS NOT NULL`
+        : `AND "Tournament"."dateEnded" IS NULL`
+    }
     GROUP BY "Tournament".id
     ${
       input.openSpotsOnly
