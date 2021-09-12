@@ -14,11 +14,17 @@ const TournamentMatchesTab = ({ tournament }) => {
         return (
           <>
             <span className="w-36 sm:w-1/6">
-              <PlayerProfileItem player={player1} />
+              <PlayerProfileItem
+                player={player1 || {}}
+                playerName={match.players[0].playerName}
+              />
             </span>{' '}
             <span className="w-24 sm:w-1/6">defeated </span>
             <span className="w-36 sm:w-1/6">
-              <PlayerProfileItem player={player2} />
+              <PlayerProfileItem
+                player={player2 || {}}
+                playerName={match.players[1].playerName}
+              />
             </span>{' '}
           </>
         )
@@ -26,11 +32,17 @@ const TournamentMatchesTab = ({ tournament }) => {
         return (
           <>
             <span className="w-36 sm:w-1/6">
-              <PlayerProfileItem player={player1} />
+              <PlayerProfileItem
+                player={player2 || {}}
+                playerName={match.players[1].playerName}
+              />
             </span>{' '}
             <span className="w-24 sm:w-1/6">defeated</span>
             <span className="w-36 sm:w-1/6">
-              <PlayerProfileItem player={player2} />
+              <PlayerProfileItem
+                player={player1 || {}}
+                playerName={match.players[0].playerName}
+              />
             </span>{' '}
           </>
         )
@@ -38,11 +50,17 @@ const TournamentMatchesTab = ({ tournament }) => {
         return (
           <>
             <span className="w-36 sm:w-1/6">
-              <PlayerProfileItem player={player1} />
+              <PlayerProfileItem
+                player={player1 || {}}
+                playerName={match.players[0].playerName}
+              />
             </span>
             <span className="w-24 sm:w-1/6">drew</span>
             <span className="w-36 sm:w-1/6">
-              <PlayerProfileItem player={player2} />
+              <PlayerProfileItem
+                player={player2 || {}}
+                playerName={match.players[1].playerName}
+              />
             </span>{' '}
           </>
         )
@@ -51,7 +69,10 @@ const TournamentMatchesTab = ({ tournament }) => {
       return (
         <>
           <span className="w-36 sm:w-1/6">
-            <PlayerProfileItem player={player1} />
+            <PlayerProfileItem
+              player={player1 || {}}
+              playerName={match.players[1].playerName}
+            />
           </span>{' '}
           <span className="w-24 sm:w-1/6">bye</span>
         </>

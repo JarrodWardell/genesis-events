@@ -78,6 +78,10 @@ const PlayerTournamentScore = ({ playerTournamentScore }) => {
               <td>{playerTournamentScore.score}</td>
             </tr>
             <tr>
+              <th>Player name</th>
+              <td>{playerTournamentScore.playerName}</td>
+            </tr>
+            <tr>
               <th>Player id</th>
               <td>{playerTournamentScore.playerId}</td>
             </tr>

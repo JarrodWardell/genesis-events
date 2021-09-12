@@ -9,7 +9,6 @@ import { sendEmail } from 'src/helpers/sendEmail'
 import {
   generateMatches,
   generateTournamentUrl,
-  randomWordGenerator,
 } from 'src/helpers/tournamentHelpers'
 import { db } from 'src/lib/db'
 import * as Sentry from '@sentry/node'
@@ -362,6 +361,16 @@ export const updateTournament = async ({ id, input }) => {
 export const registerForTournament = async ({ id }) => {
   let currentUser = context.currentUser
 
+  const tournament = await db.tournament.findUnique({
+    where: { id },
+  })
+
+  if (!tournament.publicRegistration) {
+    throw new Error(
+      'Registration can only be made by admins for this tournament. Please contact the organizer.'
+    )
+  }
+
   await db.playerTournamentScore.create({
     data: {
       player: {
@@ -375,10 +384,6 @@ export const registerForTournament = async ({ id }) => {
 
   const player = await db.user.findUnique({
     where: { id: currentUser.user.id },
-  })
-
-  const tournament = await db.tournament.findUnique({
-    where: { id },
   })
 
   let ownerEmail = ''
@@ -417,6 +422,47 @@ export const registerForTournament = async ({ id }) => {
   })
 
   return 'Successfully Signed up for Tournament'
+}
+
+export const addPlayer = async ({ id, input }) => {
+  const tournament = await db.tournament.findUnique({ where: { id } })
+  if (input.playerId) {
+    let playerId = input.playerId
+    let newInput = { ...input }
+    delete newInput.playerId
+
+    await db.playerTournamentScore.create({
+      data: {
+        ...newInput,
+        tournament: {
+          connect: {
+            id,
+          },
+        },
+        player: {
+          connect: {
+            id: playerId,
+          },
+        },
+      },
+    })
+  } else {
+    let newInput = { ...input }
+    delete newInput.playerId
+
+    await db.playerTournamentScore.create({
+      data: {
+        ...newInput,
+        tournament: {
+          connect: {
+            id,
+          },
+        },
+      },
+    })
+  }
+
+  return tournament
 }
 
 export const startTournament = async ({ id }) => {
@@ -688,10 +734,21 @@ export const addMatchScore = async ({ input }) => {
           },
         })
 
+        let playerTournamentWhere = {
+          tournamentId: match.tournamentId,
+        }
+
+        console.log(playerMatch)
+
+        if (playerMatch.userId) {
+          playerTournamentWhere.playerId = playerMatch.userId
+        } else if (playerMatch.playerName) {
+          playerTournamentWhere.playerName = playerMatch.playerName
+        }
+
         let playerTourneyScore = await db.playerTournamentScore.findFirst({
           where: {
-            playerId: playerMatch.userId,
-            tournamentId: match.tournamentId,
+            ...playerTournamentWhere,
           },
         })
 
@@ -808,6 +865,49 @@ export const leaveTournament = async ({ id }) => {
   }
 }
 
+export const searchNonPlayers = async ({ id, searchTerm, take = 20 }) => {
+  let currentPlayers = await db.playerTournamentScore.findMany({
+    where: { tournamentId: id },
+  })
+
+  let playerIds = []
+
+  currentPlayers.forEach((player) => {
+    if (player.playerId) playerIds.push(player.playerId)
+  })
+
+  let playerUserRole = await db.userRole.findUnique({
+    where: { name: 'PLAYER' },
+  })
+
+  let nonSearchPlayers = await db.user.findMany({
+    where: {
+      AND: [
+        {
+          nickname: {
+            contains: searchTerm,
+          },
+        },
+        {
+          UserUserRole: {
+            some: {
+              userRoleId: { equals: playerUserRole.id },
+            },
+          },
+        },
+        {
+          id: {
+            notIn: playerIds,
+          },
+        },
+      ],
+    },
+    take,
+  })
+
+  return nonSearchPlayers
+}
+
 const createMatches = async ({ proposedMatches, id, round }) => {
   //Create all matches
   await Promise.all(
@@ -829,26 +929,39 @@ const createMatches = async ({ proposedMatches, id, round }) => {
 
       await Promise.all(
         proposedMatch.map(async (proposedPlayer) => {
-          await db.playerMatchScore.create({
+          let player = await db.playerTournamentScore.findUnique({
+            where: { id: proposedPlayer },
+            include: { player: true },
+          })
+
+          let playerMatchScore = {
             data: {
               bye: proposedMatch.length === 1 ? true : false,
+              playerName: player.playerName || player.player.nickname,
               match: {
                 connect: {
                   id: match.id,
                 },
               },
-              user: {
-                connect: {
-                  id: proposedPlayer,
-                },
-              },
             },
+          }
+
+          if (player.playerId) {
+            playerMatchScore.data.user = {
+              connect: {
+                id: player.playerId,
+              },
+            }
+          }
+
+          await db.playerMatchScore.create({
+            ...playerMatchScore,
           })
 
           if (proposedMatch.length === 1) {
             let playerTourneyScore = await db.playerTournamentScore.findFirst({
               where: {
-                playerId: proposedPlayer,
+                id: proposedPlayer,
                 tournamentId: id,
               },
             })

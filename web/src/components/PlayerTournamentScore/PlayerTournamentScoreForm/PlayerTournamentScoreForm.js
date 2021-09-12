@@ -80,6 +80,21 @@ const PlayerTournamentScoreForm = (props) => {
         <FieldError name="score" className="rw-field-error" />
 
         <Label
+          name="playerName"
+          className="rw-label"
+          errorClassName="rw-label rw-label-error"
+        >
+          Player Name
+        </Label>
+        <TextField
+          name="playerId"
+          defaultValue={props.playerTournamentScore?.playerName}
+          className="rw-input"
+          errorClassName="rw-input rw-input-error"
+        />
+        <FieldError name="playerName" className="rw-field-error" />
+
+        <Label
           name="playerId"
           className="rw-label"
           errorClassName="rw-label rw-label-error"

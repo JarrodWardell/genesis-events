@@ -6,6 +6,7 @@ import { TOURNAMENT_BY_URL } from 'src/pages/ViewTournamentPage/ViewTournamentPa
 import PlayerProfileItem from '../PlayerProfileItem/PlayerProfileItem'
 import Button from '../Button/Button'
 import { logError } from 'src/helpers/errorLogger'
+import AddTournamentPlayer from '../AddTournamentPlayer/AddTournamentPlayer'
 
 export const REMOVE_PLAYER = gql`
   mutation removePlayer($id: Int!) {
@@ -39,8 +40,13 @@ const TournamentLeaderboardTab = ({ tournament }) => {
   })
 
   return (
-    <div className="w-full overflow-x-auto">
-      {tournament.players.length > 0 ? (
+    <div className="w-full overflow-x-auto h-full pb-96">
+      {tournament.players.length > 0 ||
+      checkTournamentPermissions({
+        tournament,
+        hasRole,
+        currentUser,
+      }) ? (
         <table className="w-full">
           <tr className="bg-gray-100 w-full text-center text-xs text-gray-500 uppercase leading-4 font-normal">
             <th className="py-2">Rank</th>
@@ -59,7 +65,11 @@ const TournamentLeaderboardTab = ({ tournament }) => {
           </tr>
           {tournament.players.map((playerScore, index) => (
             <tr
-              key={playerScore.player.id}
+              key={
+                playerScore.player
+                  ? playerScore.player.id
+                  : playerScore.playerName
+              }
               className="text-center py-2 border-black border-b-2 text-gray-900 text-sm"
             >
               <td className="text-center py-2">
@@ -75,7 +85,10 @@ const TournamentLeaderboardTab = ({ tournament }) => {
               </td>
               <td className=" py-2 ">
                 <div className="h-full justify-left items-left flex">
-                  <PlayerProfileItem player={playerScore.player} />
+                  <PlayerProfileItem
+                    player={playerScore.player || {}}
+                    playerName={playerScore.playerName}
+                  />
                 </div>
               </td>
               <td className="text-center py-2">{playerScore.wins}</td>
@@ -100,7 +113,11 @@ const TournamentLeaderboardTab = ({ tournament }) => {
                           onClick={() => {
                             if (
                               confirm(
-                                `Are you sure you would like to remove ${playerScore.player.nickname} from this tournament? This cannot be undone`
+                                `Are you sure you would like to remove ${
+                                  playerScore.player
+                                    ? playerScore.player.nickname
+                                    : playerScore.playerName
+                                } from this tournament? This cannot be undone`
                               )
                             ) {
                               removePlayer({
@@ -119,6 +136,10 @@ const TournamentLeaderboardTab = ({ tournament }) => {
                 )}
             </tr>
           ))}
+          {checkTournamentPermissions({ tournament, hasRole, currentUser }) &&
+            !tournament.dateEnded && (
+              <AddTournamentPlayer tournament={tournament} />
+            )}
         </table>
       ) : (
         <div className="text-gray-900 text-lg my-8 mx-auto text-center">

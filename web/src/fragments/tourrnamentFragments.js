@@ -17,6 +17,7 @@ export const CORE_TOURNAMENT_FIELDS = gql`
     }
     winners {
       playerId
+      playerName
       player {
         nickname
       }

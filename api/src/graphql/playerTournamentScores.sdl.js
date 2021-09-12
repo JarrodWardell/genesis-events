@@ -8,7 +8,8 @@ export const schema = gql`
     totalScore: Float
     totalPoints: Float
     totalTournamentsPlayed: Int
-    playerId: String!
+    playerName: String
+    playerId: String
     tournamentId: Int!
     createdAt: DateTime!
     updatedAt: DateTime!
@@ -16,7 +17,7 @@ export const schema = gql`
     byes: Int!
     active: Boolean!
     wonTournament: Boolean!
-    player: User!
+    player: User
     tournament: Tournament!
   }
 
@@ -40,7 +41,8 @@ export const schema = gql`
     wins: Int!
     losses: Int!
     score: Float!
-    playerId: String!
+    playerId: String
+    playerName: String
     tournamentId: Int!
     draws: Int!
     byes: Int!
@@ -53,6 +55,7 @@ export const schema = gql`
     losses: Int
     score: Float
     playerId: String
+    playerName: String
     tournamentId: Int
     draws: Int
     byes: Int

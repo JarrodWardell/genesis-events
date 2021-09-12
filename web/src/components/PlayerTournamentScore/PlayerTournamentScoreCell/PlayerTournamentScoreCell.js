@@ -7,6 +7,7 @@ export const QUERY = gql`
       wins
       losses
       score
+      playerName
       playerId
       tournamentId
       createdAt

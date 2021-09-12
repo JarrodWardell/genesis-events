@@ -14,6 +14,7 @@ const PLAYER_LEADERBOARD = gql`
     ) {
       leaderboard {
         playerId
+        playerName
         player {
           nickname
           photo {
@@ -48,7 +49,7 @@ const LeaderboardPage = () => {
 
   return (
     <div className="flex flex-col container max-w-7xl mx-auto px-2">
-      <h1 className="text-xl mt-8 sm:mt-4 mb-4 sm:mb-16 border-b-2 border-gray-100 pb-4">
+      <h1 className="text-xl mt-8 sm:mt-4 mb-4 sm:mb-0 border-b-2 border-gray-100 pb-4">
         Leaderboard
       </h1>
       <div className="relative w-11/12 sm:w-1/4 mx-auto sm:ml-auto sm:mr-0 border-2 p-2 my-6 rounded-md text-gray-500 text-base leading-6">
@@ -109,7 +110,10 @@ const LeaderboardPage = () => {
             >
               <td className="py-2">{player.rank}</td>
               <td className="py-2 flex justify-center">
-                <PlayerProfileItem player={player.player} />
+                <PlayerProfileItem
+                  player={player.player || {}}
+                  playerName={player.playerName}
+                />
               </td>
               <td className="py-2">{player.player?.country}</td>
               <td className="py-2">{player.totalScore}</td>
