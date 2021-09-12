@@ -11,6 +11,7 @@ export const schema = gql`
     dateEnded: DateTime
     maxPlayers: Int!
     locationName: String!
+    publicRegistration: Boolean
     infoUrl: String
     street1: String
     street2: String
@@ -97,6 +98,7 @@ export const schema = gql`
     dateEnded: DateTime
     maxPlayers: Int!
     locationName: String!
+    publicRegistration: Boolean
     infoUrl: String
     street1: String
     street2: String
@@ -124,6 +126,7 @@ export const schema = gql`
     dateStarted: DateTime
     dateEnded: DateTime
     maxPlayers: Int
+    publicRegistration: Boolean
     locationName: String
     infoUrl: String
     street1: String
@@ -182,6 +185,7 @@ export const schema = gql`
     state: String
     city: String
     openSpotsOnly: Boolean!
+    finishedTournaments: Boolean
     dateStart: Date
     dateEnd: Date
     distance: Int

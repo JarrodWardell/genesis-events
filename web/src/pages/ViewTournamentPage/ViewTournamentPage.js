@@ -17,6 +17,7 @@ import { ReactComponent as HomeIcon } from 'src/components/Icons/HomeIcon.svg'
 import { ReactComponent as TrophyIcon } from 'src/components/Icons/TrophyIcon.svg'
 import Truncate from 'react-truncate-html'
 import LoadingIcon from 'src/components/LoadingIcon/LoadingIcon'
+import { AtSymbolIcon } from '@heroicons/react/solid'
 
 export const TOURNAMENT_BY_URL = gql`
   query tournamentByUrl($url: String!) {
@@ -29,6 +30,7 @@ export const TOURNAMENT_BY_URL = gql`
       dateStarted
       dateEnded
       maxPlayers
+      publicRegistration
       timerLeftInSeconds
       timerStatus
       startingTimerInSeconds
@@ -47,6 +49,7 @@ export const TOURNAMENT_BY_URL = gql`
       ownerId
       store {
         name
+        email
       }
       players {
         id
@@ -241,6 +244,17 @@ const ViewTournamentPage = ({ url, tab, tabOptions }) => {
                 <span className="ml-1">
                   {players?.length}/{maxPlayers} Players Registered
                 </span>
+              </div>
+              <div className="flex items-center">
+                <div className="w-6 h-6 flex font-bold">
+                  <AtSymbolIcon />
+                </div>{' '}
+                <a
+                  className="ml-1"
+                  href={`mailto: ${tournament?.store?.email}`}
+                >
+                  {tournament?.store?.email}
+                </a>
               </div>
               <div className="flex items-center">
                 <div className="w-6 h-6 flex font-bold">

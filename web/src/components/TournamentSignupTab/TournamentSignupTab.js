@@ -96,11 +96,15 @@ const TournamentSignupTab = ({ tournament }) => {
     // User is a player (and signed in)
     let userEligible = currentUser?.user.id && hasRole('PLAYER')
 
+    //Check if admin only
+    let publicRegistration = tourney.publicRegistration
+
     if (
       notJoinedBefore &&
       notInTournament &&
       userEligible &&
-      checkIfSignupActive(tourney)
+      checkIfSignupActive(tourney) &&
+      publicRegistration
     ) {
       return true
     }
@@ -123,6 +127,8 @@ const TournamentSignupTab = ({ tournament }) => {
       return 'You have already registered for this event'
     // Tournament full
     if (tourney.players.length >= tourney.maxPlayers) return 'Event is full'
+    if (!tourney.publicRegistration)
+      return 'Only admins may register players for this tournament. Please speak to the organizer'
 
     return 'You have not signed up for this event'
   }

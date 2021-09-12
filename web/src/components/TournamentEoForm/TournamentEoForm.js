@@ -6,8 +6,8 @@ import {
   Label,
   TextField,
   NumberField,
-  Submit,
   HiddenField,
+  CheckboxField,
 } from '@redwoodjs/forms'
 import { useMutation } from '@redwoodjs/web'
 import { useForm, Controller } from 'react-hook-form'
@@ -25,7 +25,6 @@ import ReactDatePicker from 'react-datepicker'
 
 import 'react-datepicker/dist/react-datepicker.css'
 import Button from '../Button/Button'
-import { setHours } from 'date-fns/esm'
 import { logError } from 'src/helpers/errorLogger'
 
 const CREATE_TOURNAMENT = gql`
@@ -89,6 +88,10 @@ const TournamentEOForm = ({ tournament }) => {
     formMethods.setValue('state', tournament?.state)
     formMethods.setValue('lat', tournament?.lat)
     formMethods.setValue('lng', tournament?.lng)
+    formMethods.setValue(
+      'publicRegistration',
+      tournament?.id ? tournament?.publicRegistration : true
+    )
 
     setLocationName(tournament?.locationName)
     setStreet1(tournament?.street1)
@@ -482,7 +485,7 @@ const TournamentEOForm = ({ tournament }) => {
             <FieldError name="zip" className="rw-field-error" />
           </div>
 
-          <div className="col-span-2 flex flex-col w-full col-span-2">
+          <div className="flex flex-col w-full">
             <Label name="infoUrl" className="" errorClassName=" -error">
               Extra Information URL (Optional)
             </Label>
@@ -493,6 +496,22 @@ const TournamentEOForm = ({ tournament }) => {
               errorClassName="rw-input rw-input-error"
             />
             <FieldError name="infoUrl" className="rw-field-error" />
+          </div>
+
+          <div className="flex justify-evenly w-full items-center">
+            <Label
+              name="publicRegistration"
+              className=""
+              errorClassName=" -error"
+            >
+              Public Registration
+            </Label>
+            <CheckboxField
+              name="publicRegistration"
+              className="rw-input"
+              errorClassName="rw-input rw-input-error"
+            />
+            <FieldError name="publicRegistration" className="rw-field-error" />
           </div>
 
           <HiddenField name="lat" />

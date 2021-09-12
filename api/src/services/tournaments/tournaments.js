@@ -13,7 +13,6 @@ import {
 import { db } from 'src/lib/db'
 import * as Sentry from '@sentry/node'
 import { isEqual } from 'date-fns'
-import { playerTournamentScore } from '../playerTournamentScores/playerTournamentScores'
 
 export const tournament = ({ id }) => {
   return db.tournament.findUnique({
@@ -362,6 +361,16 @@ export const updateTournament = async ({ id, input }) => {
 export const registerForTournament = async ({ id }) => {
   let currentUser = context.currentUser
 
+  const tournament = await db.tournament.findUnique({
+    where: { id },
+  })
+
+  if (!tournament.publicRegistration) {
+    throw new Error(
+      'Registration can only be made by admins for this tournament. Please contact the organizer.'
+    )
+  }
+
   await db.playerTournamentScore.create({
     data: {
       player: {
@@ -375,10 +384,6 @@ export const registerForTournament = async ({ id }) => {
 
   const player = await db.user.findUnique({
     where: { id: currentUser.user.id },
-  })
-
-  const tournament = await db.tournament.findUnique({
-    where: { id },
   })
 
   let ownerEmail = ''
