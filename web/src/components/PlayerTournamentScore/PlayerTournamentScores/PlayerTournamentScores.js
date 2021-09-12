@@ -88,14 +88,18 @@ const PlayerTournamentScoresList = ({ playerTournamentScores }) => {
             <tr key={playerTournamentScore.id}>
               <td>{truncate(playerTournamentScore.id)}</td>
               <td>
-                <Link
-                  to={routes.users({
-                    searchTerm: playerTournamentScore.player?.nickname,
-                  })}
-                  className="text-blue-500 cursor-pointer"
-                >
-                  {playerTournamentScore.player?.nickname}
-                </Link>
+                {playerTournamentScore.player ? (
+                  <Link
+                    to={routes.users({
+                      searchTerm: playerTournamentScore.player?.nickname,
+                    })}
+                    className="text-blue-500 cursor-pointer"
+                  >
+                    {playerTournamentScore.player?.nickname}
+                  </Link>
+                ) : (
+                  <span>playerTournamentScore.playerName</span>
+                )}
               </td>
               <td>
                 <Link

@@ -23,6 +23,7 @@ export const playerLeaderboard = async ({
                     FROM "PlayerTournamentScore"
                     LEFT JOIN "User" ON "PlayerTournamentScore"."playerId" =  "User"."id"
                     where "PlayerTournamentScore"."active" = true
+                    and "PlayerTournamentScore"."playerId" IS NOT NULL
                     group by "playerId", "User".nickname
                     order by SUM(score) + count(*) desc
                   ) AS ranked
@@ -71,7 +72,7 @@ export const deletePlayerTournamentScore = ({ id }) => {
 
 export const PlayerTournamentScore = {
   player: (_obj, { root }) =>
-    db.user.findUnique({ where: { id: root.playerId } }),
+    root.playerId ? db.user.findUnique({ where: { id: root.playerId } }) : null,
   tournament: (_obj, { root }) =>
     db.playerTournamentScore
       .findUnique({ where: { id: root.id } })

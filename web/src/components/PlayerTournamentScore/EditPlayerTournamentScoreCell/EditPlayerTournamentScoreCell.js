@@ -10,6 +10,7 @@ export const QUERY = gql`
       wins
       losses
       score
+      playerName
       playerId
       tournamentId
       createdAt
@@ -31,6 +32,7 @@ const UPDATE_PLAYER_TOURNAMENT_SCORE_MUTATION = gql`
       wins
       losses
       score
+      playerName
       playerId
       tournamentId
       createdAt

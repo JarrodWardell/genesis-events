@@ -6,7 +6,6 @@ const Header = () => {
   const { isAuthenticated, logOut, currentUser, hasRole } = useAuth()
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false)
   const [menuOpen, setMenuOpen] = React.useState(false)
-  const [adminMenuOpen, setAdminMenuOpen] = React.useState(false)
 
   const navigateMobile = (route) => {
     setMobileMenuOpen(false)

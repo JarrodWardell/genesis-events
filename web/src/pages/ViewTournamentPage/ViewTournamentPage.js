@@ -17,6 +17,7 @@ import { ReactComponent as HomeIcon } from 'src/components/Icons/HomeIcon.svg'
 import { ReactComponent as TrophyIcon } from 'src/components/Icons/TrophyIcon.svg'
 import Truncate from 'react-truncate-html'
 import LoadingIcon from 'src/components/LoadingIcon/LoadingIcon'
+import { AtSymbolIcon } from '@heroicons/react/solid'
 
 export const TOURNAMENT_BY_URL = gql`
   query tournamentByUrl($url: String!) {
@@ -29,6 +30,7 @@ export const TOURNAMENT_BY_URL = gql`
       dateStarted
       dateEnded
       maxPlayers
+      publicRegistration
       timerLeftInSeconds
       timerStatus
       startingTimerInSeconds
@@ -47,6 +49,7 @@ export const TOURNAMENT_BY_URL = gql`
       ownerId
       store {
         name
+        email
       }
       players {
         id
@@ -56,6 +59,7 @@ export const TOURNAMENT_BY_URL = gql`
         draws
         losses
         active
+        playerName
         player {
           id
           nickname
@@ -69,6 +73,7 @@ export const TOURNAMENT_BY_URL = gql`
       winners {
         id
         wonTournament
+        playerName
         score
         wins
         byes
@@ -87,6 +92,11 @@ export const TOURNAMENT_BY_URL = gql`
           id
           players {
             id
+            playerName
+            score
+            bye
+            wonMatch
+            userId
             user {
               id
               nickname
@@ -96,9 +106,6 @@ export const TOURNAMENT_BY_URL = gql`
                 name
               }
             }
-            score
-            bye
-            wonMatch
           }
           updatedAt
         }
@@ -240,6 +247,17 @@ const ViewTournamentPage = ({ url, tab, tabOptions }) => {
               </div>
               <div className="flex items-center">
                 <div className="w-6 h-6 flex font-bold">
+                  <AtSymbolIcon />
+                </div>{' '}
+                <a
+                  className="ml-1"
+                  href={`mailto: ${tournament?.store?.email}`}
+                >
+                  {tournament?.store?.email}
+                </a>
+              </div>
+              <div className="flex items-center">
+                <div className="w-6 h-6 flex font-bold">
                   <InfoIcon />
                 </div>{' '}
                 <span className="ml-1">
@@ -270,7 +288,7 @@ const ViewTournamentPage = ({ url, tab, tabOptions }) => {
                     {tournament.winners.map((winner, index) => (
                       <span key={`winner-${winner.id}`}>
                         {index > 0 && ', '}
-                        {winner.player.nickname}
+                        {winner.player?.nickname || winner.playerName}
                       </span>
                     ))}
                   </span>

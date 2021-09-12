@@ -27,6 +27,7 @@ export const END_TOURNAMENT = gql`
     endTournament: endTournament(id: $id) {
       id
       winners {
+        playerName
         player {
           nickname
         }

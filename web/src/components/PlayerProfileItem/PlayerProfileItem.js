@@ -1,6 +1,11 @@
 import ProfilePicture from '../ProfilePicture/ProfilePicture'
 
-const PlayerProfileItem = ({ player, className = '', showPhoto = true }) => {
+const PlayerProfileItem = ({
+  player = {},
+  className = '',
+  showPhoto = true,
+  playerName = '',
+}) => {
   let { nickname, photo } = player
 
   return (
@@ -10,7 +15,7 @@ const PlayerProfileItem = ({ player, className = '', showPhoto = true }) => {
           <ProfilePicture pic={photo} size="12" />
         </div>
       )}
-      <span>{nickname}</span>
+      <span>{nickname || playerName}</span>
     </div>
   )
 }

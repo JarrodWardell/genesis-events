@@ -37,6 +37,7 @@ export const SEARCH_TOURNAMENTS = gql`
         }
         winners {
           id
+          playerName
           player {
             nickname
           }
@@ -506,10 +507,10 @@ const TournamentSearchPage = () => {
                           <span className="ml-1">
                             {tournament.winners.map((winner, index) => (
                               <span
-                                key={`winner-${tournament.id}-${winner.playerId}`}
+                                key={`winner-${tournament.id}-${winner.id}`}
                               >
                                 {index > 0 && ', '}
-                                {winner.player.nickname}
+                                {winner.player?.nickname || winner.playerName}
                               </span>
                             ))}
                           </span>

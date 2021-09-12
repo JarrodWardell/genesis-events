@@ -2,7 +2,8 @@ export const schema = gql`
   type PlayerMatchScore {
     id: Int!
     score: Int
-    userId: String!
+    userId: String
+    playerName: String
     matchId: Int!
     createdAt: DateTime!
     updatedAt: DateTime!
@@ -10,7 +11,7 @@ export const schema = gql`
     bye: Boolean!
     active: Boolean!
     match: Match!
-    user: User!
+    user: User
   }
 
   type Query {
@@ -20,7 +21,8 @@ export const schema = gql`
 
   input CreatePlayerMatchScoreInput {
     score: Int
-    userId: String!
+    userId: String
+    playerName: String
     matchId: Int!
     wonMatch: Boolean!
     bye: Boolean!
@@ -30,6 +32,7 @@ export const schema = gql`
   input UpdatePlayerMatchScoreInput {
     score: Int
     userId: String
+    playerName: String
     matchId: Int
     wonMatch: Boolean
     bye: Boolean

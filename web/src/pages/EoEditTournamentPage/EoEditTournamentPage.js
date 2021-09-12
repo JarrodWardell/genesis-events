@@ -10,6 +10,7 @@ export const TOURNAMENT_BY_URL_SIMPLE = gql`
       desc
       startDate
       maxPlayers
+      publicRegistration
       players {
         playerId
       }

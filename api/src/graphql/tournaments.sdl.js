@@ -11,6 +11,7 @@ export const schema = gql`
     dateEnded: DateTime
     maxPlayers: Int!
     locationName: String!
+    publicRegistration: Boolean
     infoUrl: String
     street1: String
     street2: String
@@ -55,6 +56,7 @@ export const schema = gql`
       street1
     }
     winners {
+      playerName
       player {
         nickname
       }
@@ -85,6 +87,7 @@ export const schema = gql`
     myTournaments: [Tournament!]!
     upcomingTournaments(input: SearchTournamentInput): [Tournament!]!
     finishedTournaments(input: SearchTournamentInput): [Tournament!]!
+    searchNonPlayers(id: Int!, searchTerm: String): [User!]!
   }
 
   input CreateTournamentInput {
@@ -95,6 +98,7 @@ export const schema = gql`
     dateEnded: DateTime
     maxPlayers: Int!
     locationName: String!
+    publicRegistration: Boolean
     infoUrl: String
     street1: String
     street2: String
@@ -122,6 +126,7 @@ export const schema = gql`
     dateStarted: DateTime
     dateEnded: DateTime
     maxPlayers: Int
+    publicRegistration: Boolean
     locationName: String
     infoUrl: String
     street1: String
@@ -149,7 +154,8 @@ export const schema = gql`
   }
 
   input MatchScore {
-    userId: String!
+    userId: String
+    playerName: String
     playerMatchScore: Int!
     score: Int!
     result: MatchResult!
@@ -179,6 +185,7 @@ export const schema = gql`
     state: String
     city: String
     openSpotsOnly: Boolean!
+    finishedTournaments: Boolean
     dateStart: Date
     dateEnd: Date
     distance: Int
@@ -190,9 +197,20 @@ export const schema = gql`
     tournaments: [Tournament!]!
   }
 
+  input AddPlayerInput {
+    playerName: String!
+    playerId: String
+    wins: Int
+    losses: Int
+    byes: Int
+    draws: Int
+    score: Float
+  }
+
   type Mutation {
     createTournament(input: CreateTournamentInput!): Tournament!
     updateTournament(id: Int!, input: UpdateTournamentInput!): Tournament!
+    addPlayer(id: Int!, input: AddPlayerInput!): Tournament!
     deleteTournament(id: Int!): Tournament!
     registerForTournament(id: Int!): String!
     startTournament(id: Int!): Tournament!
