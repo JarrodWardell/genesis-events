@@ -23,7 +23,7 @@ const TournamentMatchesTab = ({ tournament }) => {
             <span className="w-36 sm:w-1/6">
               <PlayerProfileItem
                 player={player2 || {}}
-                playerName={match.players[1].playerName}
+                playerName={match?.players[1]?.playerName}
               />
             </span>{' '}
           </>
@@ -34,7 +34,7 @@ const TournamentMatchesTab = ({ tournament }) => {
             <span className="w-36 sm:w-1/6">
               <PlayerProfileItem
                 player={player2 || {}}
-                playerName={match.players[1].playerName}
+                playerName={match?.players[1]?.playerName}
               />
             </span>{' '}
             <span className="w-24 sm:w-1/6">defeated</span>
@@ -59,7 +59,7 @@ const TournamentMatchesTab = ({ tournament }) => {
             <span className="w-36 sm:w-1/6">
               <PlayerProfileItem
                 player={player2 || {}}
-                playerName={match.players[1].playerName}
+                playerName={match?.players[1]?.playerName}
               />
             </span>{' '}
           </>
@@ -71,7 +71,7 @@ const TournamentMatchesTab = ({ tournament }) => {
           <span className="w-36 sm:w-1/6">
             <PlayerProfileItem
               player={player1 || {}}
-              playerName={match.players[1].playerName}
+              playerName={match?.players[1]?.playerName}
             />
           </span>{' '}
           <span className="w-24 sm:w-1/6">bye</span>
