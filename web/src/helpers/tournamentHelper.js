@@ -56,3 +56,42 @@ export const timeUntilTournament = (tournamentStartDate = new Date()) => {
 
   return dateDistance
 }
+
+export const timeSinceTournament = (tournamentStartDate = new Date()) => {
+  let dateDistance = {
+    days: 0,
+    hours: 0,
+    minutes: 0,
+    seconds: 0,
+  }
+
+  let tournamentDate = new Date(tournamentStartDate)
+  let today = new Date()
+  let difference = tournamentDate - today
+
+  if (difference < 0) {
+    let seconds,
+      minutes,
+      hours,
+      days = 0
+    seconds = Math.abs(Math.floor(difference / 1000))
+
+    minutes = Math.abs(Math.floor(seconds / 60))
+    seconds = seconds % 60
+
+    hours = Math.abs(Math.floor(minutes / 60))
+    minutes = minutes % 60
+
+    days = Math.abs(Math.floor(hours / 24))
+    hours = hours % 24
+
+    dateDistance = {
+      days,
+      hours,
+      minutes,
+      seconds,
+    }
+  }
+
+  return dateDistance
+}

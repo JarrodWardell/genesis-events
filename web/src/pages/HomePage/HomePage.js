@@ -12,6 +12,9 @@ export const HOMEPAGE_QUERY = gql`
     myTournaments {
       ...CoreTournamentFields
     }
+    currentTournaments {
+      ...CoreTournamentFields
+    }
     finishedTournaments {
       ...CoreTournamentFields
     }
@@ -26,7 +29,12 @@ const HomePage = () => {
   const {
     loading,
     error,
-    data: { upcomingTournaments, myTournaments, finishedTournaments } = {},
+    data: {
+      upcomingTournaments,
+      myTournaments,
+      finishedTournaments,
+      currentTournaments,
+    } = {},
   } = useQuery(HOMEPAGE_QUERY, {
     variables: {},
   })
@@ -57,6 +65,23 @@ const HomePage = () => {
                 </div>
               )}
             </div>
+            <div className="flex flex-col container mx-auto w-11/12 sm:w-full text-sm text-gray-700">
+              {currentTournaments && currentTournaments.length > 0 && (
+                <div className="mt-4 mb-8">
+                  <h1 className="text-xl text-black mb-4">
+                    Current Tournaments
+                  </h1>
+                  {currentTournaments.map((tournament, index) => (
+                    <TournamentItem
+                      tournament={tournament}
+                      key={tournament.id}
+                      index={index}
+                      full={true}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
             <div className="grid sm:grid-cols-2 gap-x-24 container mx-auto grid-cols-1 max-h-screen overflow-auto">
               <div className="flex flex-col sm:w-3/4">
                 <h1 className="text-xl text-black mb-4">
@@ -72,7 +97,7 @@ const HomePage = () => {
                     />
                   ))
                 ) : (
-                  <div className="border-gray-200 border-t">
+                  <div className="border-gray-200 border-t pt-2 text-center">
                     No Upcoming Tournaments Found
                   </div>
                 )}
@@ -91,7 +116,7 @@ const HomePage = () => {
                     />
                   ))
                 ) : (
-                  <div className="border-gray-200 border-t">
+                  <div className="border-gray-200 border-t pt-2 text-center">
                     No Completed Tournaments Found
                   </div>
                 )}

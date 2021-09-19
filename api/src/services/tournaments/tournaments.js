@@ -103,6 +103,42 @@ export const myTournaments = ({}) => {
   }
 }
 
+export const currentTournaments = ({ input, take = 6 }) => {
+  try {
+    return db.tournament.findMany({
+      where: {
+        AND: [
+          {
+            dateEnded: {
+              equals: null,
+            },
+          },
+          {
+            dateStarted: {
+              //Get any tournament that started less than 24 hours ago
+              gte: new Date(new Date().getTime() - 24 * 60 * 60 * 1000),
+            },
+          },
+          {
+            active: true,
+          },
+        ],
+      },
+      orderBy: [
+        {
+          startDate: 'desc',
+        },
+        {
+          createdAt: 'desc',
+        },
+      ],
+      take,
+    })
+  } catch (error) {
+    Sentry.captureException(error)
+  }
+}
+
 export const upcomingTournaments = ({ input, take = 6 }) => {
   try {
     return db.tournament.findMany({
