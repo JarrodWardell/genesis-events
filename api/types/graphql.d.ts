@@ -636,6 +636,7 @@ export type Query = {
   checkNickname: Scalars['Boolean'];
   contact?: Maybe<Contact>;
   contacts: Array<Contact>;
+  currentTournaments: Array<Tournament>;
   finishedTournaments: Array<Tournament>;
   homeBanners: Array<Banner>;
   match?: Maybe<Match>;
@@ -678,6 +679,11 @@ export type QueryCheckNicknameArgs = {
 
 export type QueryContactArgs = {
   id: Scalars['Int'];
+};
+
+
+export type QueryCurrentTournamentsArgs = {
+  input?: Maybe<SearchTournamentInput>;
 };
 
 
@@ -1502,6 +1508,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   checkNickname?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<QueryCheckNicknameArgs, never>>;
   contact?: Resolver<Maybe<ResolversTypes['Contact']>, ParentType, ContextType, RequireFields<QueryContactArgs, 'id'>>;
   contacts?: Resolver<Array<ResolversTypes['Contact']>, ParentType, ContextType>;
+  currentTournaments?: Resolver<Array<ResolversTypes['Tournament']>, ParentType, ContextType, RequireFields<QueryCurrentTournamentsArgs, never>>;
   finishedTournaments?: Resolver<Array<ResolversTypes['Tournament']>, ParentType, ContextType, RequireFields<QueryFinishedTournamentsArgs, never>>;
   homeBanners?: Resolver<Array<ResolversTypes['Banner']>, ParentType, ContextType>;
   match?: Resolver<Maybe<ResolversTypes['Match']>, ParentType, ContextType, RequireFields<QueryMatchArgs, 'id'>>;

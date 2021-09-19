@@ -17,6 +17,8 @@ export const schema = gql`
     zip: String!
     distributor: String!
     approved: Boolean
+    approvedBy: User
+    approverId: String
     approvedOn: DateTime
   }
 
