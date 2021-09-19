@@ -7,26 +7,31 @@ export const stores = ({ searchTerm = '' }) => {
         {
           id: {
             contains: searchTerm,
+            mode: 'insensitive',
           },
         },
         {
           name: {
             contains: searchTerm,
+            mode: 'insensitive',
           },
         },
         {
           email: {
             contains: searchTerm,
+            mode: 'insensitive',
           },
         },
         {
           street1: {
             contains: searchTerm,
+            mode: 'insensitive',
           },
         },
         {
           country: {
             contains: searchTerm,
+            mode: 'insensitive',
           },
         },
       ],

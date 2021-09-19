@@ -72,12 +72,14 @@ const HomePage = () => {
                     />
                   ))
                 ) : (
-                  <div>No Upcoming Tournaments Found</div>
+                  <div className="border-gray-200 border-t">
+                    No Upcoming Tournaments Found
+                  </div>
                 )}
               </div>
               <div className="flex flex-col sm:w-3/4 mt-4 sm:mt-0 max-h-screen overflow-auto">
                 <h1 className="text-xl text-black mb-4">
-                  Finished Tournaments
+                  Completed Tournaments
                 </h1>
                 {finishedTournaments && finishedTournaments.length > 0 ? (
                   finishedTournaments.map((tournament, index) => (
@@ -89,7 +91,9 @@ const HomePage = () => {
                     />
                   ))
                 ) : (
-                  <div>No Finished Tournaments Found</div>
+                  <div className="border-gray-200 border-t">
+                    No Completed Tournaments Found
+                  </div>
                 )}
               </div>
             </div>

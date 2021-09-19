@@ -28,21 +28,25 @@ export const tournaments = ({ searchTerm, id }) => {
           {
             name: {
               contains: searchTerm,
+              mode: 'insensitive',
             },
           },
           {
             tournamentUrl: {
               contains: searchTerm,
+              mode: 'insensitive',
             },
           },
           {
             locationName: {
               contains: searchTerm,
+              mode: 'insensitive',
             },
           },
           {
             street1: {
               contains: searchTerm,
+              mode: 'insensitive',
             },
           },
         ],
@@ -890,6 +894,7 @@ export const searchNonPlayers = async ({ id, searchTerm, take = 20 }) => {
         {
           nickname: {
             contains: searchTerm,
+            mode: 'insensitive',
           },
         },
         {

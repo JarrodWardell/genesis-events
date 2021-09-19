@@ -9,26 +9,31 @@ export const users = ({ searchTerm }) => {
         {
           id: {
             contains: searchTerm,
+            mode: 'insensitive',
           },
         },
         {
           nickname: {
             contains: searchTerm,
+            mode: 'insensitive',
           },
         },
         {
           firstname: {
             contains: searchTerm,
+            mode: 'insensitive',
           },
         },
         {
           lastname: {
             contains: searchTerm,
+            mode: 'insensitive',
           },
         },
         {
           email: {
             contains: searchTerm,
+            mode: 'insensitive',
           },
         },
       ],
