@@ -113,7 +113,6 @@ const TournamentTimer = ({ tournament }) => {
 
   const endTimer = () => {
     setTimerStatus('STOPPED')
-    setTimerSeconds(null)
     updateTimer({
       variables: {
         input: {
@@ -187,13 +186,15 @@ const TournamentTimer = ({ tournament }) => {
                 </button>
               )}
 
-              <button
-                className={buttonClasses('red')}
-                onClick={() => setConfirmStop(true)}
-                disabled={loading}
-              >
-                Stop
-              </button>
+              {timerStatus !== 'STOPPED' && (
+                <button
+                  className={buttonClasses('red')}
+                  onClick={() => setConfirmStop(true)}
+                  disabled={loading}
+                >
+                  Stop
+                </button>
+              )}
             </>
           )
         }

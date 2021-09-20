@@ -85,6 +85,7 @@ export const schema = gql`
     tournament(id: Int!): Tournament
     tournamentByUrl(url: String): Tournament
     myTournaments: [Tournament!]!
+    currentTournaments(input: SearchTournamentInput): [Tournament!]!
     upcomingTournaments(input: SearchTournamentInput): [Tournament!]!
     finishedTournaments(input: SearchTournamentInput): [Tournament!]!
     searchNonPlayers(id: Int!, searchTerm: String): [User!]!

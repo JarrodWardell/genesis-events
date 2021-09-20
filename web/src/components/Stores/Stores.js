@@ -77,6 +77,7 @@ const StoresList = ({ stores }) => {
             <th>Distributor</th>
             <th>Approved</th>
             <th>Approved on</th>
+            <th>Approved By</th>
             <th>&nbsp;</th>
           </tr>
         </thead>
@@ -106,6 +107,14 @@ const StoresList = ({ stores }) => {
               <td>{truncate(store.distributor)}</td>
               <td>{checkboxInputTag(store.approved)}</td>
               <td>{timeTag(store.approvedOn)}</td>
+              <td>
+                <Link
+                  to={routes.users({ searchTerm: store.approvedBy?.nickname })}
+                  className="text-blue-500 cursor-pointer"
+                >
+                  {store.approvedBy?.nickname}
+                </Link>
+              </td>
               <td>
                 <nav className="rw-table-actions">
                   <Link

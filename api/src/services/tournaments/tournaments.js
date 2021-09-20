@@ -28,21 +28,25 @@ export const tournaments = ({ searchTerm, id }) => {
           {
             name: {
               contains: searchTerm,
+              mode: 'insensitive',
             },
           },
           {
             tournamentUrl: {
               contains: searchTerm,
+              mode: 'insensitive',
             },
           },
           {
             locationName: {
               contains: searchTerm,
+              mode: 'insensitive',
             },
           },
           {
             street1: {
               contains: searchTerm,
+              mode: 'insensitive',
             },
           },
         ],
@@ -94,6 +98,42 @@ export const myTournaments = ({}) => {
     }
 
     return []
+  } catch (error) {
+    Sentry.captureException(error)
+  }
+}
+
+export const currentTournaments = ({ input, take = 6 }) => {
+  try {
+    return db.tournament.findMany({
+      where: {
+        AND: [
+          {
+            dateEnded: {
+              equals: null,
+            },
+          },
+          {
+            dateStarted: {
+              //Get any tournament that started less than 24 hours ago
+              gte: new Date(new Date().getTime() - 24 * 60 * 60 * 1000),
+            },
+          },
+          {
+            active: true,
+          },
+        ],
+      },
+      orderBy: [
+        {
+          startDate: 'desc',
+        },
+        {
+          createdAt: 'desc',
+        },
+      ],
+      take,
+    })
   } catch (error) {
     Sentry.captureException(error)
   }
@@ -890,6 +930,7 @@ export const searchNonPlayers = async ({ id, searchTerm, take = 20 }) => {
         {
           nickname: {
             contains: searchTerm,
+            mode: 'insensitive',
           },
         },
         {

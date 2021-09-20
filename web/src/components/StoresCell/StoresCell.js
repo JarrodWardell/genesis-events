@@ -25,6 +25,9 @@ export const QUERY = gql`
       distributor
       approved
       approvedOn
+      approvedBy {
+        nickname
+      }
       owner {
         nickname
         email

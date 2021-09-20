@@ -7,7 +7,10 @@ import { ReactComponent as ClockIcon } from 'src/components/Icons/ClockIcon.svg'
 import { ReactComponent as HomeIcon } from 'src/components/Icons/HomeIcon.svg'
 import { ReactComponent as TrophyIcon } from 'src/components/Icons/TrophyIcon.svg'
 import Truncate from 'react-truncate-html'
-import { timeUntilTournament } from 'src/helpers/tournamentHelper'
+import {
+  timeSinceTournament,
+  timeUntilTournament,
+} from 'src/helpers/tournamentHelper'
 
 const TournamentItem = ({ tournament, full = false, index }) => {
   const {
@@ -25,6 +28,7 @@ const TournamentItem = ({ tournament, full = false, index }) => {
   } = tournament
 
   let timeTillTournament = timeUntilTournament(startDate)
+  let timeSinceStart = timeSinceTournament(startDate)
 
   return (
     <div
@@ -98,9 +102,14 @@ const TournamentItem = ({ tournament, full = false, index }) => {
             }
           >
             {tournament.dateStarted ? (
-              <p className="uppercase font-bold text-sm text-red-500 mx-auto">
-                In Progress
-              </p>
+              <>
+                <p className="uppercase font-bold text-sm text-red-500 mx-auto">
+                  Started
+                </p>
+                <div className="bg-red-300 py-2 px-1 text-white uppercase rounded-md  max-w-sm text-center">
+                  {timeSinceStart.hours} Hours Ago
+                </div>
+              </>
             ) : (
               <>
                 <p className="uppercase font-bold text-sm text-red-500 mx-auto">

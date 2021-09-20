@@ -13,68 +13,69 @@ const TournamentMatchesTab = ({ tournament }) => {
       if (match.players[0].score > match.players[1].score) {
         return (
           <>
-            <span className="w-36 sm:w-1/6">
+            <div className="sm:col-span-4 flex justify-center">
               <PlayerProfileItem
                 player={player1 || {}}
                 playerName={match.players[0].playerName}
               />
-            </span>{' '}
-            <span className="w-24 sm:w-1/6">defeated </span>
-            <span className="w-36 sm:w-1/6">
+            </div>{' '}
+            <div className="sm:col-span-2">defeated </div>
+            <div className="sm:col-span-4 ">
               <PlayerProfileItem
                 player={player2 || {}}
                 playerName={match?.players[1]?.playerName}
               />
-            </span>{' '}
+            </div>{' '}
           </>
         )
       } else if (match.players[1].score > match.players[0].score) {
         return (
           <>
-            <span className="w-36 sm:w-1/6">
+            <div className="sm:col-span-4 flex justify-center">
               <PlayerProfileItem
                 player={player2 || {}}
                 playerName={match?.players[1]?.playerName}
               />
-            </span>{' '}
-            <span className="w-24 sm:w-1/6">defeated</span>
-            <span className="w-36 sm:w-1/6">
+            </div>{' '}
+            <div className="sm:col-span-2">defeated</div>
+            <div className="sm:col-span-4 ">
               <PlayerProfileItem
                 player={player1 || {}}
                 playerName={match.players[0].playerName}
               />
-            </span>{' '}
+            </div>{' '}
           </>
         )
       } else if (match.players[1].score === match.players[0].score) {
         return (
           <>
-            <span className="w-36 sm:w-1/6">
+            <div className="sm:col-span-4 flex justify-center">
               <PlayerProfileItem
                 player={player1 || {}}
                 playerName={match.players[0].playerName}
               />
-            </span>
-            <span className="w-24 sm:w-1/6">drew</span>
-            <span className="w-36 sm:w-1/6">
+            </div>
+            <div className="sm:col-span-2">drew</div>
+            <div className="sm:col-span-4 ">
               <PlayerProfileItem
                 player={player2 || {}}
                 playerName={match?.players[1]?.playerName}
               />
-            </span>{' '}
+            </div>{' '}
           </>
         )
       }
     } else if (!player2) {
       return (
         <>
-          <span className="w-36 sm:w-1/6">
+          <div className="sm:col-span-4 flex justify-center">
             <PlayerProfileItem
               player={player1 || {}}
               playerName={match?.players[1]?.playerName}
             />
-          </span>{' '}
-          <span className="w-24 sm:w-1/6">bye</span>
+          </div>{' '}
+          <div className="sm;col-span-2 ">received a bye</div>
+          <div className="sm:col-span-4 " />
         </>
       )
     }
@@ -84,6 +85,10 @@ const TournamentMatchesTab = ({ tournament }) => {
 
   return (
     <div className="flex flex-col text-sm text-gray-900 max-w-3xl overflow-x-auto sm:w-full sm:max-w-none">
+      <div className="text-gray-500 text-xs bg-gray-200 col-span-12 grid grid-cols-12 px-2">
+        <div className="py-4 col-span-1 text-center">Match #</div>
+        <div className="py-4 col-span-11 text-center">Result</div>
+      </div>
       {tournament.round?.length > 0 ? (
         tournament?.round
           ?.slice(0)
@@ -93,23 +98,23 @@ const TournamentMatchesTab = ({ tournament }) => {
               <>
                 {round.matches
                   ?.slice(0)
-                  .sort((a, b) => a.updatedAt - b.updatedAt)
+                  .reverse()
                   .map((match) => {
                     const matchResult = matchText(match)
                     if (matchResult) {
                       return (
                         <div
                           key={match.id}
-                          className="flex w-max sm:w-full py-4 sm:px-4 border-b border-black cursor-pointer items-center hover:bg-gray-100"
+                          className="overflow-x-auto flex w-full sm:grid sm:grid-cols-12 px-2 py-4 sm:px-4 border-b border-black cursor-pointer items-center hover:bg-gray-100"
                           onClick={() =>
                             navigate(
                               `/tournament/${tournament.tournamentUrl}/rounds/${round.roundNumber}#${match.id}`
                             )
                           }
                         >
-                          <span className="w-24 sm:w-1/6">
+                          <div className="sm:col-span-2">
                             Round {round.roundNumber}
-                          </span>
+                          </div>
                           {matchResult}
                         </div>
                       )
@@ -117,7 +122,7 @@ const TournamentMatchesTab = ({ tournament }) => {
                   })}
               </>
               <div
-                className="flex w-full sm:w-full py-4 sm:px-4 border-b border-black cursor-pointer font-bold hover:bg-gray-100 "
+                className="grid grid-cols-12 px-2 py-4 sm:px-4 border-b border-black cursor-pointer font-bold hover:bg-gray-100 "
                 onClick={() =>
                   navigate(
                     `/tournament/${tournament.tournamentUrl}/rounds/${round.roundNumber}`
@@ -125,8 +130,10 @@ const TournamentMatchesTab = ({ tournament }) => {
                 }
                 key={round.id}
               >
-                <span className="w-24 sm:w-1/6">Round {round.roundNumber}</span>
-                <span className="w-24 sm:w-1/6"> Started</span>
+                <div className="col-span-2">Round {round.roundNumber}</div>
+                <div className="col-span-4" />
+                <div className="col-span-2 "> Started</div>
+                <div className="col-span-4" />
               </div>
             </>
           ))

@@ -169,6 +169,7 @@ export type CreateTournamentInput = {
   dateEnded?: Maybe<Scalars['DateTime']>;
   maxPlayers: Scalars['Int'];
   locationName: Scalars['String'];
+  publicRegistration?: Maybe<Scalars['Boolean']>;
   infoUrl?: Maybe<Scalars['String']>;
   street1?: Maybe<Scalars['String']>;
   street2?: Maybe<Scalars['String']>;
@@ -635,6 +636,7 @@ export type Query = {
   checkNickname: Scalars['Boolean'];
   contact?: Maybe<Contact>;
   contacts: Array<Contact>;
+  currentTournaments: Array<Tournament>;
   finishedTournaments: Array<Tournament>;
   homeBanners: Array<Banner>;
   match?: Maybe<Match>;
@@ -677,6 +679,11 @@ export type QueryCheckNicknameArgs = {
 
 export type QueryContactArgs = {
   id: Scalars['Int'];
+};
+
+
+export type QueryCurrentTournamentsArgs = {
+  input?: Maybe<SearchTournamentInput>;
 };
 
 
@@ -808,6 +815,7 @@ export type SearchTournamentInput = {
   state?: Maybe<Scalars['String']>;
   city?: Maybe<Scalars['String']>;
   openSpotsOnly: Scalars['Boolean'];
+  finishedTournaments?: Maybe<Scalars['Boolean']>;
   dateStart?: Maybe<Scalars['Date']>;
   dateEnd?: Maybe<Scalars['Date']>;
   distance?: Maybe<Scalars['Int']>;
@@ -862,6 +870,7 @@ export type Tournament = {
   dateEnded?: Maybe<Scalars['DateTime']>;
   maxPlayers: Scalars['Int'];
   locationName: Scalars['String'];
+  publicRegistration?: Maybe<Scalars['Boolean']>;
   infoUrl?: Maybe<Scalars['String']>;
   street1?: Maybe<Scalars['String']>;
   street2?: Maybe<Scalars['String']>;
@@ -988,6 +997,7 @@ export type UpdateTournamentInput = {
   dateStarted?: Maybe<Scalars['DateTime']>;
   dateEnded?: Maybe<Scalars['DateTime']>;
   maxPlayers?: Maybe<Scalars['Int']>;
+  publicRegistration?: Maybe<Scalars['Boolean']>;
   locationName?: Maybe<Scalars['String']>;
   infoUrl?: Maybe<Scalars['String']>;
   street1?: Maybe<Scalars['String']>;
@@ -1498,6 +1508,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   checkNickname?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<QueryCheckNicknameArgs, never>>;
   contact?: Resolver<Maybe<ResolversTypes['Contact']>, ParentType, ContextType, RequireFields<QueryContactArgs, 'id'>>;
   contacts?: Resolver<Array<ResolversTypes['Contact']>, ParentType, ContextType>;
+  currentTournaments?: Resolver<Array<ResolversTypes['Tournament']>, ParentType, ContextType, RequireFields<QueryCurrentTournamentsArgs, never>>;
   finishedTournaments?: Resolver<Array<ResolversTypes['Tournament']>, ParentType, ContextType, RequireFields<QueryFinishedTournamentsArgs, never>>;
   homeBanners?: Resolver<Array<ResolversTypes['Banner']>, ParentType, ContextType>;
   match?: Resolver<Maybe<ResolversTypes['Match']>, ParentType, ContextType, RequireFields<QueryMatchArgs, 'id'>>;
@@ -1586,6 +1597,7 @@ export type TournamentResolvers<ContextType = any, ParentType extends ResolversP
   dateEnded?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
   maxPlayers?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   locationName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  publicRegistration?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   infoUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   street1?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   street2?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
