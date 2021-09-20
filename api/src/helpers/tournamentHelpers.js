@@ -83,21 +83,39 @@ export const generateMatches = async ({ roundNumber = 1, db, id }) => {
   let scoreObjDiff = Object.keys(scoreObj)
   scoreObjDiff.sort((a, b) => parseInt(a) - parseInt(b)).reverse()
 
-  //Join playerList into playersWithByes and playersWithoutBytes (randomized)
-  let playersWithByes = players.filter((player) => player.byes > 0)
-  let playersWithoutByes = randomizedArray(
-    players.filter((player) => player.byes === 0)
-  )
-  let playerList = [...playersWithByes, ...playersWithoutByes].map(
-    (player) => player.id
-  )
+  let playerList = players.map((player) => player.id)
+
+  //If odd number of players, given lowest
+  if (playerList.length % 2 !== 0) {
+    let playerGivenBye = null
+
+    //Priority for byes: Players not given Byes, player with lowest score
+    randomizedArray(players).forEach((player, index) => {
+      if (index === 0) {
+        playerGivenBye = player
+      } else {
+        if (
+          player.byes <= playerGivenBye.byes &&
+          player.score < playerGivenBye.score
+        ) {
+          playerGivenBye = player
+        }
+      }
+    })
+
+    generatedMatches.push([playerGivenBye.id])
+    playersNotGivenMatches.splice(
+      playersNotGivenMatches.indexOf(playerGivenBye.id),
+      1
+    )
+
+    playersGivenMatches.push(playerGivenBye.id)
+  }
 
   playerList.forEach((player) => {
     if (playersNotGivenMatches.indexOf(player) !== -1) {
       let match = []
       let scoreDifToCheck = playerScores[player]
-
-      //Players to avoid include players NOT in the same differential as current player && players they have played before
 
       let playersToAvoid = []
 
@@ -108,12 +126,7 @@ export const generateMatches = async ({ roundNumber = 1, db, id }) => {
         }
       })
 
-      console.log('Score obj diff', scoreObj)
-      console.log('Score dif to check', scoreDifToCheck)
-
       let preferredPlayers = scoreObj[scoreDifToCheck]
-
-      console.log(preferredPlayers)
 
       //Players that player cannot play against include players who have been given matches
       playersGivenMatches.push(player)
@@ -123,7 +136,6 @@ export const generateMatches = async ({ roundNumber = 1, db, id }) => {
       playersNotGivenMatches.splice(playersNotGivenMatches.indexOf(player), 1)
       let playersProhibited = [...playersGivenMatches]
 
-      console.log('Player', player)
       let opponent = findOpponent({
         preferredPlayers,
         playersNotGivenMatches,
@@ -149,6 +161,12 @@ export const generateMatches = async ({ roundNumber = 1, db, id }) => {
   return generatedMatches
 }
 
+const randomizedArray = (arr) =>
+  arr
+    .map((a) => ({ sort: Math.random(), value: a }))
+    .sort((a, b) => a.sort - b.sort)
+    .map((a) => a.value)
+
 export const calcNumRounds = (numPlayers, power = 1) => {
   if (2 ** power >= numPlayers) {
     return power
@@ -156,12 +174,6 @@ export const calcNumRounds = (numPlayers, power = 1) => {
     return calcNumRounds(numPlayers, power + 1)
   }
 }
-
-const randomizedArray = (arr) =>
-  arr
-    .map((a) => ({ sort: Math.random(), value: a }))
-    .sort((a, b) => a.sort - b.sort)
-    .map((a) => a.value)
 
 const findOpponent = ({
   preferredPlayers = [],
