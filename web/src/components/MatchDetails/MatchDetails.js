@@ -226,8 +226,8 @@ const MatchDetails = ({ index, match, tournament }) => {
                   tournament,
                 }) && (
                   <NumberField
-                    className="border-2 p-2 mt-2 w-14"
-                    errorClassName="border-2 p-2 mt-2 w-full border-red-500"
+                    className="border border-gray-500 p-2 mt-2 w-14"
+                    errorClassName="border p-2 mt-2 w-full border-red-500"
                     validation={{ required: true, min: 0 }}
                     name="player1"
                     min={0}
@@ -268,8 +268,8 @@ const MatchDetails = ({ index, match, tournament }) => {
                   tournament,
                 }) && (
                   <NumberField
-                    className="border-2 p-2 mt-2 w-14"
-                    errorClassName="border-2 p-2 mt-2 w-full border-red-500"
+                    className="border border-gray-500 p-2 mt-2 w-14"
+                    errorClassName="border p-2 mt-2 w-full border-red-500"
                     validation={{ required: true, min: 0 }}
                     name="player2"
                     min={0}
