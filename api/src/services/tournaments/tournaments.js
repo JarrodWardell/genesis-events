@@ -533,6 +533,10 @@ export const startTournament = async ({ id }) => {
   await db.tournament.update({
     data: {
       dateStarted: new Date(),
+      startingTimerInSeconds: 3600,
+      timerLeftInSeconds: 3600,
+      timerStatus: 'INPROGRESS',
+      timerLastUpdated: new Date(),
     },
     where: {
       id,
@@ -597,10 +601,10 @@ export const advanceRound = async ({ id, roundNumber }) => {
   await db.tournament.update({
     data: {
       updatedAt: new Date(),
-      startingTimerInSeconds: null,
-      timerLeftInSeconds: null,
-      timerStatus: null,
-      timerLastUpdated: null,
+      startingTimerInSeconds: 3600,
+      timerLeftInSeconds: 3600,
+      timerStatus: 'INPROGRESS',
+      timerLastUpdated: new Date(),
     },
     where: {
       id,
