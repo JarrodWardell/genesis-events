@@ -70,7 +70,9 @@ const LeaderboardPage = () => {
       <table className="border-gray-200 border-2 rounded-md p-4 border-collapse">
         <tr className="text-center text-gray-500 text-xs bg-gray-100 uppercase">
           <th className="py-2">Rank</th>
+          <th className="px-2" />
           <th className="py-2">Nickname</th>
+          <th className="px-2" />
           <th className="py-2">Country</th>
           <th className="py-2">Score</th>
         </tr>
@@ -111,12 +113,14 @@ const LeaderboardPage = () => {
               className="text-center border-b-2 border-black py-4 text-sm"
             >
               <td className="py-2">{player.rank}</td>
-              <td className="py-2 flex justify-center">
+              <td className="px-2" />
+              <td className="py-2 flex">
                 <PlayerProfileItem
                   player={player.player || {}}
                   playerName={player.playerName}
                 />
               </td>
+              <td className="px-2" />
               <td className="py-2">{player.player?.country}</td>
               <td className="py-2">{player.totalScore}</td>
             </tr>
