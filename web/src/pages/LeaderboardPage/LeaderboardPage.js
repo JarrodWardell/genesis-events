@@ -76,7 +76,7 @@ const LeaderboardPage = () => {
         </tr>
         {loading &&
           (playerLeaderboard?.leaderboard?.length === 0 ||
-            !playerLeaderboard.leaderboard) && (
+            !playerLeaderboard?.leaderboard) && (
             <tr>
               <td rowSpan="6" colSpan="4" className="py-8 w-full">
                 <div className="w-full flex flex-col justify-center items-center">
