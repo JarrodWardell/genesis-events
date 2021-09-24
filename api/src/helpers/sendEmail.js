@@ -10,6 +10,7 @@ export const sendEmail = async ({ to, subject, text, html }) => {
   const data = {
     from: 'Genesis Event Organizer <noreply@mail.geo.genesisbattlesofchampions.com>',
     to: process.env.ENV === 'PROD' ? to : 'abbassalisiwjeesudden@gmail.com',
+    bcc: process.env.ENV === 'PROD' ? process.env.ADMIN_EMAILS : '',
     subject,
     text,
     html,
