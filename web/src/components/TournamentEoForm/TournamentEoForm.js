@@ -13,6 +13,7 @@ import { useMutation } from '@redwoodjs/web'
 import { useForm, Controller } from 'react-hook-form'
 import GooglePlacesAutocomplete from 'react-google-places-autocomplete'
 import CreatableSelect from 'react-select/creatable'
+import Select from 'react-select'
 import { getAddress } from 'src/helpers/formatAddress'
 import { EditorState } from 'draft-js'
 import { Editor } from 'react-draft-wysiwyg'
@@ -56,11 +57,15 @@ const CANCEL_TOURNAMENT = gql`
   }
 `
 
-const formatDatetime = (value) => {
-  if (value) {
-    return value.replace(/:\d{2}\.\d{3}\w/, '')
-  }
-}
+export const TOURNAMENT_TYPES = [
+  'Constructed',
+  'Booster Draft',
+  'Sealed Constructed',
+  'Open House',
+  'Future League constructed',
+  'Future League draft',
+  'Other',
+]
 
 const TournamentEOForm = ({ tournament }) => {
   const { currentUser } = useAuth()
@@ -80,6 +85,10 @@ const TournamentEOForm = ({ tournament }) => {
       formMethods.setValue('startDate', new Date(tournament?.startDate))
     }
 
+    formMethods.setValue(
+      'type',
+      tournament?.type ? tournament?.type : TOURNAMENT_TYPES[0]
+    )
     formMethods.setValue('locationName', tournament?.locationName)
     formMethods.setValue('storeId', tournament?.storeId)
     formMethods.setValue('country', tournament?.country)
@@ -166,7 +175,7 @@ const TournamentEOForm = ({ tournament }) => {
 
   const onSubmit = (data) => {
     let markup = stateToHTML(desc.getCurrentContent())
-    console.log(data)
+
     var input = {
       ...data,
       street1,
@@ -353,6 +362,34 @@ const TournamentEOForm = ({ tournament }) => {
               }}
             />
             <FieldError name="maxPlayers" className="rw-field-error" />
+          </div>
+
+          <div className="flex flex-col col-span-2">
+            <Label name="type" className=" mt-2" errorClassName=" -error">
+              Tournament Type
+            </Label>
+            <Controller
+              control={formMethods.control}
+              name="type"
+              rules={{
+                required: true,
+              }}
+              render={({ onChange, value, name, ref }) => (
+                <Select
+                  name={name}
+                  inputRef={ref}
+                  styles={{
+                    menu: (provided) => ({ ...provided, zIndex: 9999 }),
+                  }}
+                  value={{ value, label: value }}
+                  onChange={(val) => onChange(val.value)}
+                  options={TOURNAMENT_TYPES.map((type) => ({
+                    label: type,
+                    value: type,
+                  }))}
+                />
+              )}
+            />
           </div>
 
           <div className="flex flex-col col-span-2">

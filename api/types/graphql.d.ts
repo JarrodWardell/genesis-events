@@ -840,6 +840,8 @@ export type Store = {
   zip: Scalars['String'];
   distributor: Scalars['String'];
   approved?: Maybe<Scalars['Boolean']>;
+  approvedBy?: Maybe<User>;
+  approverId?: Maybe<Scalars['String']>;
   approvedOn?: Maybe<Scalars['DateTime']>;
 };
 
@@ -1577,6 +1579,8 @@ export type StoreResolvers<ContextType = any, ParentType extends ResolversParent
   zip?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   distributor?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   approved?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  approvedBy?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
+  approverId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   approvedOn?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };

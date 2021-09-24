@@ -76,6 +76,10 @@ const Tournament = ({ tournament }) => {
               <td>{timeTag(tournament.startDate)}</td>
             </tr>
             <tr>
+              <th>Type</th>
+              <td>{tournament.type}</td>
+            </tr>
+            <tr>
               <th>Date started</th>
               <td>{timeTag(tournament.dateStarted)}</td>
             </tr>

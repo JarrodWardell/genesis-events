@@ -65,6 +65,7 @@ const TournamentsList = ({ tournaments }) => {
             <th>Name</th>
             <th>Tournament url</th>
             <th>Start date</th>
+            <th>Type</th>
             <th>Date started</th>
             <th>Date ended</th>
             <th>Max players</th>
@@ -98,6 +99,7 @@ const TournamentsList = ({ tournaments }) => {
               <td>{truncate(tournament.name)}</td>
               <td>{truncate(tournament.tournamentUrl)}</td>
               <td>{timeTag(tournament.startDate)}</td>
+              <td>{truncate(tournament.type)}</td>
               <td>{timeTag(tournament.dateStarted)}</td>
               <td>{timeTag(tournament.dateEnded)}</td>
               <td>{truncate(tournament.maxPlayers)}</td>

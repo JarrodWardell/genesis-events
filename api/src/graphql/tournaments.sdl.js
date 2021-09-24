@@ -3,6 +3,7 @@ export const schema = gql`
     id: Int!
     name: String!
     desc: String
+    type: String
     tournamentUrl: String!
     distance: Float
     playerCount: Int
@@ -44,6 +45,7 @@ export const schema = gql`
     id
     name
     tournamentUrl
+    type
     startDate
     dateStarted
     dateEnded
@@ -113,6 +115,7 @@ export const schema = gql`
     ownerId: String
     userId: String
     desc: String
+    type: String
     active: Boolean
     startingTimerInSeconds: Int
     timerLeftInSeconds: Int
@@ -142,6 +145,7 @@ export const schema = gql`
     ownerId: String
     userId: String
     desc: String
+    type: String
     active: Boolean
     startingTimerInSeconds: Int
     timerLeftInSeconds: Int

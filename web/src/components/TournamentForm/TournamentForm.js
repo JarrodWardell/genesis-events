@@ -10,6 +10,7 @@ import {
   Submit,
   SelectField,
 } from '@redwoodjs/forms'
+import { TOURNAMENT_TYPES } from '../TournamentEoForm/TournamentEoForm'
 
 const formatDatetime = (value) => {
   if (value) {
@@ -79,6 +80,28 @@ const TournamentForm = (props) => {
           validation={{ required: true }}
         />
         <FieldError name="startDate" className="rw-field-error" />
+
+        <Label
+          name="type"
+          className="rw-label"
+          errorClassName="rw-label rw-label-error"
+        >
+          Type
+        </Label>
+        <SelectField
+          name="type"
+          defaultValue={props.tournament?.type}
+          className="rw-input"
+          errorClassName="rw-input rw-input-error"
+          validation={{ required: true }}
+        >
+          {TOURNAMENT_TYPES.map((type) => (
+            <option value={type} key={type}>
+              {type}
+            </option>
+          ))}
+        </SelectField>
+        <FieldError name="type" className="rw-field-error" />
 
         <Label
           name="dateStarted"

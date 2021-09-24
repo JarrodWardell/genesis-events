@@ -74,15 +74,17 @@ const LeaderboardPage = () => {
           <th className="py-2">Country</th>
           <th className="py-2">Score</th>
         </tr>
-        {loading && playerLeaderboard?.leaderboard?.length === 0 && (
-          <tr>
-            <td rowSpan="6" colSpan="4" className="py-8 w-full">
-              <div className="w-full flex flex-col justify-center items-center">
-                <LoadingIcon size={'44px'} />
-              </div>
-            </td>
-          </tr>
-        )}
+        {loading &&
+          (playerLeaderboard?.leaderboard?.length === 0 ||
+            !playerLeaderboard.leaderboard) && (
+            <tr>
+              <td rowSpan="6" colSpan="4" className="py-8 w-full">
+                <div className="w-full flex flex-col justify-center items-center">
+                  <LoadingIcon size={'44px'} />
+                </div>
+              </td>
+            </tr>
+          )}
         {playerLeaderboard?.leaderboard?.length === 0 &&
           !loading &&
           (nicknameSearch ? (

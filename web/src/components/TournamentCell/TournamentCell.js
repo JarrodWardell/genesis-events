@@ -26,6 +26,7 @@ export const QUERY = gql`
       updatedAt
       userId
       desc
+      type
       active
       startingTimerInSeconds
       timerLeftInSeconds
