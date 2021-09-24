@@ -47,19 +47,19 @@ const MatchDetails = ({ index, match, tournament }) => {
 
   const onSubmit = (data) => {
     let input = {
-      matchId: match.id,
+      matchId: match?.id,
       matches: [
         {
-          userId: match.players[0].user?.id,
-          playerName: match.players[0]?.playerName,
-          playerMatchScore: match.players[0].id,
+          userId: match?.players[0]?.user?.id,
+          playerName: match?.players[0]?.playerName,
+          playerMatchScore: match?.players[0]?.id,
           score: data.player1,
           result: returnResult(data.player1, data.player2),
         },
         {
-          userId: match.players[1].user?.id,
-          playerMatchScore: match.players[1].id,
-          playerName: match.players[1].playerName,
+          userId: match?.players[1]?.user?.id,
+          playerMatchScore: match?.players[1]?.id,
+          playerName: match?.players[1]?.playerName,
           score: data.player2,
           result: returnResult(data.player2, data.player1),
         },
@@ -81,8 +81,11 @@ const MatchDetails = ({ index, match, tournament }) => {
   const returnIcons = () => {
     let icons = []
 
-    if (match.players[0].score === 0 || match.players[0].score >= 1) {
-      let result = returnResult(match.players[0].score, match.players[1].score)
+    if (match?.players[0]?.score === 0 || match?.players[0]?.score >= 1) {
+      let result = returnResult(
+        match?.players[0]?.score,
+        match?.players[1]?.score
+      )
       if (result === 'WIN') {
         icons.push(
           <div className="rounded-full bg-gray-900 w-10 h-10 text-white flex justify-center items-center">
@@ -199,25 +202,25 @@ const MatchDetails = ({ index, match, tournament }) => {
           />
         </div>
         <div className="col-span-1 flex justify-center items-center">
-          {!match.players[0].bye && (
+          {!match?.players[0]?.bye && (
             <div>
-              {scoreSubmitted(match.players[0].score) ? (
+              {scoreSubmitted(match?.players[0]?.score) ? (
                 <div
                   className={`rounded-full flex justify-center items-center h-8 w-8 ${
                     returnResult(
-                      match.players[0].score,
-                      match.players[1].score
+                      match?.players[0]?.score,
+                      match?.players[1]?.score
                     ) === 'WIN'
                       ? 'bg-green-300'
                       : returnResult(
-                          match.players[0].score,
-                          match.players[1].score
+                          match?.players[0]?.score,
+                          match?.players[1]?.score
                         ) === 'LOSS'
                       ? 'bg-red-300'
                       : 'bg-yellow-200'
                   }`}
                 >
-                  {match.players[0].score}
+                  {match?.players[0]?.score}
                 </div>
               ) : (
                 checkTournamentPermissions({
@@ -238,28 +241,28 @@ const MatchDetails = ({ index, match, tournament }) => {
           )}
         </div>
         <div className="col-span-2 flex justify-center items-center">
-          {match.players[0].bye ? <div>BYE</div> : returnIcons()}
+          {match?.players[0]?.bye ? <div>BYE</div> : returnIcons()}
         </div>
-        {match.players.length > 1 && (
+        {match?.players.length > 1 && (
           <>
             <div className="col-span-1 flex justify-center items-center">
-              {scoreSubmitted(match.players[1].score) ? (
+              {scoreSubmitted(match?.players[1]?.score) ? (
                 <div
                   className={`rounded-full flex justify-center items-center h-8 w-8 ${
                     returnResult(
-                      match.players[1].score,
-                      match.players[0].score
+                      match?.players[1]?.score,
+                      match?.players[0]?.score
                     ) === 'WIN'
                       ? 'bg-green-300'
                       : returnResult(
-                          match.players[1].score,
-                          match.players[0].score
+                          match?.players[1]?.score,
+                          match?.players[0]?.score
                         ) === 'LOSS'
                       ? 'bg-red-300'
                       : 'bg-yellow-200'
                   }`}
                 >
-                  {match.players[1].score}
+                  {match?.players[1]?.score}
                 </div>
               ) : (
                 checkTournamentPermissions({
@@ -290,7 +293,7 @@ const MatchDetails = ({ index, match, tournament }) => {
           {!addedScore &&
             player1 &&
             player2 &&
-            !scoreSubmitted(match.players[0].score) && (
+            !scoreSubmitted(match?.players[0]?.score) && (
               <Button
                 type="submit"
                 loading={addMatchScoreLoading}

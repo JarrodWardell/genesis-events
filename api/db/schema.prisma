@@ -118,6 +118,7 @@ model Tournament {
   dateStarted            DateTime?
   dateEnded              DateTime?
   maxPlayers             Int
+  type                   String?
   locationName           String
   infoUrl                String?
   street1                String?

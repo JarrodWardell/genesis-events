@@ -8,6 +8,7 @@ export const TOURNAMENT_BY_URL_SIMPLE = gql`
       tournamentUrl
       name
       desc
+      type
       startDate
       maxPlayers
       publicRegistration
