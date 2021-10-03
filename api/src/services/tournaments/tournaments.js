@@ -161,7 +161,7 @@ export const upcomingTournaments = ({ input, take = 6 }) => {
       },
       orderBy: [
         {
-          startDate: 'desc',
+          startDate: 'asc',
         },
         {
           createdAt: 'desc',
