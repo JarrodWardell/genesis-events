@@ -27,6 +27,7 @@ import ReactDatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
 import Button from '../Button/Button'
 import { logError } from 'src/helpers/errorLogger'
+import ToolTip from '../ToolTip/ToolTip'
 
 const CREATE_TOURNAMENT = gql`
   mutation CreateTournamentMutation($input: CreateTournamentInput!) {
@@ -541,7 +542,11 @@ const TournamentEOForm = ({ tournament }) => {
               className=""
               errorClassName=" -error"
             >
-              Public Registration
+              Public Registration{' '}
+              <ToolTip
+                text="This will allow for players to register themselves. If turned off, only admins or the organizer can register players"
+                iconClass="h-5 w-5 inline-block ml-2"
+              />
             </Label>
             <CheckboxField
               name="publicRegistration"
