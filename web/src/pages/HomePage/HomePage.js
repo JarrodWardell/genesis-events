@@ -83,7 +83,7 @@ const HomePage = () => {
               )}
             </div>
             <div className="grid sm:grid-cols-2 gap-x-24 container mx-auto grid-cols-1 max-h-screen overflow-auto">
-              <div className="flex flex-col sm:w-3/4">
+              <div className="flex flex-col sm:w-3/4 mt-4 sm:mt-0 max-h-screen overflow-auto">
                 <h1 className="text-xl text-black mb-4">
                   Upcoming Tournaments
                 </h1>
