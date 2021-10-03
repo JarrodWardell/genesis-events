@@ -1,3 +1,4 @@
+import { XIcon } from '@heroicons/react/solid'
 import { useAuth } from '@redwoodjs/auth'
 import { Link, navigate, NavLink, routes } from '@redwoodjs/router'
 import ProfilePicture from '../ProfilePicture/ProfilePicture'
@@ -204,94 +205,108 @@ const Header = () => {
 
         {mobileMenuOpen && (
           <div
-            className="md:hidden absolute h-screen z-50 w-full bg-white left-0 transition-transform ease-in"
+            className="md:hidden absolute h-screen z-50 w-full left-0 "
             id="mobile-menu"
           >
-            <div className="pt-2 pb-3 space-y-1">
-              <button
-                onClick={() => navigateMobile(routes.home())}
-                className="border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700 block pl-3 pr-4 py-2 border-l-4 text-base font-medium sm:pl-5 sm:pr-6"
-                activeClassName="bg-indigo-50 border-indigo-500 text-indigo-700 block pl-3 pr-4 py-2 border-l-4 text-base font-medium sm:pl-5 sm:pr-6"
-              >
-                Home
-              </button>
-              <button
-                onClick={() => navigateMobile(routes.tournamentSearch())}
-                className="border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700 block pl-3 pr-4 py-2 border-l-4 text-base font-medium sm:pl-5 sm:pr-6"
-                activeClassName="bg-indigo-50 border-indigo-500 text-indigo-700 block pl-3 pr-4 py-2 border-l-4 text-base font-medium sm:pl-5 sm:pr-6"
-              >
-                Events
-              </button>
-              <button
-                onClick={() => navigateMobile(routes.leaderboard())}
-                className="border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700 block pl-3 pr-4 py-2 border-l-4 text-base font-medium sm:pl-5 sm:pr-6"
-                activeClassName="bg-indigo-50 border-indigo-500 text-indigo-700 block pl-3 pr-4 py-2 border-l-4 text-base font-medium sm:pl-5 sm:pr-6"
-              >
-                Leaderboard
-              </button>
-              <button
-                onClick={() => navigateMobile(routes.userContact())}
-                className="border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700 block pl-3 pr-4 py-2 border-l-4 text-base font-medium sm:pl-5 sm:pr-6"
-                activeClassName="bg-indigo-50 border-indigo-500 text-indigo-700 block pl-3 pr-4 py-2 border-l-4 text-base font-medium sm:pl-5 sm:pr-6"
-              >
-                Contact Us
-              </button>
-              {!isAuthenticated && (
-                <>
-                  <button
-                    onClick={() => navigateMobile(routes.login())}
-                    className="block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100 sm:px-6"
-                  >
-                    Login{' '}
-                  </button>
-                  <button
-                    onClick={() => navigateMobile(routes.signup())}
-                    className="block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100 sm:px-6"
-                  >
-                    Sign Up
-                  </button>
-                </>
-              )}
+            <div
+              className="w-full flex absolute h-screen z-40"
+              style={{ background: 'rgba(113, 111, 111, 0.65)' }}
+            >
+              <XIcon
+                className="w-7 h-7 ml-auto mr-2 mt-2 text-white hover:shadow-md focus:border-blue-600"
+                onClick={() => setMobileMenuOpen(false)}
+              />
             </div>
-            {isAuthenticated && (
-              <div className="pt-4 pb-3 border-t border-gray-200">
-                <div className="flex items-center px-4 sm:px-6">
-                  <div className="flex-shrink-0">
-                    <ProfilePicture pic={currentUser?.user?.photo} size={10} />
-                  </div>
-                  <div className="ml-3">
-                    <div className="text-base font-medium text-gray-800">
-                      {currentUser?.user?.nickname}
-                    </div>
-                    <div className="text-sm font-medium text-gray-500">
-                      {currentUser?.user?.email}
-                    </div>
-                  </div>
-                </div>
-                <div className="mt-3 space-y-1">
-                  {hasRole('ADMIN') && (
+            <div className="w-3/4 absolute bg-white transition-transform ease-in h-screen z-50">
+              <div className="pt-2 pb-3 space-y-1">
+                <button
+                  onClick={() => navigateMobile(routes.home())}
+                  className="border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700 block pl-3 pr-4 py-2 border-l-4 text-base font-medium sm:pl-5 sm:pr-6"
+                  activeClassName="bg-indigo-50 border-indigo-500 text-indigo-700 block pl-3 pr-4 py-2 border-l-4 text-base font-medium sm:pl-5 sm:pr-6"
+                >
+                  Home
+                </button>
+                <button
+                  onClick={() => navigateMobile(routes.tournamentSearch())}
+                  className="border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700 block pl-3 pr-4 py-2 border-l-4 text-base font-medium sm:pl-5 sm:pr-6"
+                  activeClassName="bg-indigo-50 border-indigo-500 text-indigo-700 block pl-3 pr-4 py-2 border-l-4 text-base font-medium sm:pl-5 sm:pr-6"
+                >
+                  Events
+                </button>
+                <button
+                  onClick={() => navigateMobile(routes.leaderboard())}
+                  className="border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700 block pl-3 pr-4 py-2 border-l-4 text-base font-medium sm:pl-5 sm:pr-6"
+                  activeClassName="bg-indigo-50 border-indigo-500 text-indigo-700 block pl-3 pr-4 py-2 border-l-4 text-base font-medium sm:pl-5 sm:pr-6"
+                >
+                  Leaderboard
+                </button>
+                <button
+                  onClick={() => navigateMobile(routes.userContact())}
+                  className="border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700 block pl-3 pr-4 py-2 border-l-4 text-base font-medium sm:pl-5 sm:pr-6"
+                  activeClassName="bg-indigo-50 border-indigo-500 text-indigo-700 block pl-3 pr-4 py-2 border-l-4 text-base font-medium sm:pl-5 sm:pr-6"
+                >
+                  Contact Us
+                </button>
+                {!isAuthenticated && (
+                  <>
                     <button
-                      onClick={() => navigateMobile(routes.admin())}
+                      onClick={() => navigateMobile(routes.login())}
                       className="block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100 sm:px-6"
                     >
-                      Admin
+                      Login{' '}
                     </button>
-                  )}
-                  <button
-                    onClick={() => navigateMobile(routes.settings())}
-                    className="block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100 sm:px-6"
-                  >
-                    Settings
-                  </button>
-                  <button
-                    onClick={async () => await logOut()}
-                    className="block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100 sm:px-6"
-                  >
-                    Sign out
-                  </button>
-                </div>
+                    <button
+                      onClick={() => navigateMobile(routes.signup())}
+                      className="block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100 sm:px-6"
+                    >
+                      Sign Up
+                    </button>
+                  </>
+                )}
               </div>
-            )}
+              {isAuthenticated && (
+                <div className="pt-4 pb-3 border-t border-gray-200">
+                  <div className="flex items-center px-4 sm:px-6">
+                    <div className="flex-shrink-0">
+                      <ProfilePicture
+                        pic={currentUser?.user?.photo}
+                        size={10}
+                      />
+                    </div>
+                    <div className="ml-3">
+                      <div className="text-base font-medium text-gray-800">
+                        {currentUser?.user?.nickname}
+                      </div>
+                      <div className="text-sm font-medium text-gray-500">
+                        {currentUser?.user?.email}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="mt-3 space-y-1">
+                    {hasRole('ADMIN') && (
+                      <button
+                        onClick={() => navigateMobile(routes.admin())}
+                        className="block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100 sm:px-6"
+                      >
+                        Admin
+                      </button>
+                    )}
+                    <button
+                      onClick={() => navigateMobile(routes.settings())}
+                      className="block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100 sm:px-6"
+                    >
+                      Settings
+                    </button>
+                    <button
+                      onClick={async () => await logOut()}
+                      className="block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100 sm:px-6"
+                    >
+                      Sign out
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         )}
       </div>
