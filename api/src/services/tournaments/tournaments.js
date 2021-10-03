@@ -103,7 +103,7 @@ export const myTournaments = ({}) => {
   }
 }
 
-export const currentTournaments = ({ input, take = 6 }) => {
+export const currentTournaments = ({ input = {}, take = 6 }) => {
   try {
     return db.tournament.findMany({
       where: {
@@ -122,6 +122,12 @@ export const currentTournaments = ({ input, take = 6 }) => {
           {
             active: true,
           },
+          {
+            country: {
+              contains: input.country,
+              mode: 'insensitive',
+            },
+          },
         ],
       },
       orderBy: [
@@ -139,7 +145,7 @@ export const currentTournaments = ({ input, take = 6 }) => {
   }
 }
 
-export const upcomingTournaments = ({ input, take = 6 }) => {
+export const upcomingTournaments = ({ input = {}, take = 6 }) => {
   try {
     return db.tournament.findMany({
       where: {
@@ -156,6 +162,12 @@ export const upcomingTournaments = ({ input, take = 6 }) => {
           },
           {
             active: true,
+          },
+          {
+            country: {
+              contains: input.country,
+              mode: 'insensitive',
+            },
           },
         ],
       },
@@ -174,7 +186,7 @@ export const upcomingTournaments = ({ input, take = 6 }) => {
   }
 }
 
-export const finishedTournaments = ({ input, take = 6 }) => {
+export const finishedTournaments = ({ input = {}, take = 6 }) => {
   try {
     return db.tournament.findMany({
       where: {
@@ -190,6 +202,12 @@ export const finishedTournaments = ({ input, take = 6 }) => {
           },
           {
             active: true,
+          },
+          {
+            country: {
+              contains: input.country,
+              mode: 'insensitive',
+            },
           },
         ],
       },
