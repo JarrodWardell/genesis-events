@@ -21,6 +21,7 @@ const START_TOURNAMENT_MUTATION = gql`
 
 const TournamentNotStarted = ({ tournament }) => {
   const { currentUser, hasRole } = useAuth()
+  const [started, setStarted] = React.useState(false)
   const [startConfirmation, setStartConfirmation] = React.useState(false)
   const [timeUntilTourney, setTimeUntilTourney] = React.useState(
     timeUntilTournament(tournament.startDate)
@@ -31,6 +32,7 @@ const TournamentNotStarted = ({ tournament }) => {
     {
       onCompleted: () => {
         toast.success('Tournament started!')
+        setStarted(true)
       },
       onError: (error) => {
         logError({
@@ -89,7 +91,7 @@ const TournamentNotStarted = ({ tournament }) => {
                 startTournament({ variables: { id: tournament.id } })
               }
               full={false}
-              loading={loading}
+              loading={loading || started}
             >
               Start Tournament
             </Button>
