@@ -772,7 +772,14 @@ const SignupPage = ({ type }) => {
     return (
       <div className="min-h-screen container mx-auto flex flex-col justify-center bg-gray-200 border-sm py-4 text-sm text-gray-700">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
-          <h2 className="text-center text-2xl text-gray-900">Create Account</h2>
+          <h2
+            className={
+              'text-center text-2xl text-gray-900' +
+              (step !== 1 ? ' hidden sm:block' : '')
+            }
+          >
+            Create Account
+          </h2>
         </div>
         <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-3xl p-4">
           {error && <p>{error}</p>}
