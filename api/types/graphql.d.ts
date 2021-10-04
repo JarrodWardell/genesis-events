@@ -183,6 +183,7 @@ export type CreateTournamentInput = {
   ownerId?: Maybe<Scalars['String']>;
   userId?: Maybe<Scalars['String']>;
   desc?: Maybe<Scalars['String']>;
+  type?: Maybe<Scalars['String']>;
   active?: Maybe<Scalars['Boolean']>;
   startingTimerInSeconds?: Maybe<Scalars['Int']>;
   timerLeftInSeconds?: Maybe<Scalars['Int']>;
@@ -864,6 +865,7 @@ export type Tournament = {
   id: Scalars['Int'];
   name: Scalars['String'];
   desc?: Maybe<Scalars['String']>;
+  type?: Maybe<Scalars['String']>;
   tournamentUrl: Scalars['String'];
   distance?: Maybe<Scalars['Float']>;
   playerCount?: Maybe<Scalars['Int']>;
@@ -1014,6 +1016,7 @@ export type UpdateTournamentInput = {
   ownerId?: Maybe<Scalars['String']>;
   userId?: Maybe<Scalars['String']>;
   desc?: Maybe<Scalars['String']>;
+  type?: Maybe<Scalars['String']>;
   active?: Maybe<Scalars['Boolean']>;
   startingTimerInSeconds?: Maybe<Scalars['Int']>;
   timerLeftInSeconds?: Maybe<Scalars['Int']>;
@@ -1593,6 +1596,7 @@ export type TournamentResolvers<ContextType = any, ParentType extends ResolversP
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   desc?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  type?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   tournamentUrl?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   distance?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   playerCount?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;

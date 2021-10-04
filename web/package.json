@@ -21,6 +21,7 @@
     "@redwoodjs/web": "^0.35.2",
     "@sentry/react": "^6.10.0",
     "@sentry/tracing": "^6.10.0",
+    "country-list": "^2.2.0",
     "date-fns": "^2.22.1",
     "draft-js": "^0.11.7",
     "draft-js-export-html": "^1.4.1",
@@ -36,6 +37,7 @@
     "react-input-mask": "^2.0.4",
     "react-select": "^4.3.0",
     "react-to-print": "^2.12.6",
+    "react-tooltip": "^4.2.21",
     "react-truncate-html": "^0.1.7",
     "tailwindcss": "^2.2.4"
   },

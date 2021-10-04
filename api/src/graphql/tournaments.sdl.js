@@ -189,7 +189,7 @@ export const schema = gql`
     country: String
     state: String
     city: String
-    openSpotsOnly: Boolean!
+    openSpotsOnly: Boolean
     finishedTournaments: Boolean
     dateStart: Date
     dateEnd: Date

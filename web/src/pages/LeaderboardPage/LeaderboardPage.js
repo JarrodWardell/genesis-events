@@ -4,6 +4,7 @@ import PlayerProfileItem from 'src/components/PlayerProfileItem/PlayerProfileIte
 import { ReactComponent as SearchIcon } from 'src/components/Icons/SearchIcon.svg'
 import LoadingIcon from 'src/components/LoadingIcon/LoadingIcon'
 import Button from 'src/components/Button/Button'
+import ToolTip from 'src/components/ToolTip/ToolTip'
 
 const PLAYER_LEADERBOARD = gql`
   query playerLeaderboard($nicknameSearch: String, $skip: Int, $take: Int) {
@@ -74,7 +75,13 @@ const LeaderboardPage = () => {
           <th className="py-2">Nickname</th>
           <th className="px-2" />
           <th className="py-2">Country</th>
-          <th className="py-2">Score</th>
+          <th className="py-2">
+            Score
+            <ToolTip
+              text="Score = # Wins/Byes + # Tournaments Played + (0.5 x # Draws)"
+              iconClass="h-5 w-5 inline-block ml-2"
+            ></ToolTip>
+          </th>
         </tr>
         {loading &&
           (playerLeaderboard?.leaderboard?.length === 0 ||

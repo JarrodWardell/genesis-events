@@ -202,7 +202,8 @@ const TournamentRoundsTab = ({ tournament, roundNumber }) => {
         </div>
       </div>
 
-      {tournament.round.length === grabRound().roundNumber &&
+      {tournament.round[tournament.round.length - 1]?.roundNumber ===
+        grabRound()?.roundNumber &&
         checkScoresSubmitted() &&
         checkTournamentPermissions({ hasRole, currentUser, tournament }) &&
         !tournament.dateEnded && (

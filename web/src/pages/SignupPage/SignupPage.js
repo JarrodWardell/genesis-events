@@ -29,6 +29,8 @@ import DatePicker from 'react-datepicker'
 
 import 'react-datepicker/dist/react-datepicker.css'
 import { logError } from 'src/helpers/errorLogger'
+import { getNames } from 'country-list'
+import Select from 'react-select'
 
 const CREATE_USER = gql`
   mutation CreateUserMutation(
@@ -399,6 +401,7 @@ const SignupPage = ({ type }) => {
                 render={({ name, value, onChange, ref, onBlur }) => (
                   <DatePicker
                     onChange={onChange}
+                    autoComplete="off"
                     selected={value}
                     name={name}
                     customInputRef={ref}
@@ -451,11 +454,28 @@ const SignupPage = ({ type }) => {
               <Label name="country" errorClassName="text-red-500">
                 Country (Optional)
               </Label>
-              <TextField
+              <Controller
+                control={formMethods.control}
                 name="country"
-                className="border-2 p-2 mt-2 w-full"
-                errorClassName="border-2 p-2 mt-2 w-full border-red-500"
-                defaultValue={form['country']}
+                rules={{
+                  required: true,
+                }}
+                render={({ onChange, value, name, ref }) => (
+                  <Select
+                    name={name}
+                    inputRef={ref}
+                    styles={{
+                      menu: (provided) => ({ ...provided, zIndex: 9999 }),
+                      container: (provided) => ({ ...provided, marginTop: 8 }),
+                    }}
+                    value={{ value, label: value }}
+                    onChange={(val) => onChange(val.value)}
+                    options={getNames().map((countryName) => ({
+                      label: countryName,
+                      value: countryName,
+                    }))}
+                  />
+                )}
               />
             </div>
             <div className="flex flex-col w-full">
@@ -772,7 +792,14 @@ const SignupPage = ({ type }) => {
     return (
       <div className="min-h-screen container mx-auto flex flex-col justify-center bg-gray-200 border-sm py-4 text-sm text-gray-700">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
-          <h2 className="text-center text-2xl text-gray-900">Create Account</h2>
+          <h2
+            className={
+              'text-center text-2xl text-gray-900' +
+              (step !== 1 ? ' hidden sm:block' : '')
+            }
+          >
+            Create Account
+          </h2>
         </div>
         <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-3xl p-4">
           {error && <p>{error}</p>}

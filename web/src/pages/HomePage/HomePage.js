@@ -8,17 +8,17 @@ import LoadingIcon from 'src/components/LoadingIcon/LoadingIcon'
 
 export const HOMEPAGE_QUERY = gql`
   ${CORE_TOURNAMENT_FIELDS}
-  query MyTournamentsQuery {
+  query MyTournamentsQuery($input: SearchTournamentInput) {
     myTournaments {
       ...CoreTournamentFields
     }
-    currentTournaments {
+    currentTournaments(input: $input) {
       ...CoreTournamentFields
     }
-    finishedTournaments {
+    finishedTournaments(input: $input) {
       ...CoreTournamentFields
     }
-    upcomingTournaments {
+    upcomingTournaments(input: $input) {
       ...CoreTournamentFields
     }
   }
@@ -26,6 +26,7 @@ export const HOMEPAGE_QUERY = gql`
 
 const HomePage = () => {
   const { currentUser } = useAuth()
+  const [country, setCountry] = React.useState('')
   const {
     loading,
     error,
@@ -36,8 +37,26 @@ const HomePage = () => {
       currentTournaments,
     } = {},
   } = useQuery(HOMEPAGE_QUERY, {
-    variables: {},
+    variables: {
+      input: {
+        country,
+      },
+    },
   })
+
+  React.useEffect(() => {
+    getUserGeneralLocation()
+  }, [])
+
+  const getUserGeneralLocation = () => {
+    fetch('https://ip.nf/me.json', { method: 'GET' })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data.country)
+        setCountry(data?.ip?.country)
+      })
+      .catch((err) => console.log(err))
+  }
 
   return (
     <>
@@ -83,7 +102,7 @@ const HomePage = () => {
               )}
             </div>
             <div className="grid sm:grid-cols-2 gap-x-24 container mx-auto grid-cols-1 max-h-screen overflow-auto">
-              <div className="flex flex-col sm:w-3/4">
+              <div className="flex flex-col sm:w-3/4 mt-4 sm:mt-0 max-h-screen overflow-auto">
                 <h1 className="text-xl text-black mb-4">
                   Upcoming Tournaments
                 </h1>
