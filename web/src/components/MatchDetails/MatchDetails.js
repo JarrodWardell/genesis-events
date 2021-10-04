@@ -1,3 +1,4 @@
+import { PencilIcon } from '@heroicons/react/solid'
 import { useAuth } from '@redwoodjs/auth'
 import { Form, NumberField, Submit } from '@redwoodjs/forms/dist'
 import { useMutation } from '@redwoodjs/web'
@@ -18,8 +19,17 @@ const SUBMIT_MATCH_DETAILS = gql`
   }
 `
 
+const UPDATE_MATCH_DETAILS = gql`
+  mutation updateMatchScore($input: TournamentMatchScoreInput!) {
+    updateMatchScore(input: $input) {
+      id
+    }
+  }
+`
+
 const MatchDetails = ({ index, match, tournament }) => {
   const { currentUser, hasRole } = useAuth()
+  const [edit, setEdit] = React.useState(false)
   const [addedScore, setAddedScore] = React.useState(false)
 
   const [addMatchScore, { loading: addMatchScoreLoading }] = useMutation(
@@ -27,6 +37,29 @@ const MatchDetails = ({ index, match, tournament }) => {
     {
       onCompleted: () => {
         toast.success(`Successfully Added Score`)
+        setAddedScore(true)
+      },
+      onError: (error) => {
+        logError({
+          error,
+          log: true,
+          showToast: true,
+        })
+      },
+      refetchQueries: [
+        {
+          query: TOURNAMENT_BY_URL,
+          variables: { url: tournament.tournamentUrl },
+        },
+      ],
+    }
+  )
+
+  const [updateMatchScore, { loading: updateMatchScoreLoading }] = useMutation(
+    UPDATE_MATCH_DETAILS,
+    {
+      onCompleted: () => {
+        toast.success(`Successfully Updated Score`)
         setAddedScore(true)
       },
       onError: (error) => {
@@ -290,6 +323,27 @@ const MatchDetails = ({ index, match, tournament }) => {
         )}
 
         <div className="col-span-1 flex justify-center items-center">
+          {scoreSubmitted(match?.players[0]?.score) &&
+            checkTournamentPermissions({
+              hasRole,
+              currentUser,
+              tournament,
+            }) &&
+            !edit && (
+              <Button
+                type="submit"
+                loading={addMatchScoreLoading}
+                className="rounded-full"
+                color={'blue'}
+                my="0"
+                py="2"
+                px="2"
+                full={false}
+                colorWeight={400}
+              >
+                <PencilIcon className="h-6 w-6" />
+              </Button>
+            )}
           {!addedScore &&
             player1 &&
             player2 &&

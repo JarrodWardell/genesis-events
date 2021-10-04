@@ -804,7 +804,81 @@ export const addMatchScore = async ({ input }) => {
           tournamentId: match.tournamentId,
         }
 
-        console.log(playerMatch)
+        if (playerMatch.userId) {
+          playerTournamentWhere.playerId = playerMatch.userId
+        } else if (playerMatch.playerName) {
+          playerTournamentWhere.playerName = playerMatch.playerName
+        }
+
+        let playerTourneyScore = await db.playerTournamentScore.findFirst({
+          where: {
+            ...playerTournamentWhere,
+          },
+        })
+
+        let updateData = {}
+        switch (playerMatch.result) {
+          case 'WIN':
+            updateData.wins = playerTourneyScore.wins + 1
+            updateData.score = playerTourneyScore.score += 1
+            break
+          case 'TIED':
+            updateData.draws = playerTourneyScore.draws + 1
+            updateData.score = playerTourneyScore.score += 0.5
+            break
+          case 'LOSS':
+            updateData.losses = playerTourneyScore.losses + 1
+            break
+        }
+
+        await db.playerTournamentScore.update({
+          data: {
+            ...updateData,
+            updatedAt: new Date(),
+          },
+          where: {
+            id: playerTourneyScore.id,
+          },
+        })
+
+        await db.match.update({
+          data: {
+            updatedAt: new Date(),
+          },
+          where: {
+            id: input.matchId,
+          },
+        })
+      })
+    )
+  } catch (err) {
+    Sentry.captureException(err)
+    return err
+  }
+
+  return match
+}
+
+export const updateMatchScore = async ({ input }) => {
+  const match = await db.match.findUnique({ where: { id: input.matchId } })
+
+  try {
+    await Promise.all(
+      input.matches.map(async (playerMatch) => {
+        await db.playerMatchScore.update({
+          data: {
+            score: playerMatch.score,
+            wonMatch: playerMatch.result === 'WIN',
+            updatedAt: new Date(),
+          },
+          where: {
+            id: playerMatch.playerMatchScore,
+          },
+        })
+
+        let playerTournamentWhere = {
+          tournamentId: match.tournamentId,
+        }
 
         if (playerMatch.userId) {
           playerTournamentWhere.playerId = playerMatch.userId
