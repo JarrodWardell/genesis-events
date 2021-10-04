@@ -74,7 +74,7 @@ const TournamentSearchPage = () => {
     dateStart: null,
     dateEnd: null,
     openSpotsOnly: false,
-    finishedTournaments: true,
+    finishedTournaments: false,
   })
 
   const [newFilters, setNewFilters] = React.useState({
