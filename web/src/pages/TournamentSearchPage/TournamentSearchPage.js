@@ -245,7 +245,7 @@ const TournamentSearchPage = () => {
 
   const addFilter = (key, value) => {
     setNewFilters({
-      ...filters,
+      ...newFilters,
       [key]: value,
     })
   }
