@@ -310,6 +310,7 @@ export type Mutation = {
   updateBanner: Banner;
   updateContact: Contact;
   updateMatch: Match;
+  updateMatchScore: Match;
   updatePlayerMatchScore: PlayerMatchScore;
   updatePlayerTournamentScore: PlayerTournamentScore;
   updateRound: Round;
@@ -507,6 +508,11 @@ export type MutationUpdateContactArgs = {
 export type MutationUpdateMatchArgs = {
   id: Scalars['Int'];
   input: UpdateMatchInput;
+};
+
+
+export type MutationUpdateMatchScoreArgs = {
+  input: TournamentMatchScoreInput;
 };
 
 
@@ -1441,6 +1447,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   updateBanner?: Resolver<ResolversTypes['Banner'], ParentType, ContextType, RequireFields<MutationUpdateBannerArgs, 'id' | 'input'>>;
   updateContact?: Resolver<ResolversTypes['Contact'], ParentType, ContextType, RequireFields<MutationUpdateContactArgs, 'id' | 'input'>>;
   updateMatch?: Resolver<ResolversTypes['Match'], ParentType, ContextType, RequireFields<MutationUpdateMatchArgs, 'id' | 'input'>>;
+  updateMatchScore?: Resolver<ResolversTypes['Match'], ParentType, ContextType, RequireFields<MutationUpdateMatchScoreArgs, 'input'>>;
   updatePlayerMatchScore?: Resolver<ResolversTypes['PlayerMatchScore'], ParentType, ContextType, RequireFields<MutationUpdatePlayerMatchScoreArgs, 'id' | 'input'>>;
   updatePlayerTournamentScore?: Resolver<ResolversTypes['PlayerTournamentScore'], ParentType, ContextType, RequireFields<MutationUpdatePlayerTournamentScoreArgs, 'id' | 'input'>>;
   updateRound?: Resolver<ResolversTypes['Round'], ParentType, ContextType, RequireFields<MutationUpdateRoundArgs, 'id' | 'input'>>;
