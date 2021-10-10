@@ -815,7 +815,7 @@ export type SearchTournamentInput = {
   country?: Maybe<Scalars['String']>;
   state?: Maybe<Scalars['String']>;
   city?: Maybe<Scalars['String']>;
-  openSpotsOnly: Scalars['Boolean'];
+  openSpotsOnly?: Maybe<Scalars['Boolean']>;
   finishedTournaments?: Maybe<Scalars['Boolean']>;
   dateStart?: Maybe<Scalars['Date']>;
   dateEnd?: Maybe<Scalars['Date']>;

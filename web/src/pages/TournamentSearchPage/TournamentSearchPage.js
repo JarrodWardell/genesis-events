@@ -14,6 +14,7 @@ import DatePicker from 'react-datepicker'
 
 import 'react-datepicker/dist/react-datepicker.css'
 import { logError } from 'src/helpers/errorLogger'
+import { format } from 'date-fns'
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
@@ -511,11 +512,7 @@ const TournamentSearchPage = () => {
                           <CalendarIcon />
                         </div>{' '}
                         <span className="ml-1">
-                          {
-                            new Date(tournament.startDate)
-                              .toLocaleString()
-                              .split(',')[0]
-                          }
+                          {format(new Date(tournament.startDate), 'PP')}
                         </span>
                       </p>
                       <p className="flex items-center">
