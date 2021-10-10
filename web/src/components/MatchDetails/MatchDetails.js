@@ -398,6 +398,7 @@ const MatchDetails = ({ index, match = { players: [] }, tournament }) => {
 
           <div className="col-span-1 flex justify-around items-center">
             {scoreSubmitted(currentMatch?.players[0]?.score) &&
+              !tournament.dateEnded &&
               checkTournamentPermissions({
                 hasRole,
                 currentUser,
@@ -456,6 +457,7 @@ const MatchDetails = ({ index, match = { players: [] }, tournament }) => {
           onSubmit={onSubmitEdit}
           onCancel={() => setEdit(false)}
           loading={updateMatchScoreLoading}
+          tournament={tournament}
         />
       )}
     </div>

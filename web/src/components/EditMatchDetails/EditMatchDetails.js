@@ -10,10 +10,19 @@ const EditMatchDetails = ({
   onSubmit = () => {},
   onCancel = () => {},
   loading,
+  tournament = {},
 }) => {
   const formMethods = useForm()
   const player1 = formMethods.watch('player1', '')
   const player2 = formMethods.watch('player2', '')
+
+  const scoreSubmitted = (playerScore) => {
+    if (playerScore === 0 || playerScore >= 1) {
+      return true
+    }
+
+    return false
+  }
 
   return (
     <Form
@@ -31,7 +40,7 @@ const EditMatchDetails = ({
         />
       </div>
       <div className="col-span-1 flex justify-center items-center">
-        {!match?.players[0]?.bye && (
+        {!match?.players[0]?.bye && scoreSubmitted(match?.players[0]?.score) && (
           <div>
             <NumberField
               className="border border-gray-500 p-2 mt-2 w-14"
@@ -48,14 +57,16 @@ const EditMatchDetails = ({
       {match?.players.length > 1 ? (
         <>
           <div className="col-span-1 flex justify-center items-center">
-            <NumberField
-              className="border border-gray-500 p-2 mt-2 w-14"
-              errorClassName="border p-2 mt-2 w-full border-red-500"
-              defaultValue={match?.players[1]?.score}
-              validation={{ required: true, min: 0 }}
-              name="player2"
-              min={0}
-            />
+            {scoreSubmitted(match?.players[1]?.score) && (
+              <NumberField
+                className="border border-gray-500 p-2 mt-2 w-14"
+                errorClassName="border p-2 mt-2 w-full border-red-500"
+                defaultValue={match?.players[1]?.score}
+                validation={{ required: true, min: 0 }}
+                name="player2"
+                min={0}
+              />
+            )}
           </div>
           <div className="col-span-3 flex justify-center items-center">
             <PlayerProfileItem
