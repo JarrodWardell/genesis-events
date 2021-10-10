@@ -232,14 +232,25 @@ export const searchTournaments = async ({ input }) => {
        * SIN(RADIANS(${input.lat}))))) AS distance`
 
   let sqlQuery = `
-    SELECT "Tournament".id, "Tournament"."name", "Tournament"."desc", "tournamentUrl", "city", "Tournament"."maxPlayers", "Tournament"."locationName", "Tournament".lat, "Tournament".lng, "dateStarted", "startDate", "dateEnded", "Tournament"."createdAt", "Tournament"."updatedAt", "street1", "street2",  "country", "state", "zip", "timerLeftInSeconds", "timerStatus", "Tournament".active,
+    SELECT "Tournament".id, "Tournament"."name", "Tournament"."desc", "tournamentUrl", "Tournament"."city", "Tournament"."maxPlayers", "storeId", "Tournament"."locationName", "Tournament".lat, "Tournament".lng, "dateStarted", "startDate", "dateEnded", "Tournament"."createdAt", "Tournament"."updatedAt", "Tournament"."street1", "Tournament"."street2",  "Tournament"."country", "Tournament"."state", "Tournament"."zip", "timerLeftInSeconds", "timerStatus", "Tournament".active,
     COUNT("PlayerTournamentScore"."tournamentId") AS "playerCount", COUNT(*) OVER() AS full_count,
     ${distanceQuery}
     FROM "Tournament"
     LEFT JOIN "PlayerTournamentScore" ON "Tournament".id="PlayerTournamentScore"."tournamentId"
+    LEFT JOIN "Store" ON "Tournament"."storeId"="Store".id
     WHERE "Tournament".active = true ${
       input.name
         ? `AND LOWER("Tournament".name) LIKE LOWER('%${input.name}%')`
+        : ``
+    }
+    ${
+      input.type && input.type !== 'ALL'
+        ? `AND LOWER("Tournament".type) LIKE LOWER('%${input.type}%')`
+        : ``
+    }
+    ${
+      input.store
+        ? `AND LOWER("Store".name) LIKE LOWER('%${input.store}%')`
         : ``
     }
     ${
@@ -285,6 +296,7 @@ export const searchTournaments = async ({ input }) => {
       tournaments,
     }
   } catch (error) {
+    console.log(error)
     Sentry.captureException(error)
   }
 }

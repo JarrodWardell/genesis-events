@@ -191,6 +191,8 @@ export const schema = gql`
     city: String
     openSpotsOnly: Boolean
     finishedTournaments: Boolean
+    type: String
+    store: String
     dateStart: Date
     dateEnd: Date
     distance: Int

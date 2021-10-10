@@ -41,6 +41,22 @@ export const stores = ({ searchTerm = '' }) => {
   })
 }
 
+export const activeStores = ({ searchTerm = '' }) => {
+  return db.store.findMany({
+    where: {
+      name: {
+        contains: searchTerm,
+        mode: 'insensitive',
+      },
+      active: true,
+      approved: true,
+    },
+    orderBy: {
+      name: 'asc',
+    },
+  })
+}
+
 export const store = ({ id }) => {
   return db.store.findUnique({
     where: { id },
