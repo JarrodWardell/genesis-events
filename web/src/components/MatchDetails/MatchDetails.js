@@ -2,19 +2,37 @@ import { PencilIcon } from '@heroicons/react/solid'
 import { useAuth } from '@redwoodjs/auth'
 import { Form, NumberField, Submit } from '@redwoodjs/forms/dist'
 import { useMutation } from '@redwoodjs/web'
-import { useEffect, useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import { logError } from 'src/helpers/errorLogger'
 import { checkTournamentPermissions } from 'src/helpers/tournamentHelper'
 import { TOURNAMENT_BY_URL } from 'src/pages/ViewTournamentPage/ViewTournamentPage'
 import Button from '../Button/Button'
+import EditMatchDetails from '../EditMatchDetails/EditMatchDetails'
 import PlayerProfileItem from '../PlayerProfileItem/PlayerProfileItem'
 
 const SUBMIT_MATCH_DETAILS = gql`
   mutation addMatchScore($input: TournamentMatchScoreInput!) {
     addMatchScore(input: $input) {
       id
+      players {
+        id
+        playerName
+        score
+        bye
+        wonMatch
+        userId
+        user {
+          id
+          nickname
+          photo {
+            url
+            smallUrl
+            name
+          }
+        }
+      }
+      updatedAt
     }
   }
 `
@@ -23,20 +41,40 @@ const UPDATE_MATCH_DETAILS = gql`
   mutation updateMatchScore($input: TournamentMatchScoreInput!) {
     updateMatchScore(input: $input) {
       id
+      players {
+        id
+        playerName
+        score
+        bye
+        wonMatch
+        userId
+        user {
+          id
+          nickname
+          photo {
+            url
+            smallUrl
+            name
+          }
+        }
+      }
+      updatedAt
     }
   }
 `
 
-const MatchDetails = ({ index, match, tournament }) => {
+const MatchDetails = ({ index, match = { players: [] }, tournament }) => {
   const { currentUser, hasRole } = useAuth()
   const [edit, setEdit] = React.useState(false)
   const [addedScore, setAddedScore] = React.useState(false)
+  const [currentMatch, setCurrentMatch] = React.useState({ players: [] })
 
   const [addMatchScore, { loading: addMatchScoreLoading }] = useMutation(
     SUBMIT_MATCH_DETAILS,
     {
-      onCompleted: () => {
+      onCompleted: (data) => {
         toast.success(`Successfully Added Score`)
+        setCurrentMatch({ ...data.addMatchScore })
         setAddedScore(true)
       },
       onError: (error) => {
@@ -58,9 +96,10 @@ const MatchDetails = ({ index, match, tournament }) => {
   const [updateMatchScore, { loading: updateMatchScoreLoading }] = useMutation(
     UPDATE_MATCH_DETAILS,
     {
-      onCompleted: () => {
+      onCompleted: (data) => {
         toast.success(`Successfully Updated Score`)
-        setAddedScore(true)
+        setCurrentMatch({ ...data.updateMatchScore })
+        setEdit(false)
       },
       onError: (error) => {
         logError({
@@ -77,6 +116,10 @@ const MatchDetails = ({ index, match, tournament }) => {
       ],
     }
   )
+
+  React.useEffect(() => {
+    setCurrentMatch({ ...match })
+  }, [match])
 
   const onSubmit = (data) => {
     let input = {
@@ -101,6 +144,30 @@ const MatchDetails = ({ index, match, tournament }) => {
     addMatchScore({ variables: { input } })
   }
 
+  const onSubmitEdit = (data) => {
+    let input = {
+      matchId: match?.id,
+      matches: [
+        {
+          userId: match?.players[0]?.user?.id,
+          playerName: match?.players[0]?.playerName,
+          playerMatchScore: match?.players[0]?.id,
+          score: data.player1,
+          result: returnResult(data.player1, data.player2),
+        },
+        {
+          userId: match?.players[1]?.user?.id,
+          playerMatchScore: match?.players[1]?.id,
+          playerName: match?.players[1]?.playerName,
+          score: data.player2,
+          result: returnResult(data.player2, data.player1),
+        },
+      ],
+    }
+
+    updateMatchScore({ variables: { input } })
+  }
+
   const returnResult = (currPlayer, otherPlayer) => {
     if (currPlayer > otherPlayer) {
       return 'WIN'
@@ -114,10 +181,13 @@ const MatchDetails = ({ index, match, tournament }) => {
   const returnIcons = () => {
     let icons = []
 
-    if (match?.players[0]?.score === 0 || match?.players[0]?.score >= 1) {
+    if (
+      currentMatch?.players[0]?.score === 0 ||
+      currentMatch?.players[0]?.score >= 1
+    ) {
       let result = returnResult(
-        match?.players[0]?.score,
-        match?.players[1]?.score
+        currentMatch?.players[0]?.score,
+        currentMatch?.players[1]?.score
       )
       if (result === 'WIN') {
         icons.push(
@@ -216,166 +286,178 @@ const MatchDetails = ({ index, match, tournament }) => {
   const player1 = formMethods.watch('player1', '')
   const player2 = formMethods.watch('player2', '')
 
-  useEffect(() => {}, [player1, player2])
-
   return (
     <div className="col-span-12 border-b border-black pb-2 w-full">
-      <Form
-        onSubmit={onSubmit}
-        formMethods={formMethods}
-        className="grid grid-cols-12"
-      >
-        <div className="col-span-1 flex justify-center items-center ">
-          {index + 1}.
-        </div>
-        <div className="col-span-3 flex justify-center items-center">
-          <PlayerProfileItem
-            player={match?.players[0]?.user || {}}
-            playerName={match?.players[0]?.playerName}
-          />
-        </div>
-        <div className="col-span-1 flex justify-center items-center">
-          {!match?.players[0]?.bye && (
-            <div>
-              {scoreSubmitted(match?.players[0]?.score) ? (
-                <div
-                  className={`rounded-full flex justify-center items-center h-8 w-8 ${
-                    returnResult(
-                      match?.players[0]?.score,
-                      match?.players[1]?.score
-                    ) === 'WIN'
-                      ? 'bg-green-300'
-                      : returnResult(
-                          match?.players[0]?.score,
-                          match?.players[1]?.score
-                        ) === 'LOSS'
-                      ? 'bg-red-300'
-                      : 'bg-yellow-200'
-                  }`}
-                >
-                  {match?.players[0]?.score}
-                </div>
-              ) : (
-                checkTournamentPermissions({
-                  hasRole,
-                  currentUser,
-                  tournament,
-                }) && (
-                  <NumberField
-                    className="border border-gray-500 p-2 mt-2 w-14"
-                    errorClassName="border p-2 mt-2 w-full border-red-500"
-                    validation={{ required: true, min: 0 }}
-                    name="player1"
-                    min={0}
-                  />
-                )
-              )}
-            </div>
+      {!edit ? (
+        <Form
+          onSubmit={onSubmit}
+          formMethods={formMethods}
+          className="grid grid-cols-12"
+        >
+          <div className="col-span-1 flex justify-center items-center ">
+            {index + 1}.
+          </div>
+          <div className="col-span-3 flex justify-center items-center">
+            <PlayerProfileItem
+              player={currentMatch?.players[0]?.user || {}}
+              playerName={currentMatch?.players[0]?.playerName}
+            />
+          </div>
+          <div className="col-span-1 flex justify-center items-center">
+            {!currentMatch?.players[0]?.bye && (
+              <div>
+                {scoreSubmitted(currentMatch?.players[0]?.score) ? (
+                  <div
+                    className={`rounded-full flex justify-center items-center h-8 w-8 ${
+                      returnResult(
+                        currentMatch?.players[0]?.score,
+                        currentMatch?.players[1]?.score
+                      ) === 'WIN'
+                        ? 'bg-green-300'
+                        : returnResult(
+                            currentMatch?.players[0]?.score,
+                            currentMatch?.players[1]?.score
+                          ) === 'LOSS'
+                        ? 'bg-red-300'
+                        : 'bg-yellow-200'
+                    }`}
+                  >
+                    {currentMatch?.players[0]?.score}
+                  </div>
+                ) : (
+                  checkTournamentPermissions({
+                    hasRole,
+                    currentUser,
+                    tournament,
+                  }) && (
+                    <NumberField
+                      className="border border-gray-500 p-2 mt-2 w-14"
+                      errorClassName="border p-2 mt-2 w-full border-red-500"
+                      validation={{ required: true, min: 0 }}
+                      name="player1"
+                      min={0}
+                    />
+                  )
+                )}
+              </div>
+            )}
+          </div>
+          <div className="col-span-2 flex justify-center items-center">
+            {currentMatch?.players[0]?.bye ? <div>BYE</div> : returnIcons()}
+          </div>
+          {currentMatch?.players.length > 1 ? (
+            <>
+              <div className="col-span-1 flex justify-center items-center">
+                {scoreSubmitted(currentMatch?.players[1]?.score) ? (
+                  <div
+                    className={`rounded-full flex justify-center items-center h-8 w-8 ${
+                      returnResult(
+                        currentMatch?.players[1]?.score,
+                        currentMatch?.players[0]?.score
+                      ) === 'WIN'
+                        ? 'bg-green-300'
+                        : returnResult(
+                            currentMatch?.players[1]?.score,
+                            currentMatch?.players[0]?.score
+                          ) === 'LOSS'
+                        ? 'bg-red-300'
+                        : 'bg-yellow-200'
+                    }`}
+                  >
+                    {currentMatch?.players[1]?.score}
+                  </div>
+                ) : (
+                  checkTournamentPermissions({
+                    hasRole,
+                    currentUser,
+                    tournament,
+                  }) && (
+                    <NumberField
+                      className="border border-gray-500 p-2 mt-2 w-14"
+                      errorClassName="border p-2 mt-2 w-full border-red-500"
+                      validation={{ required: true, min: 0 }}
+                      name="player2"
+                      min={0}
+                    />
+                  )
+                )}
+              </div>
+              <div className="col-span-3 flex justify-center items-center">
+                <PlayerProfileItem
+                  player={currentMatch?.players[1]?.user || {}}
+                  playerName={currentMatch?.players[1]?.playerName}
+                />
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="col-span-1 flex justify-center items-center"></div>
+              <div className="col-span-3 flex justify-center items-center"></div>
+            </>
           )}
-        </div>
-        <div className="col-span-2 flex justify-center items-center">
-          {match?.players[0]?.bye ? <div>BYE</div> : returnIcons()}
-        </div>
-        {match?.players.length > 1 && (
-          <>
-            <div className="col-span-1 flex justify-center items-center">
-              {scoreSubmitted(match?.players[1]?.score) ? (
-                <div
-                  className={`rounded-full flex justify-center items-center h-8 w-8 ${
-                    returnResult(
-                      match?.players[1]?.score,
-                      match?.players[0]?.score
-                    ) === 'WIN'
-                      ? 'bg-green-300'
-                      : returnResult(
-                          match?.players[1]?.score,
-                          match?.players[0]?.score
-                        ) === 'LOSS'
-                      ? 'bg-red-300'
-                      : 'bg-yellow-200'
-                  }`}
-                >
-                  {match?.players[1]?.score}
-                </div>
-              ) : (
-                checkTournamentPermissions({
-                  hasRole,
-                  currentUser,
-                  tournament,
-                }) && (
-                  <NumberField
-                    className="border border-gray-500 p-2 mt-2 w-14"
-                    errorClassName="border p-2 mt-2 w-full border-red-500"
-                    validation={{ required: true, min: 0 }}
-                    name="player2"
-                    min={0}
-                  />
-                )
-              )}
-            </div>
-            <div className="col-span-3 flex justify-center items-center">
-              <PlayerProfileItem
-                player={match?.players[1]?.user || {}}
-                playerName={match?.players[1]?.playerName}
-              />
-            </div>
-          </>
-        )}
 
-        <div className="col-span-1 flex justify-center items-center">
-          {scoreSubmitted(match?.players[0]?.score) &&
-            checkTournamentPermissions({
-              hasRole,
-              currentUser,
-              tournament,
-            }) &&
-            !edit && (
-              <Button
-                type="submit"
-                loading={addMatchScoreLoading}
-                className="rounded-full"
-                color={'blue'}
-                my="0"
-                py="2"
-                px="2"
-                full={false}
-                colorWeight={400}
-              >
-                <PencilIcon className="h-6 w-6" />
-              </Button>
-            )}
-          {!addedScore &&
-            player1 &&
-            player2 &&
-            !scoreSubmitted(match?.players[0]?.score) && (
-              <Button
-                type="submit"
-                loading={addMatchScoreLoading}
-                className="rounded-full"
-                my="0"
-                py="2"
-                px="2"
-                full={false}
-                colorWeight={400}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
+          <div className="col-span-1 flex justify-around items-center">
+            {scoreSubmitted(currentMatch?.players[0]?.score) &&
+              checkTournamentPermissions({
+                hasRole,
+                currentUser,
+                tournament,
+              }) && (
+                <Button
+                  onClick={() => setEdit(true)}
+                  loading={addMatchScoreLoading}
+                  className="rounded-full"
+                  color={'blue'}
+                  my="0"
+                  py="2"
+                  px="2"
+                  full={false}
+                  colorWeight={400}
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M5 13l4 4L19 7"
-                  />
-                </svg>
-              </Button>
-            )}
-        </div>
-      </Form>
+                  <PencilIcon className="h-6 w-6" />
+                </Button>
+              )}
+            {!addedScore &&
+              player1 &&
+              player2 &&
+              !scoreSubmitted(currentMatch?.players[0]?.score) && (
+                <Button
+                  type="submit"
+                  loading={addMatchScoreLoading}
+                  className="rounded-full"
+                  my="0"
+                  py="2"
+                  px="2"
+                  full={false}
+                  colorWeight={400}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-6 w-6"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                </Button>
+              )}
+          </div>
+        </Form>
+      ) : (
+        <EditMatchDetails
+          index={index}
+          match={match}
+          onSubmit={onSubmitEdit}
+          onCancel={() => setEdit(false)}
+          loading={updateMatchScoreLoading}
+        />
+      )}
     </div>
   )
 }
