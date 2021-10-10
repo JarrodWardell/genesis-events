@@ -228,7 +228,7 @@ const ViewTournamentPage = ({ url, tab, tabOptions }) => {
                   <CalendarIcon />
                 </div>{' '}
                 <span className="ml-1">
-                  {new Date(startDate).toLocaleString().split(',')[0]}
+                  {format(new Date(startDate), 'PP')}
                 </span>
               </div>
               <div className="flex items-center">

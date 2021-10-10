@@ -632,6 +632,7 @@ export type Provider = {
 
 export type Query = {
   __typename?: 'Query';
+  activeStores: Array<Store>;
   banner?: Maybe<Banner>;
   banners: Array<Banner>;
   checkNickname: Scalars['Boolean'];
@@ -665,6 +666,11 @@ export type Query = {
   userUserRole?: Maybe<UserUserRole>;
   userUserRoles: Array<UserUserRole>;
   users: Array<User>;
+};
+
+
+export type QueryActiveStoresArgs = {
+  searchTerm?: Maybe<Scalars['String']>;
 };
 
 
@@ -815,8 +821,10 @@ export type SearchTournamentInput = {
   country?: Maybe<Scalars['String']>;
   state?: Maybe<Scalars['String']>;
   city?: Maybe<Scalars['String']>;
-  openSpotsOnly: Scalars['Boolean'];
+  openSpotsOnly?: Maybe<Scalars['Boolean']>;
   finishedTournaments?: Maybe<Scalars['Boolean']>;
+  type?: Maybe<Scalars['String']>;
+  store?: Maybe<Scalars['String']>;
   dateStart?: Maybe<Scalars['Date']>;
   dateEnd?: Maybe<Scalars['Date']>;
   distance?: Maybe<Scalars['Int']>;
@@ -1508,6 +1516,7 @@ export type ProviderResolvers<ContextType = any, ParentType extends ResolversPar
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
+  activeStores?: Resolver<Array<ResolversTypes['Store']>, ParentType, ContextType, RequireFields<QueryActiveStoresArgs, never>>;
   banner?: Resolver<Maybe<ResolversTypes['Banner']>, ParentType, ContextType, RequireFields<QueryBannerArgs, 'id'>>;
   banners?: Resolver<Array<ResolversTypes['Banner']>, ParentType, ContextType>;
   checkNickname?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<QueryCheckNicknameArgs, never>>;

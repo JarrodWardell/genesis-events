@@ -1,19 +1,23 @@
-import { Link, navigate, routes, useLocation } from '@redwoodjs/router'
+import { navigate, useLocation } from '@redwoodjs/router'
 import { useLazyQuery } from '@apollo/client'
 import GooglePlacesAutocomplete from 'react-google-places-autocomplete'
+import Select from 'react-select'
+import DatePicker from 'react-datepicker'
+import { Switch } from '@headlessui/react'
+
+import 'react-datepicker/dist/react-datepicker.css'
 import { getAddress } from 'src/helpers/formatAddress'
 import LoadingIcon from 'src/components/LoadingIcon/LoadingIcon'
-import { Switch } from '@headlessui/react'
 import { ReactComponent as LocationIcon } from 'src/components/Icons/LocationIcon.svg'
 import { ReactComponent as CalendarIcon } from 'src/components/Icons/CalendarIcon.svg'
 import { ReactComponent as SearchIcon } from 'src/components/Icons/SearchIcon.svg'
 import { ReactComponent as PlayersIcon } from 'src/components/Icons/PlayersIcon.svg'
 import { ReactComponent as TrophyIcon } from 'src/components/Icons/TrophyIcon.svg'
 import Button from 'src/components/Button/Button'
-import DatePicker from 'react-datepicker'
 
-import 'react-datepicker/dist/react-datepicker.css'
 import { logError } from 'src/helpers/errorLogger'
+import { format } from 'date-fns'
+import { TOURNAMENT_TYPES } from 'src/constants/tournaments'
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
@@ -58,11 +62,20 @@ export const SEARCH_TOURNAMENTS = gql`
   }
 `
 
+export const ACTIVE_STORES = gql`
+  query activeStores($searchTerm: String) {
+    activeStores(searchTerm: $searchTerm) {
+      name
+    }
+  }
+`
+
 const TournamentSearchPage = () => {
   const { pathname, search } = useLocation()
   const [mobileMenu, showMobileMenu] = React.useState(true)
   const takeAmount = 12
   const [take, setTake] = React.useState(takeAmount)
+  const [storeList, setStoreList] = React.useState([])
 
   const [filters, setFilters] = React.useState({
     lat: null,
@@ -73,6 +86,8 @@ const TournamentSearchPage = () => {
     location: null,
     dateStart: null,
     dateEnd: null,
+    type: 'ALL',
+    store: null,
     openSpotsOnly: false,
     finishedTournaments: false,
   })
@@ -101,7 +116,21 @@ const TournamentSearchPage = () => {
     }
   )
 
-  React.useEffect(() => {})
+  const [searchStores, { loading: loadingStores }] = useLazyQuery(
+    ACTIVE_STORES,
+    {
+      onCompleted: ({ activeStores }) => {
+        setStoreList(activeStores ? activeStores.map(({ name }) => name) : [])
+      },
+      onError: (error) => {
+        logError({
+          error,
+          log: true,
+          showToast: true,
+        })
+      },
+    }
+  )
 
   React.useEffect(() => {
     breakdownSearch()
@@ -126,6 +155,10 @@ const TournamentSearchPage = () => {
 
           if (brokeParam[0] === 'location') val = val.replaceAll('%20', ' ')
 
+          if (brokeParam[0] === 'type') val = val.replaceAll('%20', ' ')
+
+          if (brokeParam[0] === 'store') val = val.replaceAll('%20', ' ')
+
           if (brokeParam[0] === 'openSpotsOnly') val = val === 'true'
 
           if (brokeParam[0] === 'finishedTournaments') val = val === 'true'
@@ -148,6 +181,10 @@ const TournamentSearchPage = () => {
 
       searchTournaments({
         variables: { input: { ...newQuery, take, skip: 0 } },
+      })
+    } else {
+      searchTournaments({
+        variables: { input: { ...filters, take, skip: 0 } },
       })
     }
   }
@@ -208,7 +245,7 @@ const TournamentSearchPage = () => {
 
   const addFilter = (key, value) => {
     setNewFilters({
-      ...filters,
+      ...newFilters,
       [key]: value,
     })
   }
@@ -286,7 +323,7 @@ const TournamentSearchPage = () => {
               </p>
               <input
                 onChange={(e) => addFilter('name', e.target.value)}
-                value={filters.name}
+                value={newFilters.name}
                 className="focus:outline-none px-2 h-8  rounded-md "
               />
             </div>
@@ -353,6 +390,62 @@ const TournamentSearchPage = () => {
           <div className="cols-span-1">
             <div className="relative flex flex-col border border-gray-400 rounded-md w-full bg-white">
               <p className="bg-white text-sm text-gray-400 ml-2 rounded-md mt-2">
+                Tournament Store
+              </p>
+              <Select
+                styles={{
+                  menu: (provided) => ({ ...provided, zIndex: 9999 }),
+                  control: (provided) => ({
+                    ...provided,
+                    border: 'none',
+                    minHeight: '30px',
+                    height: '30px',
+                  }),
+                }}
+                isLoading={loadingStores}
+                value={{ value: newFilters.store, label: newFilters.store }}
+                onInputChange={(val) => {
+                  if (val.length > 1)
+                    searchStores({ variables: { searchTerm: val } })
+                }}
+                onChange={(val) => addFilter('store', val?.value)}
+                isClearable
+                options={storeList.map((name) => ({
+                  value: name,
+                  label: name,
+                }))}
+                className="focus:outline-none px-2 h-8  rounded-md "
+              />
+            </div>
+          </div>
+          <div className="cols-span-1">
+            <div className="relative flex flex-col border border-gray-400 rounded-md w-full bg-white">
+              <p className="bg-white text-sm text-gray-400 ml-2 rounded-md mt-2">
+                Tournament Type
+              </p>
+              <Select
+                styles={{
+                  menu: (provided) => ({ ...provided, zIndex: 9999 }),
+                  control: (provided) => ({
+                    ...provided,
+                    border: 'none',
+                    minHeight: '30px',
+                    height: '30px',
+                  }),
+                }}
+                value={{ value: newFilters.type, label: newFilters.type }}
+                onChange={(val) => addFilter('type', val.value)}
+                options={['ALL', ...TOURNAMENT_TYPES].map((type) => ({
+                  label: type,
+                  value: type,
+                }))}
+                className="focus:outline-none px-2 h-8  rounded-md "
+              />
+            </div>
+          </div>
+          <div className="cols-span-1">
+            <div className="relative flex flex-col border border-gray-400 rounded-md w-full bg-white">
+              <p className="bg-white text-sm text-gray-400 ml-2 rounded-md mt-2">
                 Tournament Location
               </p>
               <div className="flex">
@@ -383,6 +476,10 @@ const TournamentSearchPage = () => {
                       }),
                       indicatorSeparator: (provided) => ({
                         display: 'none',
+                      }),
+                      menu: (provided) => ({
+                        ...provided,
+                        marginLeft: '-41px',
                       }),
                     },
                     onChange: onSelectAddress,
@@ -511,11 +608,7 @@ const TournamentSearchPage = () => {
                           <CalendarIcon />
                         </div>{' '}
                         <span className="ml-1">
-                          {
-                            new Date(tournament.startDate)
-                              .toLocaleString()
-                              .split(',')[0]
-                          }
+                          {format(new Date(tournament.startDate), 'PP')}
                         </span>
                       </p>
                       <p className="flex items-center">

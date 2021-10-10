@@ -21,13 +21,15 @@ const tournamentEditedEO = ({
           Hello ${owner.nickname}
         </mj-text>
         <mj-text mj-class="body">
-          We would like to inform you that the Tournament you created that was to take place on ${
-            new Date(prevTournament.startDate).toLocaleString().split(',')[0]
-          } located at ${prevTournament.locationName}, ${
+          We would like to inform you that the Tournament you created that was to take place on ${format(
+            new Date(prevTournament.startDate),
+            'PP'
+          )} located at ${prevTournament.locationName}, ${
         prevTournament.street1
-      } at ${
-        new Date(prevTournament.startDate).toLocaleString().split(',')[1]
-      } has been successfully updated.
+      } at ${format(
+        new Date(prevTournament.startDate),
+        'p'
+      )} has been successfully updated.
         </mj-text>
         <mj-text mj-class="body">
           Please see below for the following changes:
