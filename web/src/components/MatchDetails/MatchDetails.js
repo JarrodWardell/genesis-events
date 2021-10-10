@@ -1,6 +1,6 @@
 import { PencilIcon } from '@heroicons/react/solid'
 import { useAuth } from '@redwoodjs/auth'
-import { Form, NumberField, Submit } from '@redwoodjs/forms/dist'
+import { Form, NumberField } from '@redwoodjs/forms/dist'
 import { useMutation } from '@redwoodjs/web'
 import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
