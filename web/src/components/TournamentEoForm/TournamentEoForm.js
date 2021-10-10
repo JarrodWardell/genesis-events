@@ -28,6 +28,7 @@ import 'react-datepicker/dist/react-datepicker.css'
 import Button from '../Button/Button'
 import { logError } from 'src/helpers/errorLogger'
 import ToolTip from '../ToolTip/ToolTip'
+import { TOURNAMENT_TYPES } from 'src/constants/tournaments'
 
 const CREATE_TOURNAMENT = gql`
   mutation CreateTournamentMutation($input: CreateTournamentInput!) {
@@ -57,16 +58,6 @@ const CANCEL_TOURNAMENT = gql`
     }
   }
 `
-
-export const TOURNAMENT_TYPES = [
-  'Constructed',
-  'Booster Draft',
-  'Sealed Constructed',
-  'Open House',
-  'Future League constructed',
-  'Future League draft',
-  'Other',
-]
 
 const TournamentEOForm = ({ tournament }) => {
   const { currentUser } = useAuth()

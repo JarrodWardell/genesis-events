@@ -53,9 +53,7 @@ const TournamentItem = ({ tournament, full = false, index }) => {
               <div className="w-6 h-6 flex font-bold">
                 <CalendarIcon />
               </div>{' '}
-              <span className="ml-1">
-                {new Date(startDate).toLocaleString().split(',')[0]}
-              </span>
+              <span className="ml-1">{format(new Date(startDate), 'PP')}</span>
             </div>
             <div className="flex items-center">
               <div className="w-6 h-6 flex font-bold">
@@ -133,9 +131,7 @@ const TournamentItem = ({ tournament, full = false, index }) => {
             <div className="w-6 h-6 flex font-bold">
               <CalendarIcon />
             </div>{' '}
-            <span className="ml-1">
-              {new Date(startDate).toLocaleString().split(',')[0]}
-            </span>
+            <span className="ml-1">{format(new Date(startDate), 'PP')}</span>
           </div>
           <div className="flex items-center">
             <div className="w-6 h-6 flex font-bold">
