@@ -801,68 +801,7 @@ export const addMatchScore = async ({ input }) => {
   try {
     await Promise.all(
       input.matches.map(async (playerMatch) => {
-        await db.playerMatchScore.update({
-          data: {
-            score: playerMatch.score,
-            wonMatch: playerMatch.result === 'WIN',
-            updatedAt: new Date(),
-          },
-          where: {
-            id: playerMatch.playerMatchScore,
-          },
-        })
-
-        let playerTournamentWhere = {
-          tournamentId: match.tournamentId,
-        }
-
-        console.log(playerMatch)
-
-        if (playerMatch.userId) {
-          playerTournamentWhere.playerId = playerMatch.userId
-        } else if (playerMatch.playerName) {
-          playerTournamentWhere.playerName = playerMatch.playerName
-        }
-
-        let playerTourneyScore = await db.playerTournamentScore.findFirst({
-          where: {
-            ...playerTournamentWhere,
-          },
-        })
-
-        let updateData = {}
-        switch (playerMatch.result) {
-          case 'WIN':
-            updateData.wins = playerTourneyScore.wins + 1
-            updateData.score = playerTourneyScore.score += 1
-            break
-          case 'TIED':
-            updateData.draws = playerTourneyScore.draws + 1
-            updateData.score = playerTourneyScore.score += 0.5
-            break
-          case 'LOSS':
-            updateData.losses = playerTourneyScore.losses + 1
-            break
-        }
-
-        await db.playerTournamentScore.update({
-          data: {
-            ...updateData,
-            updatedAt: new Date(),
-          },
-          where: {
-            id: playerTourneyScore.id,
-          },
-        })
-
-        await db.match.update({
-          data: {
-            updatedAt: new Date(),
-          },
-          where: {
-            id: input.matchId,
-          },
-        })
+        await addPlayerMatchScore({ playerMatch, input, match })
       })
     )
   } catch (err) {
@@ -871,6 +810,170 @@ export const addMatchScore = async ({ input }) => {
   }
 
   return match
+}
+
+export const updateMatchScore = async ({ input }) => {
+  const match = await db.match.findUnique({ where: { id: input.matchId } })
+
+  try {
+    await updatePlayerMatchScore({ match })
+
+    await Promise.all(
+      input.matches.map(async (playerMatch) => {
+        await addPlayerMatchScore({ playerMatch, input, match })
+      })
+    )
+  } catch (err) {
+    Sentry.captureException(err)
+    return err
+  }
+
+  return match
+}
+
+// Add scores, update playerTournamentScore
+const addPlayerMatchScore = async ({ playerMatch, input, match }) => {
+  await db.playerMatchScore.update({
+    data: {
+      score: playerMatch.score,
+      wonMatch: playerMatch.result === 'WIN',
+      updatedAt: new Date(),
+    },
+    where: {
+      id: playerMatch.playerMatchScore,
+    },
+  })
+
+  let playerTournamentWhere = {
+    tournamentId: match.tournamentId,
+  }
+
+  if (playerMatch.userId) {
+    playerTournamentWhere.playerId = playerMatch.userId
+  } else if (playerMatch.playerName) {
+    playerTournamentWhere.playerName = playerMatch.playerName
+  }
+
+  let playerTourneyScore = await db.playerTournamentScore.findFirst({
+    where: {
+      ...playerTournamentWhere,
+    },
+  })
+
+  let updateData = {}
+  switch (playerMatch.result) {
+    case 'WIN':
+      updateData.wins = playerTourneyScore.wins + 1
+      updateData.score = playerTourneyScore.score += 1
+      break
+    case 'TIED':
+      updateData.draws = playerTourneyScore.draws + 1
+      updateData.score = playerTourneyScore.score += 0.5
+      break
+    case 'LOSS':
+      updateData.losses = playerTourneyScore.losses + 1
+      break
+  }
+
+  await db.playerTournamentScore.update({
+    data: {
+      ...updateData,
+      updatedAt: new Date(),
+    },
+    where: {
+      id: playerTourneyScore.id,
+    },
+  })
+
+  await db.match.update({
+    data: {
+      updatedAt: new Date(),
+    },
+    where: {
+      id: input.matchId,
+    },
+  })
+}
+
+const updatePlayerMatchScore = async ({ match }) => {
+  //Check if previous match was a win, draw, or loss, then update scores appropriately
+  let scores = {}
+
+  let matches = await db.playerMatchScore.findMany({
+    where: { matchId: match.id },
+  })
+
+  matches.forEach((playerMatch) => {
+    scores[playerMatch.userId || playerMatch.playerName] = {
+      prevScore: playerMatch.score,
+      ...playerMatch,
+    }
+  })
+
+  let [player1, player2] = Object.keys(scores)
+
+  let updateDataPlayer1 = {}
+  let player1TourneyWhere = scores[player1].userId
+    ? { playerId: scores[player1].userId }
+    : { playerName: scores[player1].playerName }
+
+  let player1TourneyScore = await db.playerTournamentScore.findFirst({
+    where: {
+      tournamentId: match.tournamentId,
+      ...player1TourneyWhere,
+    },
+  })
+
+  let updateDataPlayer2 = {}
+  let player2TourneyWhere = scores[player2].userId
+    ? { playerId: scores[player2].userId }
+    : { playerName: scores[player2].playerName }
+
+  let player2TourneyScore = await db.playerTournamentScore.findFirst({
+    where: {
+      tournamentId: match.tournamentId,
+      ...player2TourneyWhere,
+    },
+  })
+
+  //Return scores to previous values based on whether they won or loss
+  if (scores[player1].prevScore > scores[player2].prevScore) {
+    //Player1 won
+    updateDataPlayer1.wins = player1TourneyScore.wins - 1
+    updateDataPlayer1.score = player1TourneyScore.score -= 1
+    updateDataPlayer2.losses = player2TourneyScore.losses -= 1
+  } else if (scores[player1].prevScore < scores[player2].prevScore) {
+    //Player2 won
+    updateDataPlayer2.wins = player2TourneyScore.wins - 1
+    updateDataPlayer2.score = player2TourneyScore.score -= 1
+    updateDataPlayer1.losses = player1TourneyScore.losses -= 1
+  } else {
+    //drew
+    updateDataPlayer1.draws = player1TourneyScore.draws - 1
+    updateDataPlayer1.score = player1TourneyScore.score -= 0.5
+    updateDataPlayer2.draws = player2TourneyScore.draws - 1
+    updateDataPlayer2.score = player2TourneyScore.score -= 0.5
+  }
+
+  await db.playerTournamentScore.update({
+    data: {
+      ...updateDataPlayer1,
+      updatedAt: new Date(),
+    },
+    where: {
+      id: player1TourneyScore.id,
+    },
+  })
+
+  await db.playerTournamentScore.update({
+    data: {
+      ...updateDataPlayer2,
+      updatedAt: new Date(),
+    },
+    where: {
+      id: player2TourneyScore.id,
+    },
+  })
 }
 
 export const updateTimer = async ({ input }) => {
