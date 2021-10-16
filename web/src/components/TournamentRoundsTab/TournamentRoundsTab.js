@@ -10,84 +10,74 @@ import Button from '../Button/Button'
 import ReactToPrint from 'react-to-print'
 import PrintRound from '../PrintRound/PrintRound'
 import { logError } from 'src/helpers/errorLogger'
+import { VIEW_TOURNAMENT_FIELDS } from 'src/fragments/tourrnamentFragments'
 
 export const ADVANCE_ROUND = gql`
+  ${VIEW_TOURNAMENT_FIELDS}
   mutation advanceRound($id: Int!, $roundNumber: Int!) {
     advanceRound: advanceRound(id: $id, roundNumber: $roundNumber) {
-      id
-      round {
-        roundNumber
-      }
+      ...ViewTournamentFields
     }
   }
 `
 
 export const END_TOURNAMENT = gql`
+  ${VIEW_TOURNAMENT_FIELDS}
   mutation endTournament($id: Int!) {
     endTournament: endTournament(id: $id) {
-      id
-      winners {
-        playerName
-        player {
-          nickname
-        }
-      }
+      ...ViewTournamentFields
     }
   }
 `
 
-const TournamentRoundsTab = ({ tournament, roundNumber }) => {
+const TournamentRoundsTab = ({ tournament, roundNumber, setTournament }) => {
   const componentRef = React.useRef()
   const { hasRole, currentUser } = useAuth()
 
-  const [
-    advanceRound,
-    { loading: loadingAdvanceRound, error: errorAdvanceRound },
-  ] = useMutation(ADVANCE_ROUND, {
-    onCompleted: (data) => {
-      const newRound =
-        data.advanceRound?.round[data.advanceRound?.round?.length - 1]
-          ?.roundNumber
-      toast.success(`Tournament has advanced to round ${newRound}`)
-      navigate(`/tournament/${tournament?.tournamentUrl}/rounds/${newRound}`)
-    },
-    onError: (error) => {
-      logError({
-        error,
-        log: true,
-        showToast: true,
-      })
-    },
-    refetchQueries: [
-      {
-        query: TOURNAMENT_BY_URL,
-        variables: { url: tournament.tournamentUrl },
+  const [advanceRound, { loading: loadingAdvanceRound }] = useMutation(
+    ADVANCE_ROUND,
+    {
+      onCompleted: (data) => {
+        setTournament(data.advanceRound)
+        const newRound =
+          data.advanceRound?.round[data.advanceRound?.round?.length - 1]
+            ?.roundNumber
+        toast.success(`Tournament has advanced to round ${newRound}`)
+        navigate(`/tournament/${tournament?.tournamentUrl}/rounds/${newRound}`)
       },
-    ],
-  })
+      onError: (error) => {
+        logError({
+          error,
+          log: true,
+          showToast: true,
+        })
+      },
+    }
+  )
 
-  const [
-    endTournament,
-    { loading: loadingEndTournament, error: errorEndTournament },
-  ] = useMutation(END_TOURNAMENT, {
-    onCompleted: (data) => {
-      toast.success(`Tournament has ended!`)
-      navigate(`/tournament/${tournament?.tournamentUrl}/leaderboard`)
-    },
-    onError: (error) => {
-      logError({
-        error,
-        log: true,
-        showToast: true,
-      })
-    },
-    refetchQueries: [
-      {
-        query: TOURNAMENT_BY_URL,
-        variables: { url: tournament.tournamentUrl },
+  const [endTournament, { loading: loadingEndTournament }] = useMutation(
+    END_TOURNAMENT,
+    {
+      onCompleted: (data) => {
+        setTournament(data.endTournament)
+        toast.success(`Tournament has ended!`)
+        navigate(`/tournament/${tournament?.tournamentUrl}/leaderboard`)
       },
-    ],
-  })
+      onError: (error) => {
+        logError({
+          error,
+          log: true,
+          showToast: true,
+        })
+      },
+      refetchQueries: [
+        {
+          query: TOURNAMENT_BY_URL,
+          variables: { url: tournament.tournamentUrl },
+        },
+      ],
+    }
+  )
 
   const grabRound = () => {
     let round = {}
@@ -112,6 +102,7 @@ const TournamentRoundsTab = ({ tournament, roundNumber }) => {
             match={match}
             index={index}
             tournament={tournament}
+            setTournament={setTournament}
             key={`round-${round}-match-${match.id}`}
           />
         )
@@ -147,7 +138,12 @@ const TournamentRoundsTab = ({ tournament, roundNumber }) => {
   }
 
   if (!tournament.dateStarted) {
-    return <TournamentNotStarted tournament={tournament} />
+    return (
+      <TournamentNotStarted
+        tournament={tournament}
+        setTournament={setTournament}
+      />
+    )
   }
 
   return (

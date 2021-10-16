@@ -1,5 +1,5 @@
 import { useAuth } from '@redwoodjs/auth'
-import { Link, navigate, routes } from '@redwoodjs/router'
+import { navigate, routes } from '@redwoodjs/router'
 import { useMutation } from '@redwoodjs/web'
 import toast from 'react-hot-toast'
 import { logError } from 'src/helpers/errorLogger'
@@ -22,7 +22,7 @@ export const LEAVE_TOURNAMENT = gql`
 
 const TournamentSignupTab = ({ tournament }) => {
   const { currentUser, hasRole } = useAuth()
-  const [registerForTournament, { loading, error }] = useMutation(
+  const [registerForTournament, { loading }] = useMutation(
     REGISTER_TOURNAMENT,
     {
       onCompleted: () => {

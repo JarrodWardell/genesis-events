@@ -74,6 +74,100 @@ export const schema = gql`
     zip
   }
 
+  fragment ViewTournamentFields on Tournament {
+    id
+    tournamentUrl
+    name
+    desc
+    type
+    startDate
+    dateStarted
+    dateEnded
+    maxPlayers
+    publicRegistration
+    timerLeftInSeconds
+    timerStatus
+    startingTimerInSeconds
+    timerLastUpdated
+    lat
+    lng
+    locationName
+    street1
+    city
+    country
+    state
+    zip
+    owner {
+      nickname
+    }
+    ownerId
+    store {
+      name
+      email
+    }
+    players {
+      id
+      score
+      wins
+      byes
+      draws
+      losses
+      active
+      playerName
+      player {
+        id
+        nickname
+        photo {
+          url
+          smallUrl
+          name
+        }
+      }
+    }
+    winners {
+      id
+      wonTournament
+      playerName
+      score
+      wins
+      byes
+      draws
+      losses
+      player {
+        id
+        nickname
+      }
+    }
+    round {
+      id
+      roundNumber
+      roundTimerLeftInSeconds
+      matches {
+        id
+        players {
+          id
+          playerName
+          score
+          bye
+          wonMatch
+          userId
+          user {
+            id
+            nickname
+            photo {
+              url
+              smallUrl
+              name
+            }
+          }
+        }
+        updatedAt
+      }
+      createdAt
+    }
+    active
+  }
+
   enum TimerStatus {
     PENDING
     INPROGRESS
@@ -222,8 +316,8 @@ export const schema = gql`
     registerForTournament(id: Int!): String!
     startTournament(id: Int!): Tournament!
     updateTimer(input: TimerInput!): Tournament!
-    addMatchScore(input: TournamentMatchScoreInput!): Match!
-    updateMatchScore(input: TournamentMatchScoreInput!): Match!
+    addMatchScore(input: TournamentMatchScoreInput!): Tournament!
+    updateMatchScore(input: TournamentMatchScoreInput!): Tournament!
     advanceRound(id: Int!, roundNumber: Int!): Tournament
     endTournament(id: Int!): Tournament!
     cancelTournament(id: Int!): Tournament!

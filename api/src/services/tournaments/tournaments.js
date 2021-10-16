@@ -797,6 +797,9 @@ export const deleteTournament = ({ id }) => {
 
 export const addMatchScore = async ({ input }) => {
   const match = await db.match.findUnique({ where: { id: input.matchId } })
+  const tournament = await db.tournament.findUnique({
+    where: { id: match.tournamentId },
+  })
 
   try {
     await Promise.all(
@@ -809,11 +812,14 @@ export const addMatchScore = async ({ input }) => {
     return err
   }
 
-  return match
+  return tournament
 }
 
 export const updateMatchScore = async ({ input }) => {
   const match = await db.match.findUnique({ where: { id: input.matchId } })
+  const tournament = await db.tournament.findUnique({
+    where: { id: match.tournamentId },
+  })
 
   try {
     await updatePlayerMatchScore({ match })
@@ -828,7 +834,7 @@ export const updateMatchScore = async ({ input }) => {
     return err
   }
 
-  return match
+  return tournament
 }
 
 // Add scores, update playerTournamentScore
