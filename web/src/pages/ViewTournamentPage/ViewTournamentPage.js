@@ -328,7 +328,10 @@ const ViewTournamentPage = ({ url, tab, tabOptions }) => {
             }
           >
             {tournamentActive && (
-              <TournamentTimer tournament={currTournament} />
+              <TournamentTimer
+                tournament={currTournament}
+                setTournament={setCurrTournament}
+              />
             )}
             {!tournament.active && (
               <div className="rounded-md bg-red-600 m-4 text-white p-2 text-center">

@@ -268,9 +268,9 @@ export const schema = gql`
 
   input TimerInput {
     tournamentId: Int!
-    timerLeftInSeconds: Int!
+    timerLeftInSeconds: Int
     timerStatus: TimerStatus!
-    startingTimerInSeconds: Int!
+    startingTimerInSeconds: Int
   }
 
   input SearchTournamentInput {
