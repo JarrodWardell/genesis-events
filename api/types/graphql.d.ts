@@ -310,6 +310,7 @@ export type Mutation = {
   updateBanner: Banner;
   updateContact: Contact;
   updateMatch: Match;
+  updateMatchScore: Match;
   updatePlayerMatchScore: PlayerMatchScore;
   updatePlayerTournamentScore: PlayerTournamentScore;
   updateRound: Round;
@@ -510,6 +511,11 @@ export type MutationUpdateMatchArgs = {
 };
 
 
+export type MutationUpdateMatchScoreArgs = {
+  input: TournamentMatchScoreInput;
+};
+
+
 export type MutationUpdatePlayerMatchScoreArgs = {
   id: Scalars['Int'];
   input: UpdatePlayerMatchScoreInput;
@@ -632,6 +638,7 @@ export type Provider = {
 
 export type Query = {
   __typename?: 'Query';
+  activeStores: Array<Store>;
   banner?: Maybe<Banner>;
   banners: Array<Banner>;
   checkNickname: Scalars['Boolean'];
@@ -665,6 +672,11 @@ export type Query = {
   userUserRole?: Maybe<UserUserRole>;
   userUserRoles: Array<UserUserRole>;
   users: Array<User>;
+};
+
+
+export type QueryActiveStoresArgs = {
+  searchTerm?: Maybe<Scalars['String']>;
 };
 
 
@@ -815,8 +827,10 @@ export type SearchTournamentInput = {
   country?: Maybe<Scalars['String']>;
   state?: Maybe<Scalars['String']>;
   city?: Maybe<Scalars['String']>;
-  openSpotsOnly: Scalars['Boolean'];
+  openSpotsOnly?: Maybe<Scalars['Boolean']>;
   finishedTournaments?: Maybe<Scalars['Boolean']>;
+  type?: Maybe<Scalars['String']>;
+  store?: Maybe<Scalars['String']>;
   dateStart?: Maybe<Scalars['Date']>;
   dateEnd?: Maybe<Scalars['Date']>;
   distance?: Maybe<Scalars['Int']>;
@@ -1433,6 +1447,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   updateBanner?: Resolver<ResolversTypes['Banner'], ParentType, ContextType, RequireFields<MutationUpdateBannerArgs, 'id' | 'input'>>;
   updateContact?: Resolver<ResolversTypes['Contact'], ParentType, ContextType, RequireFields<MutationUpdateContactArgs, 'id' | 'input'>>;
   updateMatch?: Resolver<ResolversTypes['Match'], ParentType, ContextType, RequireFields<MutationUpdateMatchArgs, 'id' | 'input'>>;
+  updateMatchScore?: Resolver<ResolversTypes['Match'], ParentType, ContextType, RequireFields<MutationUpdateMatchScoreArgs, 'input'>>;
   updatePlayerMatchScore?: Resolver<ResolversTypes['PlayerMatchScore'], ParentType, ContextType, RequireFields<MutationUpdatePlayerMatchScoreArgs, 'id' | 'input'>>;
   updatePlayerTournamentScore?: Resolver<ResolversTypes['PlayerTournamentScore'], ParentType, ContextType, RequireFields<MutationUpdatePlayerTournamentScoreArgs, 'id' | 'input'>>;
   updateRound?: Resolver<ResolversTypes['Round'], ParentType, ContextType, RequireFields<MutationUpdateRoundArgs, 'id' | 'input'>>;
@@ -1508,6 +1523,7 @@ export type ProviderResolvers<ContextType = any, ParentType extends ResolversPar
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
+  activeStores?: Resolver<Array<ResolversTypes['Store']>, ParentType, ContextType, RequireFields<QueryActiveStoresArgs, never>>;
   banner?: Resolver<Maybe<ResolversTypes['Banner']>, ParentType, ContextType, RequireFields<QueryBannerArgs, 'id'>>;
   banners?: Resolver<Array<ResolversTypes['Banner']>, ParentType, ContextType>;
   checkNickname?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<QueryCheckNicknameArgs, never>>;

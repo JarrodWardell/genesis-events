@@ -20,13 +20,12 @@ const tournamentEditedPlayer = ({
           Hello ${player.nickname}
         </mj-text>
         <mj-text mj-class="body">
-          We would like to inform you that the Tournament you have registered for on ${new Date(
-            prevTournament.startDate
-          ).toDateString()} located at ${prevTournament.locationName}, ${
+          We would like to inform you that the Tournament you have registered for on ${format(
+            new Date(prevTournament.startDate),
+            'PP'
+          )} located at ${prevTournament.locationName}, ${
         prevTournament.street1
-      } at ${
-        new Date(prevTournament.startDate).toLocaleString().split(',')[1]
-      } has been changed.
+      } at ${format(new Date(prevTournament.startDate), 'p')} has been changed.
         </mj-text>
         <mj-text mj-class="body">
           Please see below for the following changes:

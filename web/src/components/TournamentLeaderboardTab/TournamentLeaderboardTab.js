@@ -14,34 +14,34 @@ export const REMOVE_PLAYER = gql`
   }
 `
 
-const TournamentLeaderboardTab = ({ tournament }) => {
+const TournamentLeaderboardTab = ({ tournament, setTournament }) => {
   const { hasRole, currentUser } = useAuth()
 
-  const [
-    removePlayer,
-    { loading: loadingRemovePlayer, error: errorRemovePlayer },
-  ] = useMutation(REMOVE_PLAYER, {
-    onCompleted: () => {
-      toast.success('Successfully Removed Player')
-    },
-    onError: (error) => {
-      logError({
-        error,
-        log: true,
-        showToast: true,
-      })
-    },
-    refetchQueries: [
-      {
-        query: TOURNAMENT_BY_URL,
-        variables: { url: tournament.tournamentUrl },
+  const [removePlayer, { loading: loadingRemovePlayer }] = useMutation(
+    REMOVE_PLAYER,
+    {
+      onCompleted: () => {
+        toast.success('Successfully Removed Player')
       },
-    ],
-  })
+      onError: (error) => {
+        logError({
+          error,
+          log: true,
+          showToast: true,
+        })
+      },
+      refetchQueries: [
+        {
+          query: TOURNAMENT_BY_URL,
+          variables: { url: tournament.tournamentUrl },
+        },
+      ],
+    }
+  )
 
   return (
     <div className="w-full overflow-x-auto h-full pb-96">
-      {tournament.players.length > 0 ||
+      {tournament?.players?.length > 0 ||
       checkTournamentPermissions({
         tournament,
         hasRole,
@@ -63,7 +63,7 @@ const TournamentLeaderboardTab = ({ tournament }) => {
                 currentUser,
               }) && <th className="py-2">User Actions</th>}
           </tr>
-          {tournament.players.map((playerScore, index) => (
+          {tournament?.players?.map((playerScore, index) => (
             <tr
               key={
                 playerScore.player

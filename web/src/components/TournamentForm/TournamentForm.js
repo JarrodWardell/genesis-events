@@ -10,7 +10,7 @@ import {
   Submit,
   SelectField,
 } from '@redwoodjs/forms'
-import { TOURNAMENT_TYPES } from '../TournamentEoForm/TournamentEoForm'
+import { TOURNAMENT_TYPES } from 'src/constants/tournaments'
 
 const formatDatetime = (value) => {
   if (value) {

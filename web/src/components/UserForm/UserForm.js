@@ -30,13 +30,28 @@ const UserForm = (props) => {
           titleClassName="rw-form-error-title"
           listClassName="rw-form-error-list"
         />
+        <Label
+          name="nickname"
+          className="rw-label"
+          errorClassName="rw-label rw-label-error"
+        >
+          Nickname *
+        </Label>
+        <TextField
+          name="nickname"
+          defaultValue={props.user?.nickname}
+          className="rw-input"
+          errorClassName="rw-input rw-input-error"
+          validation={{ required: true }}
+        />
+        <FieldError name="nickname" className="rw-field-error" />
 
         <Label
           name="firstname"
           className="rw-label"
           errorClassName="rw-label rw-label-error"
         >
-          Firstname
+          Firstname *
         </Label>
         <TextField
           name="firstname"
@@ -52,7 +67,7 @@ const UserForm = (props) => {
           className="rw-label"
           errorClassName="rw-label rw-label-error"
         >
-          Lastname
+          Lastname *
         </Label>
         <TextField
           name="lastname"
@@ -62,6 +77,37 @@ const UserForm = (props) => {
           validation={{ required: true }}
         />
         <FieldError name="lastname" className="rw-field-error" />
+
+        <Label
+          name="email"
+          className="rw-label"
+          errorClassName="rw-label rw-label-error"
+        >
+          Email *
+        </Label>
+        <TextField
+          name="email"
+          defaultValue={props.user?.email}
+          className="rw-input"
+          errorClassName="rw-input rw-input-error"
+          validation={{ required: true }}
+        />
+        <FieldError name="email" className="rw-field-error" />
+
+        <Label
+          name="dob"
+          className="rw-label"
+          errorClassName="rw-label rw-label-error"
+        >
+          Dob
+        </Label>
+        <TextField
+          name="dob"
+          defaultValue={props.user?.dob}
+          className="rw-input"
+          errorClassName="rw-input rw-input-error"
+        />
+        <FieldError name="dob" className="rw-field-error" />
 
         <Label
           name="gender"
@@ -75,7 +121,6 @@ const UserForm = (props) => {
           defaultValue={props.user?.gender}
           className="rw-input"
           errorClassName="rw-input rw-input-error"
-          validation={{ required: true }}
         />
         <FieldError name="gender" className="rw-field-error" />
 
@@ -84,7 +129,7 @@ const UserForm = (props) => {
           className="rw-label"
           errorClassName="rw-label rw-label-error"
         >
-          Phone
+          Phone *
         </Label>
         <TextField
           name="phone"
@@ -107,7 +152,6 @@ const UserForm = (props) => {
           defaultValue={props.user?.city}
           className="rw-input"
           errorClassName="rw-input rw-input-error"
-          validation={{ required: true }}
         />
         <FieldError name="city" className="rw-field-error" />
 
@@ -123,7 +167,6 @@ const UserForm = (props) => {
           defaultValue={props.user?.state}
           className="rw-input"
           errorClassName="rw-input rw-input-error"
-          validation={{ required: true }}
         />
         <FieldError name="state" className="rw-field-error" />
 
@@ -139,7 +182,6 @@ const UserForm = (props) => {
           defaultValue={props.user?.country}
           className="rw-input"
           errorClassName="rw-input rw-input-error"
-          validation={{ required: true }}
         />
         <FieldError name="country" className="rw-field-error" />
 
@@ -155,7 +197,6 @@ const UserForm = (props) => {
           defaultValue={props.user?.zip}
           className="rw-input"
           errorClassName="rw-input rw-input-error"
-          validation={{ required: true }}
         />
         <FieldError name="zip" className="rw-field-error" />
 
@@ -171,7 +212,6 @@ const UserForm = (props) => {
           defaultValue={props.user?.howHeard}
           className="rw-input"
           errorClassName="rw-input rw-input-error"
-          validation={{ required: true }}
         />
         <FieldError name="howHeard" className="rw-field-error" />
 
@@ -180,7 +220,7 @@ const UserForm = (props) => {
           className="rw-label"
           errorClassName="rw-label rw-label-error"
         >
-          Flags
+          Flags *
         </Label>
         <NumberField
           name="flags"
@@ -203,7 +243,6 @@ const UserForm = (props) => {
           defaultValue={props.user?.adminComments}
           className="rw-input"
           errorClassName="rw-input rw-input-error"
-          validation={{ required: true }}
         />
         <FieldError name="adminComments" className="rw-field-error" />
 
@@ -234,25 +273,8 @@ const UserForm = (props) => {
           defaultValue={formatDatetime(props.user?.disabledOn)}
           className="rw-input"
           errorClassName="rw-input rw-input-error"
-          validation={{ required: true }}
         />
         <FieldError name="disabledOn" className="rw-field-error" />
-
-        <Label
-          name="nickname"
-          className="rw-label"
-          errorClassName="rw-label rw-label-error"
-        >
-          Nickname
-        </Label>
-        <TextField
-          name="nickname"
-          defaultValue={props.user?.nickname}
-          className="rw-input"
-          errorClassName="rw-input rw-input-error"
-          validation={{ required: true }}
-        />
-        <FieldError name="nickname" className="rw-field-error" />
 
         <Label
           name="userPictureId"
@@ -266,7 +288,6 @@ const UserForm = (props) => {
           defaultValue={props.user?.userPictureId}
           className="rw-input"
           errorClassName="rw-input rw-input-error"
-          validation={{ required: true }}
         />
         <FieldError name="userPictureId" className="rw-field-error" />
 
@@ -282,41 +303,8 @@ const UserForm = (props) => {
           defaultValue={props.user?.disabledBy}
           className="rw-input"
           errorClassName="rw-input rw-input-error"
-          validation={{ required: true }}
         />
         <FieldError name="disabledBy" className="rw-field-error" />
-
-        <Label
-          name="email"
-          className="rw-label"
-          errorClassName="rw-label rw-label-error"
-        >
-          Email
-        </Label>
-        <TextField
-          name="email"
-          defaultValue={props.user?.email}
-          className="rw-input"
-          errorClassName="rw-input rw-input-error"
-          validation={{ required: true }}
-        />
-        <FieldError name="email" className="rw-field-error" />
-
-        <Label
-          name="dob"
-          className="rw-label"
-          errorClassName="rw-label rw-label-error"
-        >
-          Dob
-        </Label>
-        <TextField
-          name="dob"
-          defaultValue={props.user?.dob}
-          className="rw-input"
-          errorClassName="rw-input rw-input-error"
-          validation={{ required: true }}
-        />
-        <FieldError name="dob" className="rw-field-error" />
 
         <Label
           name="active"
