@@ -255,7 +255,7 @@ const TournamentTimer = ({ tournament, setTournament }) => {
           </div>
           {renderButtons()}
         </div>
-      ) : (
+      ) : checkTournamentPermissions({ hasRole, currentUser, tournament }) ? (
         <div className="flex flex-col">
           <div className="border-gray-100 border-b-2 pb-1 flex flex-row">
             <span>
@@ -286,7 +286,7 @@ const TournamentTimer = ({ tournament, setTournament }) => {
 
           {renderButtons()}
         </div>
-      )}
+      ) : null}
     </>
   )
 }
