@@ -20,7 +20,11 @@ export const tournament = ({ id }) => {
   })
 }
 
-export const tournaments = ({ searchTerm, id }) => {
+export const tournaments = ({
+  searchTerm,
+  orderBy = { orderByKey: 'id', orderByDirection: 'desc' },
+  id,
+}) => {
   try {
     return db.tournament.findMany({
       where: {
@@ -50,6 +54,9 @@ export const tournaments = ({ searchTerm, id }) => {
             },
           },
         ],
+      },
+      orderBy: {
+        [orderBy.orderByKey]: orderBy.orderByDirection,
       },
     })
   } catch (error) {
