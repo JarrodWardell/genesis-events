@@ -96,17 +96,19 @@ const TournamentRoundsTab = ({ tournament, roundNumber, setTournament }) => {
     let matches = []
 
     if (round?.matches) {
-      round.matches.map((match, index) => {
-        matches.push(
-          <MatchDetails
-            match={match}
-            index={index}
-            tournament={tournament}
-            setTournament={setTournament}
-            key={`round-${round}-match-${match.id}`}
-          />
-        )
-      })
+      ;[...round?.matches]
+        .sort((a, b) => b.players.length - a.players.length)
+        .map((match, index) => {
+          matches.push(
+            <MatchDetails
+              match={match}
+              index={index}
+              tournament={tournament}
+              setTournament={setTournament}
+              key={`round-${round}-match-${match.id}`}
+            />
+          )
+        })
     }
 
     return matches
@@ -191,7 +193,7 @@ const TournamentRoundsTab = ({ tournament, roundNumber, setTournament }) => {
       <div className="w-full overflow-x-auto">
         <div className="grid grid-cols-12 gap-y-4 my-4 w-max sm:w-full">
           <div className="text-gray-500 text-xs bg-gray-200 col-span-12 grid grid-cols-12 px-2">
-            <div className="py-4 col-span-1 text-center">Match #</div>
+            <div className="py-4 col-span-1 text-center">Table #</div>
             <div className="py-4 col-span-11 text-center">Result</div>
           </div>
           {renderRound()}
