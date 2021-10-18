@@ -138,7 +138,10 @@ const TournamentLeaderboardTab = ({ tournament, setTournament }) => {
           ))}
           {checkTournamentPermissions({ tournament, hasRole, currentUser }) &&
             !tournament.dateEnded && (
-              <AddTournamentPlayer tournament={tournament} />
+              <AddTournamentPlayer
+                tournament={tournament}
+                setTournament={setTournament}
+              />
             )}
         </table>
       ) : (
