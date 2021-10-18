@@ -274,7 +274,7 @@ const TournamentSignupTab = ({ tournament }) => {
           <p className="text-center v">Sign up</p>
         </Button>
       )}
-      <div className="mt-10">
+      <div className="mt-10" id="share">
         <div className="relative">
           <div className="absolute inset-0 flex items-center">
             <div className="w-full border-t border-gray-300"></div>

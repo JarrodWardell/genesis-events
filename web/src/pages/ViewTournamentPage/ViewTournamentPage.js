@@ -17,7 +17,7 @@ import { ReactComponent as HomeIcon } from 'src/components/Icons/HomeIcon.svg'
 import { ReactComponent as TrophyIcon } from 'src/components/Icons/TrophyIcon.svg'
 import Truncate from 'react-truncate-html'
 import LoadingIcon from 'src/components/LoadingIcon/LoadingIcon'
-import { AtSymbolIcon } from '@heroicons/react/solid'
+import { AtSymbolIcon, ShareIcon } from '@heroicons/react/solid'
 import { BookOpenIcon } from '@heroicons/react/outline'
 import { VIEW_TOURNAMENT_FIELDS } from 'src/fragments/tourrnamentFragments'
 
@@ -157,7 +157,17 @@ const ViewTournamentPage = ({ url, tab, tabOptions }) => {
               (tournamentActive || !tournament.active ? ' sm:w-5/6' : ' w-full')
             }
           >
-            <h1 className="text-xl">{name}</h1>
+            <h1 className="flex items-center text-xl w-full justify-between sm:w-auto sm:justify-start">
+              {name}
+              <div
+                className="cursor-pointer w-4 h-4 ml-2 hover:gray-300"
+                onClick={() =>
+                  navigate(`/tournament/${url}/${TABS.signup.path}#share`)
+                }
+              >
+                <ShareIcon />
+              </div>
+            </h1>
             <div className="py-2 my-2 border-gray-100 border-t-2 border-b-2 text-gray-400 leading-relaxed">
               <div className="flex items-center">
                 <div className="w-6 h-6 flex font-bold">
