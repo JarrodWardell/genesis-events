@@ -175,8 +175,13 @@ export const schema = gql`
     STOPPED
   }
 
+  input OrderByInput {
+    orderByKey: String
+    orderByDirection: String
+  }
+
   type Query {
-    tournaments(searchTerm: String): [Tournament!]!
+    tournaments(searchTerm: String, orderBy: OrderByInput): [Tournament!]!
     searchTournaments(input: SearchTournamentInput!): PaginatedTournaments!
     tournament(id: Int!): Tournament
     tournamentByUrl(url: String): Tournament

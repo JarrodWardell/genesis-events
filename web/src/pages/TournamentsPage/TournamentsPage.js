@@ -5,6 +5,10 @@ import { useLocation } from '@redwoodjs/router'
 const TournamentsPage = () => {
   const { search } = useLocation()
   const [searchTerm, setSearchTerm] = React.useState('')
+  const [orderBy, setOrderBy] = React.useState({
+    orderByKey: 'id',
+    orderByDirection: 'asc',
+  })
 
   React.useEffect(() => {
     let brokenSearch = new URLSearchParams(search)
@@ -21,7 +25,11 @@ const TournamentsPage = () => {
         onChange={(e) => setSearchTerm(e.target.value)}
         placeholder="Search Tournament Name, Url, Location Name, or Street1"
       />
-      <TournamentsCell searchTerm={searchTerm} />
+      <TournamentsCell
+        searchTerm={searchTerm}
+        orderBy={orderBy}
+        setOrderBy={setOrderBy}
+      />
     </TournamentsLayout>
   )
 }
