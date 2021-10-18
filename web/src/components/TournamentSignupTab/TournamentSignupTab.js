@@ -73,7 +73,7 @@ const TournamentSignupTab = ({ tournament }) => {
     let tournamentIsActive = tourney.active
 
     // Tournament not full
-    let tournamentNotFull = tourney.players.length < tourney.maxPlayers
+    let tournamentNotFull = tourney?.players?.length < tourney?.maxPlayers
 
     let tournamentNotEnded = !tourney.dateEnded
 
@@ -126,7 +126,7 @@ const TournamentSignupTab = ({ tournament }) => {
     if (isInTournament(tourney, currUser))
       return 'You have already registered for this event'
     // Tournament full
-    if (tourney.players.length >= tourney.maxPlayers) return 'Event is full'
+    if (tourney?.players?.length >= tourney?.maxPlayers) return 'Event is full'
     if (!tourney.publicRegistration)
       return 'Only admins may register players for this tournament. Please speak to the organizer'
 
