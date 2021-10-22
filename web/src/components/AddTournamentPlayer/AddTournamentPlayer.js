@@ -6,6 +6,7 @@ import { TOURNAMENT_BY_URL } from 'src/pages/ViewTournamentPage/ViewTournamentPa
 import { useMutation } from '@redwoodjs/web'
 import toast from 'react-hot-toast'
 import { logError } from 'src/helpers/errorLogger'
+import { VIEW_TOURNAMENT_FIELDS } from 'src/fragments/tourrnamentFragments'
 
 export const SEARCH_NON_PLAYERS = gql`
   query searchNonPlayers($id: Int!, $searchTerm: String) {
@@ -17,14 +18,16 @@ export const SEARCH_NON_PLAYERS = gql`
 `
 
 export const ADD_PLAYER = gql`
+  ${VIEW_TOURNAMENT_FIELDS}
   mutation addPlayer($id: Int!, $input: AddPlayerInput!) {
     addPlayer: addPlayer(id: $id, input: $input) {
-      id
+      ...ViewTournamentFields
     }
   }
 `
 const AddTournamentPlayer = ({
   tournament = {},
+  setTournament = () => {},
   columns = ['wins', 'draws', 'byes', 'losses', 'score'],
   columnClasses = 'text-center py-2',
 }) => {
@@ -44,7 +47,8 @@ const AddTournamentPlayer = ({
   const [nonPlayerList, setNonPlayerList] = React.useState([])
 
   const [addPlayer, { loading: loadingAddPlayer }] = useMutation(ADD_PLAYER, {
-    onCompleted: () => {
+    onCompleted: (data) => {
+      setTournament(data.addPlayer)
       toast.success('Successfully Added Player')
       setForm({
         ...defaultForm,

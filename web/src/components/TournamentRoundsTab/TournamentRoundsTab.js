@@ -10,84 +10,81 @@ import Button from '../Button/Button'
 import ReactToPrint from 'react-to-print'
 import PrintRound from '../PrintRound/PrintRound'
 import { logError } from 'src/helpers/errorLogger'
+import { VIEW_TOURNAMENT_FIELDS } from 'src/fragments/tourrnamentFragments'
 
 export const ADVANCE_ROUND = gql`
+  ${VIEW_TOURNAMENT_FIELDS}
   mutation advanceRound($id: Int!, $roundNumber: Int!) {
     advanceRound: advanceRound(id: $id, roundNumber: $roundNumber) {
-      id
-      round {
-        roundNumber
-      }
+      ...ViewTournamentFields
     }
   }
 `
 
 export const END_TOURNAMENT = gql`
+  ${VIEW_TOURNAMENT_FIELDS}
   mutation endTournament($id: Int!) {
     endTournament: endTournament(id: $id) {
-      id
-      winners {
-        playerName
-        player {
-          nickname
-        }
-      }
+      ...ViewTournamentFields
     }
   }
 `
 
-const TournamentRoundsTab = ({ tournament, roundNumber }) => {
+const TournamentRoundsTab = ({ tournament, roundNumber, setTournament }) => {
   const componentRef = React.useRef()
+  const [started, setStarted] = React.useState(false)
   const { hasRole, currentUser } = useAuth()
 
-  const [
-    advanceRound,
-    { loading: loadingAdvanceRound, error: errorAdvanceRound },
-  ] = useMutation(ADVANCE_ROUND, {
-    onCompleted: (data) => {
-      const newRound =
-        data.advanceRound?.round[data.advanceRound?.round?.length - 1]
-          ?.roundNumber
-      toast.success(`Tournament has advanced to round ${newRound}`)
-      navigate(`/tournament/${tournament?.tournamentUrl}/rounds/${newRound}`)
-    },
-    onError: (error) => {
-      logError({
-        error,
-        log: true,
-        showToast: true,
-      })
-    },
-    refetchQueries: [
-      {
-        query: TOURNAMENT_BY_URL,
-        variables: { url: tournament.tournamentUrl },
-      },
-    ],
-  })
+  React.useEffect(() => {
+    if (!started && tournament.dateStarted) {
+      setStarted(true)
+    }
+  }, [tournament, started])
 
-  const [
-    endTournament,
-    { loading: loadingEndTournament, error: errorEndTournament },
-  ] = useMutation(END_TOURNAMENT, {
-    onCompleted: (data) => {
-      toast.success(`Tournament has ended!`)
-      navigate(`/tournament/${tournament?.tournamentUrl}/leaderboard`)
-    },
-    onError: (error) => {
-      logError({
-        error,
-        log: true,
-        showToast: true,
-      })
-    },
-    refetchQueries: [
-      {
-        query: TOURNAMENT_BY_URL,
-        variables: { url: tournament.tournamentUrl },
+  const [advanceRound, { loading: loadingAdvanceRound }] = useMutation(
+    ADVANCE_ROUND,
+    {
+      onCompleted: (data) => {
+        setTournament(data.advanceRound)
+        const newRound =
+          data.advanceRound?.round[data.advanceRound?.round?.length - 1]
+            ?.roundNumber
+        toast.success(`Tournament has advanced to round ${newRound}`)
+        navigate(`/tournament/${tournament?.tournamentUrl}/rounds/${newRound}`)
       },
-    ],
-  })
+      onError: (error) => {
+        logError({
+          error,
+          log: true,
+          showToast: true,
+        })
+      },
+    }
+  )
+
+  const [endTournament, { loading: loadingEndTournament }] = useMutation(
+    END_TOURNAMENT,
+    {
+      onCompleted: (data) => {
+        setTournament(data.endTournament)
+        toast.success(`Tournament has ended!`)
+        navigate(`/tournament/${tournament?.tournamentUrl}/leaderboard`)
+      },
+      onError: (error) => {
+        logError({
+          error,
+          log: true,
+          showToast: true,
+        })
+      },
+      refetchQueries: [
+        {
+          query: TOURNAMENT_BY_URL,
+          variables: { url: tournament.tournamentUrl },
+        },
+      ],
+    }
+  )
 
   const grabRound = () => {
     let round = {}
@@ -106,16 +103,19 @@ const TournamentRoundsTab = ({ tournament, roundNumber }) => {
     let matches = []
 
     if (round?.matches) {
-      round.matches.map((match, index) => {
-        matches.push(
-          <MatchDetails
-            match={match}
-            index={index}
-            tournament={tournament}
-            key={`round-${round}-match-${match.id}`}
-          />
-        )
-      })
+      ;[...round?.matches]
+        .sort((a, b) => b.players.length - a.players.length)
+        .map((match, index) => {
+          matches.push(
+            <MatchDetails
+              match={match}
+              index={index}
+              tournament={tournament}
+              setTournament={setTournament}
+              key={`round-${round}-match-${match.id}`}
+            />
+          )
+        })
     }
 
     return matches
@@ -146,8 +146,15 @@ const TournamentRoundsTab = ({ tournament, roundNumber }) => {
     )
   }
 
-  if (!tournament.dateStarted) {
-    return <TournamentNotStarted tournament={tournament} />
+  if (!tournament.dateStarted && !started) {
+    return (
+      <TournamentNotStarted
+        tournament={tournament}
+        setTournament={setTournament}
+        setStarted={setStarted}
+        started={started}
+      />
+    )
   }
 
   return (
@@ -178,7 +185,7 @@ const TournamentRoundsTab = ({ tournament, roundNumber }) => {
             <ReactToPrint
               trigger={() => (
                 <Button className="uppercase" my={'2'}>
-                  Print Round Stats
+                  Print Round Sheet
                 </Button>
               )}
               content={() => componentRef.current}
@@ -195,7 +202,7 @@ const TournamentRoundsTab = ({ tournament, roundNumber }) => {
       <div className="w-full overflow-x-auto">
         <div className="grid grid-cols-12 gap-y-4 my-4 w-max sm:w-full">
           <div className="text-gray-500 text-xs bg-gray-200 col-span-12 grid grid-cols-12 px-2">
-            <div className="py-4 col-span-1 text-center">Match #</div>
+            <div className="py-4 col-span-1 text-center">Table #</div>
             <div className="py-4 col-span-11 text-center">Result</div>
           </div>
           {renderRound()}

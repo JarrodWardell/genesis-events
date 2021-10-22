@@ -1,5 +1,5 @@
 import { useAuth } from '@redwoodjs/auth'
-import { Link, navigate, routes } from '@redwoodjs/router'
+import { navigate, routes } from '@redwoodjs/router'
 import { useMutation } from '@redwoodjs/web'
 import toast from 'react-hot-toast'
 import { logError } from 'src/helpers/errorLogger'
@@ -22,7 +22,7 @@ export const LEAVE_TOURNAMENT = gql`
 
 const TournamentSignupTab = ({ tournament }) => {
   const { currentUser, hasRole } = useAuth()
-  const [registerForTournament, { loading, error }] = useMutation(
+  const [registerForTournament, { loading }] = useMutation(
     REGISTER_TOURNAMENT,
     {
       onCompleted: () => {
@@ -73,7 +73,7 @@ const TournamentSignupTab = ({ tournament }) => {
     let tournamentIsActive = tourney.active
 
     // Tournament not full
-    let tournamentNotFull = tourney.players.length < tourney.maxPlayers
+    let tournamentNotFull = tourney?.players?.length < tourney?.maxPlayers
 
     let tournamentNotEnded = !tourney.dateEnded
 
@@ -126,7 +126,7 @@ const TournamentSignupTab = ({ tournament }) => {
     if (isInTournament(tourney, currUser))
       return 'You have already registered for this event'
     // Tournament full
-    if (tourney.players.length >= tourney.maxPlayers) return 'Event is full'
+    if (tourney?.players?.length >= tourney?.maxPlayers) return 'Event is full'
     if (!tourney.publicRegistration)
       return 'Only admins may register players for this tournament. Please speak to the organizer'
 
@@ -274,7 +274,7 @@ const TournamentSignupTab = ({ tournament }) => {
           <p className="text-center v">Sign up</p>
         </Button>
       )}
-      <div className="mt-10">
+      <div className="mt-10" id="share">
         <div className="relative">
           <div className="absolute inset-0 flex items-center">
             <div className="w-full border-t border-gray-300"></div>

@@ -20,7 +20,11 @@ export const tournament = ({ id }) => {
   })
 }
 
-export const tournaments = ({ searchTerm, id }) => {
+export const tournaments = ({
+  searchTerm,
+  orderBy = { orderByKey: 'id', orderByDirection: 'desc' },
+  id,
+}) => {
   try {
     return db.tournament.findMany({
       where: {
@@ -50,6 +54,9 @@ export const tournaments = ({ searchTerm, id }) => {
             },
           },
         ],
+      },
+      orderBy: {
+        [orderBy.orderByKey]: orderBy.orderByDirection,
       },
     })
   } catch (error) {
@@ -540,8 +547,6 @@ export const addPlayer = async ({ id, input }) => {
 }
 
 export const startTournament = async ({ id }) => {
-  const tournament = await db.tournament.findUnique({ where: { id } })
-
   //Grab list of players and generate match ups
   const proposedMatches = await generateMatches({ roundNumber: 1, id, db })
 
@@ -559,8 +564,8 @@ export const startTournament = async ({ id }) => {
 
   await createMatches({ proposedMatches, round, id })
 
-  //Add tournament started date
-  await db.tournament.update({
+  //Return tournament
+  return db.tournament.update({
     data: {
       dateStarted: new Date(),
       startingTimerInSeconds: 3600,
@@ -572,9 +577,6 @@ export const startTournament = async ({ id }) => {
       id,
     },
   })
-
-  //Return tournament
-  return tournament
 }
 
 export const advanceRound = async ({ id, roundNumber }) => {
@@ -797,6 +799,9 @@ export const deleteTournament = ({ id }) => {
 
 export const addMatchScore = async ({ input }) => {
   const match = await db.match.findUnique({ where: { id: input.matchId } })
+  const tournament = await db.tournament.findUnique({
+    where: { id: match.tournamentId },
+  })
 
   try {
     await Promise.all(
@@ -809,11 +814,14 @@ export const addMatchScore = async ({ input }) => {
     return err
   }
 
-  return match
+  return tournament
 }
 
 export const updateMatchScore = async ({ input }) => {
   const match = await db.match.findUnique({ where: { id: input.matchId } })
+  const tournament = await db.tournament.findUnique({
+    where: { id: match.tournamentId },
+  })
 
   try {
     await updatePlayerMatchScore({ match })
@@ -828,7 +836,7 @@ export const updateMatchScore = async ({ input }) => {
     return err
   }
 
-  return match
+  return tournament
 }
 
 // Add scores, update playerTournamentScore

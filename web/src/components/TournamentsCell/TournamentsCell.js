@@ -7,8 +7,8 @@ export const beforeQuery = (props) => {
 }
 
 export const QUERY = gql`
-  query ($searchTerm: String) {
-    tournaments(searchTerm: $searchTerm) {
+  query ($searchTerm: String, $orderBy: OrderByInput) {
+    tournaments(searchTerm: $searchTerm, orderBy: $orderBy) {
       id
       name
       tournamentUrl
@@ -55,6 +55,6 @@ export const Empty = () => {
   )
 }
 
-export const Success = ({ tournaments }) => {
-  return <Tournaments tournaments={tournaments} />
+export const Success = (props) => {
+  return <Tournaments {...props} />
 }
