@@ -59,6 +59,7 @@ export const VIEW_TOURNAMENT_FIELDS = gql`
     zip
     owner {
       nickname
+      email
     }
     ownerId
     store {

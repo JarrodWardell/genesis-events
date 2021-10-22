@@ -199,9 +199,11 @@ const ViewTournamentPage = ({ url, tab, tabOptions }) => {
                 </div>{' '}
                 <a
                   className="ml-1"
-                  href={`mailto: ${tournament?.store?.email}`}
+                  href={`mailto: ${
+                    tournament?.store?.email || tournament?.owner?.email
+                  }`}
                 >
-                  {tournament?.store?.email}
+                  {tournament?.store?.email || tournament?.owner?.email}
                 </a>
               </div>
               {tournament.type && (

@@ -99,6 +99,7 @@ export const schema = gql`
     zip
     owner {
       nickname
+      email
     }
     ownerId
     store {
