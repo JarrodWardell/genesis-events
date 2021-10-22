@@ -214,6 +214,8 @@ const TournamentTimer = ({ tournament }) => {
     return null
   }
 
+  let timerWidth = 100 - (timerInSeconds / startingTimerInSeconds) * 100
+
   return (
     <>
       {timerInSeconds ? (
@@ -241,9 +243,7 @@ const TournamentTimer = ({ tournament }) => {
             <div
               className="bg-red-300 h-4 rounded-l-sm border-red-300 border-l"
               style={{
-                width: `${
-                  100 - (timerInSeconds / startingTimerInSeconds) * 100
-                }%`,
+                width: `${timerWidth > 100 ? 100 : timerWidth}%`,
               }}
             />
           </div>
