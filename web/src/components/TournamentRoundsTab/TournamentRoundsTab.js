@@ -32,7 +32,14 @@ export const END_TOURNAMENT = gql`
 
 const TournamentRoundsTab = ({ tournament, roundNumber, setTournament }) => {
   const componentRef = React.useRef()
+  const [started, setStarted] = React.useState(false)
   const { hasRole, currentUser } = useAuth()
+
+  React.useEffect(() => {
+    if (!started && tournament.dateStarted) {
+      setStarted(true)
+    }
+  }, [tournament, started])
 
   const [advanceRound, { loading: loadingAdvanceRound }] = useMutation(
     ADVANCE_ROUND,
@@ -139,11 +146,13 @@ const TournamentRoundsTab = ({ tournament, roundNumber, setTournament }) => {
     )
   }
 
-  if (!tournament.dateStarted) {
+  if (!tournament.dateStarted && !started) {
     return (
       <TournamentNotStarted
         tournament={tournament}
         setTournament={setTournament}
+        setStarted={setStarted}
+        started={started}
       />
     )
   }
@@ -176,7 +185,7 @@ const TournamentRoundsTab = ({ tournament, roundNumber, setTournament }) => {
             <ReactToPrint
               trigger={() => (
                 <Button className="uppercase" my={'2'}>
-                  Print Round Stats
+                  Print Round Sheet
                 </Button>
               )}
               content={() => componentRef.current}

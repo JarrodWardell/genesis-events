@@ -52,7 +52,6 @@ const HomePage = () => {
     fetch('https://ip.nf/me.json', { method: 'GET' })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data.country)
         setCountry(data?.ip?.country)
       })
       .catch((err) => console.log(err))

@@ -27,7 +27,6 @@ const TournamentsList = ({ tournaments, orderBy, setOrderBy, searchTerm }) => {
       deleteTournament({ variables: { id } })
     }
   }
-  console.log(searchTerm)
 
   return (
     <Table

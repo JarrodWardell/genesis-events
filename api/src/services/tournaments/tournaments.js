@@ -547,8 +547,6 @@ export const addPlayer = async ({ id, input }) => {
 }
 
 export const startTournament = async ({ id }) => {
-  const tournament = await db.tournament.findUnique({ where: { id } })
-
   //Grab list of players and generate match ups
   const proposedMatches = await generateMatches({ roundNumber: 1, id, db })
 
@@ -566,8 +564,8 @@ export const startTournament = async ({ id }) => {
 
   await createMatches({ proposedMatches, round, id })
 
-  //Add tournament started date
-  await db.tournament.update({
+  //Return tournament
+  return db.tournament.update({
     data: {
       dateStarted: new Date(),
       startingTimerInSeconds: 3600,
@@ -579,9 +577,6 @@ export const startTournament = async ({ id }) => {
       id,
     },
   })
-
-  //Return tournament
-  return tournament
 }
 
 export const advanceRound = async ({ id, roundNumber }) => {

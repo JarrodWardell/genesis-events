@@ -205,7 +205,6 @@ const TournamentEOForm = ({ tournament }) => {
     var addr = data.value
     setLocationName(addr.name)
     setStreet1(addr.street1)
-    console.log(addr)
     formMethods.setValue('locationName', addr.name)
     formMethods.setValue('country', addr.country)
     formMethods.setValue('zip', addr.zip)

@@ -8,7 +8,6 @@ import {
   checkTournamentPermissions,
   timeUntilTournament,
 } from 'src/helpers/tournamentHelper'
-import { TOURNAMENT_BY_URL } from 'src/pages/ViewTournamentPage/ViewTournamentPage'
 
 import Button from '../Button/Button'
 
@@ -21,9 +20,13 @@ const START_TOURNAMENT_MUTATION = gql`
   }
 `
 
-const TournamentNotStarted = ({ tournament, setTournament }) => {
+const TournamentNotStarted = ({
+  tournament,
+  setTournament,
+  setStarted,
+  started,
+}) => {
   const { currentUser, hasRole } = useAuth()
-  const [started, setStarted] = React.useState(false)
   const [startConfirmation, setStartConfirmation] = React.useState(false)
   const [timeUntilTourney, setTimeUntilTourney] = React.useState(
     timeUntilTournament(tournament.startDate)
@@ -33,6 +36,7 @@ const TournamentNotStarted = ({ tournament, setTournament }) => {
     START_TOURNAMENT_MUTATION,
     {
       onCompleted: (data) => {
+        console.log(data)
         setTournament(data.startTournament)
         toast.success(
           'Tournament started! Please wait for this page to reload...'
