@@ -2,36 +2,45 @@ import { useAuth } from '@redwoodjs/auth'
 import { navigate } from '@redwoodjs/router'
 import { useMutation } from '@redwoodjs/web'
 import toast from 'react-hot-toast'
+import { VIEW_TOURNAMENT_FIELDS } from 'src/fragments/tourrnamentFragments'
 import { logError } from 'src/helpers/errorLogger'
 import {
   checkTournamentPermissions,
   timeUntilTournament,
 } from 'src/helpers/tournamentHelper'
-import { TOURNAMENT_BY_URL } from 'src/pages/ViewTournamentPage/ViewTournamentPage'
 
 import Button from '../Button/Button'
 
 const START_TOURNAMENT_MUTATION = gql`
+  ${VIEW_TOURNAMENT_FIELDS}
   mutation startTournament($id: Int!) {
     startTournament(id: $id) {
-      id
+      ...ViewTournamentFields
     }
   }
 `
 
-const TournamentNotStarted = ({ tournament }) => {
+const TournamentNotStarted = ({
+  tournament,
+  setTournament,
+  setStarted,
+  started,
+}) => {
   const { currentUser, hasRole } = useAuth()
-  const [started, setStarted] = React.useState(false)
   const [startConfirmation, setStartConfirmation] = React.useState(false)
   const [timeUntilTourney, setTimeUntilTourney] = React.useState(
     timeUntilTournament(tournament.startDate)
   )
 
-  const [startTournament, { loading, error }] = useMutation(
+  const [startTournament, { loading }] = useMutation(
     START_TOURNAMENT_MUTATION,
     {
-      onCompleted: () => {
-        toast.success('Tournament started!')
+      onCompleted: (data) => {
+        console.log(data)
+        setTournament(data.startTournament)
+        toast.success(
+          'Tournament started! Please wait for this page to reload...'
+        )
         setStarted(true)
       },
       onError: (error) => {
@@ -41,12 +50,6 @@ const TournamentNotStarted = ({ tournament }) => {
           showToast: true,
         })
       },
-      refetchQueries: [
-        {
-          query: TOURNAMENT_BY_URL,
-          variables: { url: tournament.tournamentUrl },
-        },
-      ],
     }
   )
 
@@ -92,6 +95,7 @@ const TournamentNotStarted = ({ tournament }) => {
               }
               full={false}
               loading={loading || started}
+              disabled={started}
             >
               Start Tournament
             </Button>
@@ -121,7 +125,7 @@ const TournamentNotStarted = ({ tournament }) => {
             </div>
           </div>
           {checkTournamentPermissions({ hasRole, currentUser, tournament }) &&
-          tournament.players.length > 1 ? (
+          tournament?.players?.length > 1 ? (
             <button
               className="flex items-center mx-auto py-2 px-8 text-center bg-white rounded-md border-2 cursor-pointer hover:bg-green-600 uppercase"
               onClick={() => setStartConfirmation(true)}
@@ -130,23 +134,24 @@ const TournamentNotStarted = ({ tournament }) => {
             </button>
           ) : (
             checkTournamentPermissions({ hasRole, currentUser, tournament }) &&
-            tournament.players.length < 2 && (
+            tournament?.players?.length < 2 && (
               <div className="text-center text-white my-4">
                 Tournaments require a minimum of 2 players to Start
               </div>
             )
           )}
 
-          {hasRole(['PLAYER']) && (
-            <button
-              className="flex items-center mx-auto py-2 px-8 text-center bg-white rounded-md border-2 cursor-pointer hover:bg-green-600 uppercase"
-              onClick={() =>
-                navigate(`/tournament/${tournament.tournamentUrl}/signup`)
-              }
-            >
-              Sign Up Here
-            </button>
-          )}
+          {hasRole(['PLAYER']) ||
+            (!currentUser && (
+              <button
+                className="flex items-center mx-auto py-2 px-8 text-center bg-white rounded-md border-2 cursor-pointer hover:bg-green-600 uppercase"
+                onClick={() =>
+                  navigate(`/tournament/${tournament.tournamentUrl}/signup`)
+                }
+              >
+                Sign Up Here
+              </button>
+            ))}
         </div>
       )}
 

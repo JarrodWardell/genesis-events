@@ -274,7 +274,7 @@ export type MatchScore = {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  addMatchScore: Match;
+  addMatchScore: Tournament;
   addPlayer: Tournament;
   advanceRound?: Maybe<Tournament>;
   cancelTournament: Tournament;
@@ -310,7 +310,7 @@ export type Mutation = {
   updateBanner: Banner;
   updateContact: Contact;
   updateMatch: Match;
-  updateMatchScore: Match;
+  updateMatchScore: Tournament;
   updatePlayerMatchScore: PlayerMatchScore;
   updatePlayerTournamentScore: PlayerTournamentScore;
   updateRound: Round;
@@ -568,6 +568,11 @@ export type MutationUpdateUserUserRoleArgs = {
   input: UpdateUserUserRoleInput;
 };
 
+export type OrderByInput = {
+  orderByKey?: Maybe<Scalars['String']>;
+  orderByDirection?: Maybe<Scalars['String']>;
+};
+
 export type PaginatedLeaderboard = {
   __typename?: 'PaginatedLeaderboard';
   more?: Maybe<Scalars['Boolean']>;
@@ -765,6 +770,7 @@ export type QueryTournamentByUrlArgs = {
 
 export type QueryTournamentsArgs = {
   searchTerm?: Maybe<Scalars['String']>;
+  orderBy?: Maybe<OrderByInput>;
 };
 
 
@@ -863,9 +869,9 @@ export type Store = {
 
 export type TimerInput = {
   tournamentId: Scalars['Int'];
-  timerLeftInSeconds: Scalars['Int'];
+  timerLeftInSeconds?: Maybe<Scalars['Int']>;
   timerStatus: TimerStatus;
-  startingTimerInSeconds: Scalars['Int'];
+  startingTimerInSeconds?: Maybe<Scalars['Int']>;
 };
 
 export type TimerStatus =
@@ -1248,6 +1254,7 @@ export type ResolversTypes = {
   MatchResult: MatchResult;
   MatchScore: MatchScore;
   Mutation: ResolverTypeWrapper<{}>;
+  OrderByInput: OrderByInput;
   PaginatedLeaderboard: ResolverTypeWrapper<PaginatedLeaderboard>;
   PaginatedTournaments: ResolverTypeWrapper<PaginatedTournaments>;
   Placement: Placement;
@@ -1310,6 +1317,7 @@ export type ResolversParentTypes = {
   Match: Match;
   MatchScore: MatchScore;
   Mutation: {};
+  OrderByInput: OrderByInput;
   PaginatedLeaderboard: PaginatedLeaderboard;
   PaginatedTournaments: PaginatedTournaments;
   PlayerMatchScore: PlayerMatchScore;
@@ -1411,7 +1419,7 @@ export type MatchResolvers<ContextType = any, ParentType extends ResolversParent
 };
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
-  addMatchScore?: Resolver<ResolversTypes['Match'], ParentType, ContextType, RequireFields<MutationAddMatchScoreArgs, 'input'>>;
+  addMatchScore?: Resolver<ResolversTypes['Tournament'], ParentType, ContextType, RequireFields<MutationAddMatchScoreArgs, 'input'>>;
   addPlayer?: Resolver<ResolversTypes['Tournament'], ParentType, ContextType, RequireFields<MutationAddPlayerArgs, 'id' | 'input'>>;
   advanceRound?: Resolver<Maybe<ResolversTypes['Tournament']>, ParentType, ContextType, RequireFields<MutationAdvanceRoundArgs, 'id' | 'roundNumber'>>;
   cancelTournament?: Resolver<ResolversTypes['Tournament'], ParentType, ContextType, RequireFields<MutationCancelTournamentArgs, 'id'>>;
@@ -1447,7 +1455,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   updateBanner?: Resolver<ResolversTypes['Banner'], ParentType, ContextType, RequireFields<MutationUpdateBannerArgs, 'id' | 'input'>>;
   updateContact?: Resolver<ResolversTypes['Contact'], ParentType, ContextType, RequireFields<MutationUpdateContactArgs, 'id' | 'input'>>;
   updateMatch?: Resolver<ResolversTypes['Match'], ParentType, ContextType, RequireFields<MutationUpdateMatchArgs, 'id' | 'input'>>;
-  updateMatchScore?: Resolver<ResolversTypes['Match'], ParentType, ContextType, RequireFields<MutationUpdateMatchScoreArgs, 'input'>>;
+  updateMatchScore?: Resolver<ResolversTypes['Tournament'], ParentType, ContextType, RequireFields<MutationUpdateMatchScoreArgs, 'input'>>;
   updatePlayerMatchScore?: Resolver<ResolversTypes['PlayerMatchScore'], ParentType, ContextType, RequireFields<MutationUpdatePlayerMatchScoreArgs, 'id' | 'input'>>;
   updatePlayerTournamentScore?: Resolver<ResolversTypes['PlayerTournamentScore'], ParentType, ContextType, RequireFields<MutationUpdatePlayerTournamentScoreArgs, 'id' | 'input'>>;
   updateRound?: Resolver<ResolversTypes['Round'], ParentType, ContextType, RequireFields<MutationUpdateRoundArgs, 'id' | 'input'>>;

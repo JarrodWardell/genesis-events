@@ -17,103 +17,15 @@ import { ReactComponent as HomeIcon } from 'src/components/Icons/HomeIcon.svg'
 import { ReactComponent as TrophyIcon } from 'src/components/Icons/TrophyIcon.svg'
 import Truncate from 'react-truncate-html'
 import LoadingIcon from 'src/components/LoadingIcon/LoadingIcon'
-import { AtSymbolIcon } from '@heroicons/react/solid'
+import { AtSymbolIcon, ShareIcon } from '@heroicons/react/solid'
 import { BookOpenIcon } from '@heroicons/react/outline'
+import { VIEW_TOURNAMENT_FIELDS } from 'src/fragments/tourrnamentFragments'
 
 export const TOURNAMENT_BY_URL = gql`
+  ${VIEW_TOURNAMENT_FIELDS}
   query tournamentByUrl($url: String!) {
     tournamentByUrl: tournamentByUrl(url: $url) {
-      id
-      tournamentUrl
-      name
-      desc
-      type
-      startDate
-      dateStarted
-      dateEnded
-      maxPlayers
-      publicRegistration
-      timerLeftInSeconds
-      timerStatus
-      startingTimerInSeconds
-      timerLastUpdated
-      lat
-      lng
-      locationName
-      street1
-      city
-      country
-      state
-      zip
-      owner {
-        nickname
-      }
-      ownerId
-      store {
-        name
-        email
-      }
-      players {
-        id
-        score
-        wins
-        byes
-        draws
-        losses
-        active
-        playerName
-        player {
-          id
-          nickname
-          photo {
-            url
-            smallUrl
-            name
-          }
-        }
-      }
-      winners {
-        id
-        wonTournament
-        playerName
-        score
-        wins
-        byes
-        draws
-        losses
-        player {
-          id
-          nickname
-        }
-      }
-      round {
-        id
-        roundNumber
-        roundTimerLeftInSeconds
-        matches {
-          id
-          players {
-            id
-            playerName
-            score
-            bye
-            wonMatch
-            userId
-            user {
-              id
-              nickname
-              photo {
-                url
-                smallUrl
-                name
-              }
-            }
-          }
-          updatedAt
-        }
-        createdAt
-      }
-      active
+      ...ViewTournamentFields
     }
   }
 `
@@ -139,6 +51,7 @@ const ViewTournamentPage = ({ url, tab, tabOptions }) => {
   }
   const { currentUser, hasRole } = useAuth()
   const [expandedDesc, setExpandedDesc] = React.useState(false)
+  const [currTournament, setCurrTournament] = React.useState({})
 
   if (!tab || tab === '' || !(tab in TABS)) {
     return <Redirect to={`/tournament/${url}/${TABS.rounds.path}`} />
@@ -146,11 +59,18 @@ const ViewTournamentPage = ({ url, tab, tabOptions }) => {
 
   const {
     loading,
-    error,
-    data: { tournamentByUrl: tournament } = {},
+    data: { tournamentByUrl: tournament } = {
+      players: [],
+      round: [],
+      winners: [],
+    },
+    // eslint-disable-next-line react-hooks/rules-of-hooks
   } = useQuery(TOURNAMENT_BY_URL, {
     variables: { url },
     pollInterval: 10000,
+    onCompleted: (data) => {
+      setCurrTournament(data?.tournamentByUrl)
+    },
   })
 
   const renderTabNav = () => {
@@ -177,16 +97,32 @@ const ViewTournamentPage = ({ url, tab, tabOptions }) => {
       case TABS.rounds.path:
         return (
           <TournamentRoundsTab
-            tournament={tournament}
+            tournament={currTournament}
+            setTournament={setCurrTournament}
             roundNumber={tabOptions}
           />
         )
       case TABS.leaderboard.path:
-        return <TournamentLeaderboardTab tournament={tournament} />
+        return (
+          <TournamentLeaderboardTab
+            tournament={currTournament}
+            setTournament={setCurrTournament}
+          />
+        )
       case TABS.matches.path:
-        return <TournamentMatchesTab tournament={tournament} />
+        return (
+          <TournamentMatchesTab
+            tournament={currTournament}
+            setTournament={setCurrTournament}
+          />
+        )
       case TABS.signup.path:
-        return <TournamentSignupTab tournament={tournament} />
+        return (
+          <TournamentSignupTab
+            tournament={currTournament}
+            setTournament={setCurrTournament}
+          />
+        )
     }
   }
 
@@ -221,7 +157,17 @@ const ViewTournamentPage = ({ url, tab, tabOptions }) => {
               (tournamentActive || !tournament.active ? ' sm:w-5/6' : ' w-full')
             }
           >
-            <h1 className="text-xl">{name}</h1>
+            <h1 className="flex items-center text-xl w-full justify-between sm:w-auto sm:justify-start">
+              {name}
+              <div
+                className="cursor-pointer w-4 h-4 ml-2 hover:gray-300"
+                onClick={() =>
+                  navigate(`/tournament/${url}/${TABS.signup.path}#share`)
+                }
+              >
+                <ShareIcon />
+              </div>
+            </h1>
             <div className="py-2 my-2 border-gray-100 border-t-2 border-b-2 text-gray-400 leading-relaxed">
               <div className="flex items-center">
                 <div className="w-6 h-6 flex font-bold">
@@ -252,10 +198,12 @@ const ViewTournamentPage = ({ url, tab, tabOptions }) => {
                   <AtSymbolIcon />
                 </div>{' '}
                 <a
-                  className="ml-1"
-                  href={`mailto: ${tournament?.store?.email}`}
+                  className="ml-1 hover:text-blue-400"
+                  href={`mailto: ${
+                    tournament?.store?.email || tournament?.owner?.email
+                  }`}
                 >
-                  {tournament?.store?.email}
+                  {tournament?.store?.email || tournament?.owner?.email}
                 </a>
               </div>
               {tournament.type && (
@@ -272,7 +220,7 @@ const ViewTournamentPage = ({ url, tab, tabOptions }) => {
                 </div>{' '}
                 <span className="ml-1">
                   Recommended Number of Rounds:{' '}
-                  {calcNumRounds(tournament.players.length)}
+                  {calcNumRounds(tournament?.players?.length)}
                 </span>
               </div>
               <div className="flex items-center">
@@ -391,7 +339,12 @@ const ViewTournamentPage = ({ url, tab, tabOptions }) => {
                 : ' hidden')
             }
           >
-            {tournamentActive && <TournamentTimer tournament={tournament} />}
+            {tournamentActive && (
+              <TournamentTimer
+                tournament={currTournament}
+                setTournament={setCurrTournament}
+              />
+            )}
             {!tournament.active && (
               <div className="rounded-md bg-red-600 m-4 text-white p-2 text-center">
                 Tournament Cancelled

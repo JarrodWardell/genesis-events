@@ -4,6 +4,7 @@ import { Form, NumberField } from '@redwoodjs/forms/dist'
 import { useMutation } from '@redwoodjs/web'
 import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
+import { VIEW_TOURNAMENT_FIELDS } from 'src/fragments/tourrnamentFragments'
 import { logError } from 'src/helpers/errorLogger'
 import { checkTournamentPermissions } from 'src/helpers/tournamentHelper'
 import { TOURNAMENT_BY_URL } from 'src/pages/ViewTournamentPage/ViewTournamentPage'
@@ -12,58 +13,29 @@ import EditMatchDetails from '../EditMatchDetails/EditMatchDetails'
 import PlayerProfileItem from '../PlayerProfileItem/PlayerProfileItem'
 
 const SUBMIT_MATCH_DETAILS = gql`
+  ${VIEW_TOURNAMENT_FIELDS}
   mutation addMatchScore($input: TournamentMatchScoreInput!) {
     addMatchScore(input: $input) {
-      id
-      players {
-        id
-        playerName
-        score
-        bye
-        wonMatch
-        userId
-        user {
-          id
-          nickname
-          photo {
-            url
-            smallUrl
-            name
-          }
-        }
-      }
-      updatedAt
+      ...ViewTournamentFields
     }
   }
 `
 
 const UPDATE_MATCH_DETAILS = gql`
+  ${VIEW_TOURNAMENT_FIELDS}
   mutation updateMatchScore($input: TournamentMatchScoreInput!) {
     updateMatchScore(input: $input) {
-      id
-      players {
-        id
-        playerName
-        score
-        bye
-        wonMatch
-        userId
-        user {
-          id
-          nickname
-          photo {
-            url
-            smallUrl
-            name
-          }
-        }
-      }
-      updatedAt
+      ...ViewTournamentFields
     }
   }
 `
 
-const MatchDetails = ({ index, match = { players: [] }, tournament }) => {
+const MatchDetails = ({
+  index,
+  match = { players: [] },
+  tournament,
+  setTournament,
+}) => {
   const { currentUser, hasRole } = useAuth()
   const [edit, setEdit] = React.useState(false)
   const [addedScore, setAddedScore] = React.useState(false)
@@ -73,8 +45,8 @@ const MatchDetails = ({ index, match = { players: [] }, tournament }) => {
     SUBMIT_MATCH_DETAILS,
     {
       onCompleted: (data) => {
+        setTournament(data.addMatchScore)
         toast.success(`Successfully Added Score`)
-        setCurrentMatch({ ...data.addMatchScore })
         setAddedScore(true)
       },
       onError: (error) => {
@@ -84,12 +56,6 @@ const MatchDetails = ({ index, match = { players: [] }, tournament }) => {
           showToast: true,
         })
       },
-      refetchQueries: [
-        {
-          query: TOURNAMENT_BY_URL,
-          variables: { url: tournament.tournamentUrl },
-        },
-      ],
     }
   )
 
@@ -97,8 +63,8 @@ const MatchDetails = ({ index, match = { players: [] }, tournament }) => {
     UPDATE_MATCH_DETAILS,
     {
       onCompleted: (data) => {
+        setTournament(data.updateMatchScore)
         toast.success(`Successfully Updated Score`)
-        setCurrentMatch({ ...data.updateMatchScore })
         setEdit(false)
       },
       onError: (error) => {
@@ -108,12 +74,6 @@ const MatchDetails = ({ index, match = { players: [] }, tournament }) => {
           showToast: true,
         })
       },
-      refetchQueries: [
-        {
-          query: TOURNAMENT_BY_URL,
-          variables: { url: tournament.tournamentUrl },
-        },
-      ],
     }
   )
 

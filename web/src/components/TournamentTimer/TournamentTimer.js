@@ -2,21 +2,20 @@ import { useAuth } from '@redwoodjs/auth'
 import { useMutation } from '@redwoodjs/web'
 import InputMask from 'react-input-mask'
 import { checkTournamentPermissions } from 'src/helpers/tournamentHelper'
-import { TOURNAMENT_BY_URL } from 'src/pages/ViewTournamentPage/ViewTournamentPage'
 import { ReactComponent as ClockIcon } from 'src/components/Icons/ClockIcon.svg'
+import { VIEW_TOURNAMENT_FIELDS } from 'src/fragments/tourrnamentFragments'
+import { logError } from 'src/helpers/errorLogger'
 
 export const UPDATE_TIMER = gql`
+  ${VIEW_TOURNAMENT_FIELDS}
   mutation updateTimer($input: TimerInput!) {
     updateTimer: updateTimer(input: $input) {
-      timerLeftInSeconds
-      timerStatus
-      startingTimerInSeconds
-      timerLastUpdated
+      ...ViewTournamentFields
     }
   }
 `
 
-const TournamentTimer = ({ tournament }) => {
+const TournamentTimer = ({ tournament, setTournament }) => {
   const [timerInput, setTimerInput] = React.useState('060:00')
   const [timerStatus, setTimerStatus] = React.useState('PENDING')
   const [startingTimerInSeconds, setStartingTimerInSeconds] =
@@ -24,13 +23,17 @@ const TournamentTimer = ({ tournament }) => {
   const [timerInSeconds, setTimerSeconds] = React.useState(null)
   const [confirmStop, setConfirmStop] = React.useState(false)
   const { currentUser, hasRole } = useAuth()
-  const [updateTimer, { loading, error }] = useMutation(UPDATE_TIMER, {
-    refetchQueries: [
-      {
-        query: TOURNAMENT_BY_URL,
-        variables: { url: tournament.tournamentUrl },
-      },
-    ],
+  const [updateTimer, { loading }] = useMutation(UPDATE_TIMER, {
+    onCompleted: (data) => {
+      setTournament(data.updateTimer)
+    },
+    onError: (error) => {
+      logError({
+        error,
+        log: true,
+        showToast: true,
+      })
+    },
   })
 
   React.useEffect(() => {
@@ -113,16 +116,19 @@ const TournamentTimer = ({ tournament }) => {
 
   const endTimer = () => {
     setTimerStatus('STOPPED')
+    setConfirmStop(false)
     updateTimer({
       variables: {
         input: {
           tournamentId: tournament.id,
-          startingTimerInSeconds,
-          timerLeftInSeconds: timerInSeconds,
+          startingTimerInSeconds: timerInSeconds,
+          timerLeftInSeconds: null,
           timerStatus: 'STOPPED',
         },
       },
     })
+    setStartingTimerInSeconds(timerInSeconds)
+    setTimerSeconds(null)
   }
 
   const formatTime = (timerInSeconds) => {
@@ -249,7 +255,7 @@ const TournamentTimer = ({ tournament }) => {
           </div>
           {renderButtons()}
         </div>
-      ) : (
+      ) : checkTournamentPermissions({ hasRole, currentUser, tournament }) ? (
         <div className="flex flex-col">
           <div className="border-gray-100 border-b-2 pb-1 flex flex-row">
             <span>
@@ -280,7 +286,7 @@ const TournamentTimer = ({ tournament }) => {
 
           {renderButtons()}
         </div>
-      )}
+      ) : null}
     </>
   )
 }
