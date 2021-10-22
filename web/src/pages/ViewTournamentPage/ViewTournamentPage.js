@@ -198,7 +198,7 @@ const ViewTournamentPage = ({ url, tab, tabOptions }) => {
                   <AtSymbolIcon />
                 </div>{' '}
                 <a
-                  className="ml-1"
+                  className="ml-1 hover:text-blue-400"
                   href={`mailto: ${
                     tournament?.store?.email || tournament?.owner?.email
                   }`}
