@@ -10,7 +10,7 @@ import {
   CheckboxField,
 } from '@redwoodjs/forms'
 import { useMutation } from '@redwoodjs/web'
-import { useForm, Controller } from 'react-hook-form'
+import { useForm, Controller } from '@redwoodjs/forms'
 import GooglePlacesAutocomplete from 'react-google-places-autocomplete'
 import CreatableSelect from 'react-select/creatable'
 import Select from 'react-select'

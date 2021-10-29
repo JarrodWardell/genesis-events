@@ -1,6 +1,6 @@
 import { XIcon } from '@heroicons/react/solid'
 import { Form, NumberField } from '@redwoodjs/forms/dist'
-import { useForm } from 'react-hook-form'
+import { useForm } from '@redwoodjs/forms'
 import Button from '../Button/Button'
 import PlayerProfileItem from '../PlayerProfileItem/PlayerProfileItem'
 

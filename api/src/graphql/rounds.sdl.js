@@ -13,8 +13,8 @@ export const schema = gql`
   }
 
   type Query {
-    rounds: [Round!]!
-    round(id: Int!): Round
+    rounds: [Round!]! @requireAuth
+    round(id: Int!): Round @requireAuth
   }
 
   input CreateRoundInput {
@@ -34,8 +34,8 @@ export const schema = gql`
   }
 
   type Mutation {
-    createRound(input: CreateRoundInput!): Round!
-    updateRound(id: Int!, input: UpdateRoundInput!): Round!
-    deleteRound(id: Int!): Round!
+    createRound(input: CreateRoundInput!): Round! @requireAuth
+    updateRound(id: Int!, input: UpdateRoundInput!): Round! @requireAuth
+    deleteRound(id: Int!): Round! @requireAuth
   }
 `

@@ -3,19 +3,7 @@
 
 import { PrismaClient } from '@prisma/client'
 
-import { emitLogLevels, handlePrismaLogging } from '@redwoodjs/api/logger'
-
-import { logger } from './logger'
-
 /*
  * Instance of the Prisma Client
  */
-export const db = new PrismaClient({
-  log: emitLogLevels(['warn', 'error', 'query']),
-})
-
-handlePrismaLogging({
-  db,
-  logger,
-  logLevels: ['warn', 'error'],
-})
+export const db = new PrismaClient({})

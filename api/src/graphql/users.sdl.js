@@ -51,9 +51,9 @@ export const schema = gql`
   }
 
   type Query {
-    users(searchTerm: String): [User!]!
-    user(id: String!): User
-    checkNickname(nickname: String): Boolean!
+    users(searchTerm: String): [User!]! @requireAuth
+    user(id: String!): User @requireAuth
+    checkNickname(nickname: String): Boolean! @skipAuth
   }
 
   input CreateUserInput {
@@ -122,8 +122,11 @@ export const schema = gql`
   }
 
   type Mutation {
-    createUser(input: CreateUserInput!, storeInput: CreateUserStoreInput): User!
-    updateUser(id: String!, input: UpdateUserInput!): User!
-    deleteUser(id: String!): User!
+    createUser(
+      input: CreateUserInput!
+      storeInput: CreateUserStoreInput
+    ): User! @skipAuth
+    updateUser(id: String!, input: UpdateUserInput!): User! @requireAuth
+    deleteUser(id: String!): User! @requireAuth
   }
 `
