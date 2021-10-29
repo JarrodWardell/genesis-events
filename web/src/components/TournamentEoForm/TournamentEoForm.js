@@ -8,9 +8,10 @@ import {
   NumberField,
   HiddenField,
   CheckboxField,
+  useForm,
+  Controller,
 } from '@redwoodjs/forms'
 import { useMutation } from '@redwoodjs/web'
-import { useForm, Controller } from '@redwoodjs/forms'
 import GooglePlacesAutocomplete from 'react-google-places-autocomplete'
 import CreatableSelect from 'react-select/creatable'
 import Select from 'react-select'
@@ -307,7 +308,7 @@ const TournamentEOForm = ({ tournament }) => {
               rules={{
                 required: true,
               }}
-              render={({ name, value, onChange, ref, onBlur }) => (
+              render={({ field: { name, value, onChange, ref, onBlur } }) => (
                 <ReactDatePicker
                   onChange={onChange}
                   selected={value}
@@ -360,12 +361,11 @@ const TournamentEOForm = ({ tournament }) => {
               Tournament Type
             </Label>
             <Controller
-              control={formMethods.control}
               name="type"
               rules={{
                 required: true,
               }}
-              render={({ onChange, value, name, ref }) => (
+              render={({ field: { name, ref, onChange, value } }) => (
                 <Select
                   name={name}
                   inputRef={ref}

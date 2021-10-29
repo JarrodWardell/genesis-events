@@ -1,16 +1,16 @@
 import { useAuth } from '@redwoodjs/auth'
 import {
-  DateField,
   Form,
   Label,
   Submit,
   TextField,
-} from '@redwoodjs/forms/dist'
+  useForm,
+  Controller,
+} from '@redwoodjs/forms'
 import FormError from '@redwoodjs/forms/dist/FormError'
 import NicknameCheckField from '../NicknameCheckField/NicknameCheckField'
 import ProfilePicture from '../ProfilePicture/ProfilePicture'
 import UserPictureSelector from '../UserPictureSelector/UserPictureSelector'
-import { useForm, Controller } from '@redwoodjs/forms'
 import { useMutation } from '@redwoodjs/web'
 import toast from 'react-hot-toast'
 import DatePicker from 'react-datepicker'
@@ -229,7 +229,7 @@ const UserSettingsTab = () => {
                 rules={{
                   required: true,
                 }}
-                render={({ name, value, onChange, ref, onBlur }) => (
+                render={({ field: { name, value, onChange, ref, onBlur } }) => (
                   <DatePicker
                     onChange={onChange}
                     selected={value}
