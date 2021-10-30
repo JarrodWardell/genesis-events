@@ -87,7 +87,7 @@ const LeaderboardPage = () => {
           (playerLeaderboard?.leaderboard?.length === 0 ||
             !playerLeaderboard?.leaderboard) && (
             <tr>
-              <td rowSpan="6" colSpan="4" className="py-8 w-full">
+              <td rowSpan="6" colSpan="6" className="py-8 w-full">
                 <div className="w-full flex flex-col justify-center items-center">
                   <LoadingIcon size={'44px'} />
                 </div>
@@ -99,7 +99,7 @@ const LeaderboardPage = () => {
           (nicknameSearch ? (
             <td
               rowSpan="6"
-              colSpan="4"
+              colSpan="6"
               className="text-gray-500 text-lg text-center py-8"
             >
               No players found with that nickname.
@@ -107,7 +107,7 @@ const LeaderboardPage = () => {
           ) : (
             <td
               rowSpan="6"
-              colSpan="4"
+              colSpan="6"
               className="text-gray-500 text-lg text-center py-8"
             >
               No tournaments have been completed.
