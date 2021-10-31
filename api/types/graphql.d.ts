@@ -1335,6 +1335,10 @@ export type ResolversParentTypes = {
   UserUserRole: UserUserRole;
 };
 
+export type AdminOnlyDirectiveArgs = { };
+
+export type AdminOnlyDirectiveResolver<Result, Parent, ContextType = any, Args = AdminOnlyDirectiveArgs> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
+
 export type RequireAuthDirectiveArgs = {
   roles?: Maybe<Array<Maybe<Scalars['String']>>>;
 };
@@ -1750,6 +1754,7 @@ export type Resolvers<ContextType = any> = {
 };
 
 export type DirectiveResolvers<ContextType = any> = {
+  adminOnly?: AdminOnlyDirectiveResolver<any, any, ContextType>;
   requireAuth?: RequireAuthDirectiveResolver<any, any, ContextType>;
   skipAuth?: SkipAuthDirectiveResolver<any, any, ContextType>;
 };

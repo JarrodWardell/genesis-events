@@ -55,8 +55,13 @@ export const getCurrentUser = async (decoded, { token, type }) => {
   return { email, uid, user, roles, stores }
 }
 
-export const requireAuth = () => {
+export const requireAuth = ({ roles = [] }) => {
   if (!context.currentUser) {
+    throw new AuthenticationError("You don't have permission to do that.")
+  }
+
+  let userRoles = context.currentUser.roles
+  if (roles.length > 0 && roles.indexOf(userRoles[0]) === -1) {
     throw new AuthenticationError("You don't have permission to do that.")
   }
 }

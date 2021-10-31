@@ -33,8 +33,8 @@ export const schema = gql`
       skip: Int
       take: Int
     ): PaginatedLeaderboard @skipAuth
-    playerTournamentScores: [PlayerTournamentScore!]! @requireAuth
-    playerTournamentScore(id: Int!): PlayerTournamentScore @requireAuth
+    playerTournamentScores: [PlayerTournamentScore!]! @adminOnly
+    playerTournamentScore(id: Int!): PlayerTournamentScore @adminOnly
   }
 
   input CreatePlayerTournamentScoreInput {
@@ -66,11 +66,11 @@ export const schema = gql`
   type Mutation {
     createPlayerTournamentScore(
       input: CreatePlayerTournamentScoreInput!
-    ): PlayerTournamentScore! @requireAuth
+    ): PlayerTournamentScore! @adminOnly
     updatePlayerTournamentScore(
       id: Int!
       input: UpdatePlayerTournamentScoreInput!
-    ): PlayerTournamentScore! @requireAuth
-    deletePlayerTournamentScore(id: Int!): PlayerTournamentScore! @requireAuth
+    ): PlayerTournamentScore! @adminOnly
+    deletePlayerTournamentScore(id: Int!): PlayerTournamentScore! @adminOnly
   }
 `

@@ -12,8 +12,8 @@ export const schema = gql`
   }
 
   type Query {
-    matches: [Match!]! @requireAuth
-    match(id: Int!): Match @requireAuth
+    matches: [Match!]! @adminOnly
+    match(id: Int!): Match @adminOnly
   }
 
   input CreateMatchInput {
@@ -29,8 +29,8 @@ export const schema = gql`
   }
 
   type Mutation {
-    createMatch(input: CreateMatchInput!): Match! @requireAuth
-    updateMatch(id: Int!, input: UpdateMatchInput!): Match! @requireAuth
-    deleteMatch(id: Int!): Match! @requireAuth
+    createMatch(input: CreateMatchInput!): Match! @adminOnly
+    updateMatch(id: Int!, input: UpdateMatchInput!): Match! @adminOnly
+    deleteMatch(id: Int!): Match! @adminOnly
   }
 `

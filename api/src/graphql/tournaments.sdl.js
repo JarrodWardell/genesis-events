@@ -183,10 +183,10 @@ export const schema = gql`
 
   type Query {
     tournaments(searchTerm: String, orderBy: OrderByInput): [Tournament!]!
-      @skipAuth
+      @adminOnly
     searchTournaments(input: SearchTournamentInput!): PaginatedTournaments!
       @skipAuth
-    tournament(id: Int!): Tournament @requireAuth
+    tournament(id: Int!): Tournament @adminOnly
     tournamentByUrl(url: String): Tournament @requireAuth
     myTournaments: [Tournament!]! @skipAuth
     currentTournaments(input: SearchTournamentInput): [Tournament!]! @skipAuth
@@ -321,7 +321,7 @@ export const schema = gql`
     updateTournament(id: Int!, input: UpdateTournamentInput!): Tournament!
       @requireAuth
     addPlayer(id: Int!, input: AddPlayerInput!): Tournament! @requireAuth
-    deleteTournament(id: Int!): Tournament! @requireAuth
+    deleteTournament(id: Int!): Tournament! @adminOnly
     registerForTournament(id: Int!): String! @requireAuth
     startTournament(id: Int!): Tournament! @requireAuth
     updateTimer(input: TimerInput!): Tournament! @requireAuth

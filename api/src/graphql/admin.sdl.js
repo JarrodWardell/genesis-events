@@ -1,7 +1,7 @@
 export const schema = gql`
   type Mutation {
-    seedSingleTournament(id: Int!, numPlayers: Int): Tournament @requireAuth
+    seedSingleTournament(id: Int!, numPlayers: Int): Tournament @adminOnly
     seedTournaments(country: String, numTournaments: Int): [Tournament]!
-      @requireAuth
+      @adminOnly
   }
 `

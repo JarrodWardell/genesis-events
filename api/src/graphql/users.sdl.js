@@ -51,8 +51,8 @@ export const schema = gql`
   }
 
   type Query {
-    users(searchTerm: String): [User!]! @requireAuth
-    user(id: String!): User @requireAuth
+    users(searchTerm: String): [User!]! @adminOnly
+    user(id: String!): User @adminOnly
     checkNickname(nickname: String): Boolean! @skipAuth
   }
 
@@ -127,6 +127,6 @@ export const schema = gql`
       storeInput: CreateUserStoreInput
     ): User! @skipAuth
     updateUser(id: String!, input: UpdateUserInput!): User! @requireAuth
-    deleteUser(id: String!): User! @requireAuth
+    deleteUser(id: String!): User! @adminOnly
   }
 `
