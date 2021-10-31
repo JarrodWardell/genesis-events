@@ -48,7 +48,6 @@ export const composeMatchArrays = ({
   matches = [],
   lastRoundMatches = [],
 }) => {
-  console.log(lastRoundMatches)
   let matchArray = []
   let lastPlayed = {}
   lastRoundMatches.forEach((match) => {
@@ -61,8 +60,6 @@ export const composeMatchArrays = ({
       lastPlayed[player1] = player2
     }
   })
-
-  console.log(lastPlayed)
 
   let numberOfRuns = 0
   let setReRun = true
@@ -174,7 +171,7 @@ export const composeMatchArrays = ({
         playersNotGivenMatches.splice(playersNotGivenMatches.indexOf(player), 1)
         let playersProhibited = [...playersGivenMatches]
 
-        if (playerList.length > 2 && lastRoundMatches.length > 0) {
+        if (playersNotGivenMatches.length > 2 && lastRoundMatches.length > 0) {
           playersProhibited = [...playersProhibited, lastPlayed[player]]
         }
 
@@ -206,20 +203,6 @@ export const composeMatchArrays = ({
   }
 
   return matchArray
-}
-
-const randomizedArray = (arr) =>
-  arr
-    .map((a) => ({ sort: Math.random(), value: a }))
-    .sort((a, b) => a.sort - b.sort)
-    .map((a) => a.value)
-
-export const calcNumRounds = (numPlayers, power = 1) => {
-  if (2 ** power >= numPlayers) {
-    return power
-  } else {
-    return calcNumRounds(numPlayers, power + 1)
-  }
 }
 
 export const findOpponent = ({
@@ -289,4 +272,18 @@ export const findOpponent = ({
 
   //Return ChosenOpponent
   return { opponent: chosenOpponent, rerun }
+}
+
+const randomizedArray = (arr) =>
+  arr
+    .map((a) => ({ sort: Math.random(), value: a }))
+    .sort((a, b) => a.sort - b.sort)
+    .map((a) => a.value)
+
+export const calcNumRounds = (numPlayers, power = 1) => {
+  if (2 ** power >= numPlayers) {
+    return power
+  } else {
+    return calcNumRounds(numPlayers, power + 1)
+  }
 }

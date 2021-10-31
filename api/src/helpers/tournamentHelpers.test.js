@@ -47,15 +47,13 @@ const checkNoRematch = ({ oldMatches = [], newMatches = [] }) => {
 
     if (
       playersPlayed[player1].indexOf(player2) !== -1 ||
-      playersPlayed[player2].indexOf(player1) !== -1
+      playersPlayed[player2]?.indexOf(player1) !== -1
     ) {
       anyRematch = false
     }
   })
 
   return anyRematch
-
-  //Compare new matches with object
 }
 
 const checkCorrectScoreDifferential = ({ players = [], matches = [] }) => {
@@ -368,6 +366,54 @@ describe('Matching Algorithm', () => {
     expect(
       checkNoRematch({ oldMatches: matches, newMatches: composedMatches })
     ).toBe(false)
+  })
+
+  it('Correctly ensures no rematches for 6 players when there is a draw', () => {
+    let players = [
+      returnPlayer({ name: 'player1', score: 1, wins: 1, losses: 0 }),
+      returnPlayer({ name: 'player2', score: 0, wins: 0, losses: 1 }),
+      returnPlayer({ name: 'player3', score: 1, wins: 1, losses: 0 }),
+      returnPlayer({ name: 'player4', score: 0, wins: 0, losses: 1 }),
+      returnPlayer({
+        name: 'player5',
+        score: 0.5,
+        wins: 0,
+        losses: 0,
+        draws: 1,
+      }),
+      returnPlayer({
+        name: 'player6',
+        score: 0.5,
+        wins: 0,
+        losses: 0,
+        draws: 1,
+      }),
+    ]
+
+    let matches = [
+      {
+        players: [players[0], players[1]],
+      },
+      {
+        players: [players[2], players[3]],
+      },
+      {
+        players: [players[4], players[5]],
+      },
+    ]
+
+    //In 100 scenarios, ensure there is never an end result of a player playing against the same player twice in a row
+    for (var i = 0; i < 100; i++) {
+      let composedMatches = composeMatchArrays({
+        players,
+        matches,
+        lastRoundMatches: matches,
+      })
+
+      expect(
+        checkNoRematch({ oldMatches: matches, newMatches: composedMatches })
+      ).toBe(true)
+    }
   })
 })
 
