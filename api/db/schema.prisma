@@ -1,7 +1,6 @@
 generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["orderByAggregateGroup"]
-  binaryTargets   = ["native"]
+  provider      = "prisma-client-js"
+  binaryTargets = ["native"]
 }
 
 datasource DS {
@@ -47,8 +46,8 @@ model User {
   matches           PlayerMatchScore[]
   tournamentsPlayed PlayerTournamentScore[]
   providers         Provider[]
+  storesApproved    Store[]                 @relation("StoreApprover")
   Store             Store[]
-  storesApproved    Store[] @relation("StoreApprover")
   tournamentsOwned  Tournament[]            @relation("TournamentOwner")
   Tournament        Tournament[]
   UserUserRole      UserUserRole[]
@@ -57,6 +56,7 @@ model User {
 model Store {
   id          String       @id @default(uuid())
   name        String
+  ownerId     String
   email       String
   phone       String
   lat         Float?
@@ -70,10 +70,9 @@ model Store {
   distributor String
   approved    Boolean?
   approvedOn  DateTime?
-  approvedBy  User? @relation("StoreApprover", fields: [approverId], references: [id])
-  approverId String?
   active      Boolean      @default(true)
-  ownerId     String
+  approverId  String?
+  approvedBy  User?        @relation("StoreApprover", fields: [approverId], references: [id])
   owner       User         @relation(fields: [ownerId], references: [id])
   tournaments Tournament[]
 }
@@ -87,8 +86,6 @@ model UserUserRole {
   updatedAt  DateTime @default(now())
   user       User     @relation(fields: [userId], references: [id])
   userRole   UserRole @relation(fields: [userRoleId], references: [id])
-
-  @@unique([userId, userRoleId], name: "UserUserRole.userId_userRoleId_unique")
 }
 
 model UserRole {
@@ -103,11 +100,11 @@ model UserPicture {
   id        Int      @id @default(autoincrement())
   name      String?
   url       String
-  smallUrl  String?
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
-  user      User[]
+  smallUrl  String?
   active    Boolean? @default(true)
+  user      User[]
 }
 
 model Tournament {
@@ -118,7 +115,6 @@ model Tournament {
   dateStarted            DateTime?
   dateEnded              DateTime?
   maxPlayers             Int
-  type                   String?
   locationName           String
   infoUrl                String?
   street1                String?
@@ -131,7 +127,6 @@ model Tournament {
   lng                    Float?
   storeId                String?
   ownerId                String?
-  publicRegistration     Boolean                 @default(true)
   createdAt              DateTime                @default(now())
   updatedAt              DateTime                @default(now())
   userId                 String?
@@ -141,6 +136,8 @@ model Tournament {
   timerLeftInSeconds     Int?
   timerStatus            TimerStatus?
   timerLastUpdated       DateTime?
+  publicRegistration     Boolean                 @default(true)
+  type                   String?
   owner                  User?                   @relation("TournamentOwner", fields: [ownerId], references: [id])
   store                  Store?                  @relation(fields: [storeId], references: [id])
   user                   User?                   @relation(fields: [userId], references: [id])
@@ -164,23 +161,21 @@ model Round {
 
 model PlayerTournamentScore {
   id            Int        @id @default(autoincrement())
-  wins          Int        @default(0)
-  losses        Int        @default(0)
-  score         Float      @default(0)
+  playerId      String?
   tournamentId  Int
   createdAt     DateTime   @default(now())
   updatedAt     DateTime   @default(now())
-  draws         Int        @default(0)
   byes          Int        @default(0)
-  randomizer    String?
   active        Boolean    @default(true)
   wonTournament Boolean    @default(false)
-  playerName  String?
-  playerId      String?
-  player        User?       @relation(fields: [playerId], references: [id])
+  draws         Int        @default(0)
+  losses        Int        @default(0)
+  randomizer    String?
+  score         Float      @default(0)
+  wins          Int        @default(0)
+  playerName    String?
+  player        User?      @relation(fields: [playerId], references: [id])
   tournament    Tournament @relation(fields: [tournamentId], references: [id])
-
-  @@unique([playerId, tournamentId], name: "PlayerTournamentScore.playerId_tournamentId_unique")
 }
 
 model Match {
@@ -196,20 +191,18 @@ model Match {
 }
 
 model PlayerMatchScore {
-  id        Int      @id @default(autoincrement())
-  score     Int?
-  matchId   Int
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
-  wonMatch  Boolean?  @default(false)
-  bye       Boolean  @default(false)
-  active    Boolean  @default(true)
-  match     Match    @relation(fields: [matchId], references: [id])
-  playerName  String?
-  userId    String?
-  user      User?     @relation(fields: [userId], references: [id])
-
-  @@unique([userId, matchId], name: "PlayerMatchScore.userId_matchId_unique")
+  id         Int      @id @default(autoincrement())
+  score      Int?
+  userId     String?
+  matchId    Int
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now())
+  wonMatch   Boolean? @default(false)
+  bye        Boolean  @default(false)
+  active     Boolean  @default(true)
+  playerName String?
+  match      Match    @relation(fields: [matchId], references: [id])
+  user       User?    @relation(fields: [userId], references: [id])
 }
 
 model Contact {
@@ -227,27 +220,27 @@ model Banner {
   id                         Int              @id @default(autoincrement())
   backgroundUrl              String
   mainText                   String?          @default("#8D929E")
-  mainTextColor              String?          @default("white")
-  mainTextFontSize           Int?             @default(48)
   subText                    String?
-  subTextColor               String?
-  subTextFontSize            Int?             @default(36)
-  textPlacement              Placement?
   button1Link                String?
   button1Text                String?
-  button1BackgroundColor     String?          @default("#047857")
-  button1TextColor           String?          @default("white")
   button2Link                String?
   button2Text                String?
-  button2BackgroundColor     String?          @default("white")
-  button2TextColor           String?          @default("#007B54")
-  buttonsFontSize            Int?             @default(24)
-  buttonsVerticalPlacement   Placement?
-  buttonsHorizontalPlacement Placement?
-  condition                  BannerCondition?
   createdAt                  DateTime         @default(now())
   updatedAt                  DateTime         @default(now())
   active                     Boolean          @default(true)
+  condition                  BannerCondition?
+  mainTextColor              String?          @default("white")
+  mainTextFontSize           Int?             @default(48)
+  subTextColor               String?
+  subTextFontSize            Int?             @default(36)
+  textPlacement              Placement?
+  buttonsVerticalPlacement   Placement?
+  buttonsHorizontalPlacement Placement?
+  button1BackgroundColor     String?          @default("#047857")
+  button1TextColor           String?          @default("white")
+  button2BackgroundColor     String?          @default("white")
+  button2TextColor           String?          @default("#007B54")
+  buttonsFontSize            Int?             @default(24)
 }
 
 enum Placement {
@@ -257,11 +250,11 @@ enum Placement {
 }
 
 enum BannerCondition {
-  ALL
   GUEST
   LOGGEDIN
   EO
   PLAYER
+  ALL
 }
 
 enum TimerStatus {

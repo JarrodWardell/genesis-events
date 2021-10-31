@@ -141,17 +141,16 @@ const TournamentNotStarted = ({
             )
           )}
 
-          {hasRole(['PLAYER']) ||
-            (!currentUser && (
-              <button
-                className="flex items-center mx-auto py-2 px-8 text-center bg-white rounded-md border-2 cursor-pointer hover:bg-green-600 uppercase"
-                onClick={() =>
-                  navigate(`/tournament/${tournament.tournamentUrl}/signup`)
-                }
-              >
-                Sign Up Here
-              </button>
-            ))}
+          {(hasRole('PLAYER') || !currentUser) && (
+            <button
+              className="flex items-center mx-auto py-2 px-8 text-center bg-white rounded-md border-2 cursor-pointer hover:bg-green-600 uppercase"
+              onClick={() =>
+                navigate(`/tournament/${tournament.tournamentUrl}/signup`)
+              }
+            >
+              Sign Up Here
+            </button>
+          )}
         </div>
       )}
 

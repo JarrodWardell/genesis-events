@@ -1,5 +1,5 @@
 import { Form, Label, PasswordField, Submit } from '@redwoodjs/forms/dist'
-import { useForm } from 'react-hook-form'
+import { useForm } from '@redwoodjs/forms'
 import Button from '../Button/Button'
 
 const PasswordCheck = ({

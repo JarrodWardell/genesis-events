@@ -23,9 +23,9 @@ export const schema = gql`
   }
 
   type Query {
-    stores(searchTerm: String): [Store!]!
-    activeStores(searchTerm: String): [Store!]!
-    store(id: String!): Store
+    stores(searchTerm: String): [Store!]! @adminOnly
+    activeStores(searchTerm: String): [Store!]! @skipAuth
+    store(id: String!): Store @adminOnly
   }
 
   input CreateStoreInput {
@@ -65,8 +65,8 @@ export const schema = gql`
   }
 
   type Mutation {
-    createStore(input: CreateStoreInput!): Store!
-    updateStore(id: String!, input: UpdateStoreInput!): Store!
-    deleteStore(id: String!): Store!
+    createStore(input: CreateStoreInput!): Store! @adminOnly
+    updateStore(id: String!, input: UpdateStoreInput!): Store! @adminOnly
+    deleteStore(id: String!): Store! @adminOnly
   }
 `

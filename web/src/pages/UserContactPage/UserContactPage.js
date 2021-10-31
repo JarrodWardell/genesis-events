@@ -10,7 +10,7 @@ import {
 import FormError from '@redwoodjs/forms/dist/FormError'
 import { useMutation } from '@redwoodjs/web'
 import toast from 'react-hot-toast'
-import { useForm } from 'react-hook-form'
+import { useForm } from '@redwoodjs/forms'
 import Button from 'src/components/Button/Button'
 import { logError } from 'src/helpers/errorLogger'
 

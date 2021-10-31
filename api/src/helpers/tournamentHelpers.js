@@ -1,14 +1,3 @@
-export const randomWordGenerator = (length = 8) => {
-  var result = []
-  var characters =
-    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
-  var charactersLength = characters.length
-  for (var i = 0; i < length; i++) {
-    result.push(characters.charAt(Math.floor(Math.random() * charactersLength)))
-  }
-  return result.join('')
-}
-
 export const generateTournamentUrl = async (tournamentName, db) => {
   //Replace spaces in name with dashes
   let name = tournamentName.replaceAll(/[\W_]+/g, ' ')
@@ -35,147 +24,188 @@ export const generateMatches = async ({ roundNumber = 1, db, id }) => {
   const players = await db.tournament
     .findUnique({ where: { id } })
     .players({ where: { active: true } })
-  let playersNotGivenMatches = players.map((player) => player.id)
-  let playersGivenMatches = []
-  let playerScores = {}
 
-  let generatedMatches = []
-  let scoreObj = {}
-  let playersPlayed = {}
-
-  //Organize each user into a score differential
-  players.forEach((player) => {
-    let scoreDiff = player.wins - player.losses + 0.5 * player.draws
-    if (scoreDiff in scoreObj) {
-      scoreObj[scoreDiff].push(player.id)
-    } else {
-      scoreObj[scoreDiff] = [player.id]
-    }
-    playerScores[player.id] = scoreDiff
-  })
+  let matches = []
+  let lastRoundMatches = []
 
   if (roundNumber > 1) {
-    const matches = await db.tournament
+    matches = await db.tournament
       .findUnique({ where: { id } })
       .matches({ where: { active: true }, include: { players: true } })
-
-    //Go through all previous matches, find which players played which and add to the player dictionary
-    matches.forEach((match) => {
-      let player1 = match.players[0].userId
-      if (!(player1 in playersPlayed)) {
-        playersPlayed[player1] = []
-      }
-
-      if (match.players.length > 1) {
-        let player2 = match.players[1].userId
-
-        if (!(player2 in playersPlayed)) {
-          playersPlayed[player2] = []
-        }
-
-        playersPlayed[player1] = [...playersPlayed[player1], player2]
-        playersPlayed[player2] = [...playersPlayed[player2], player1]
-      }
-    })
   }
 
-  //Sort the score differentials
-  let scoreObjDiff = Object.keys(scoreObj)
-  scoreObjDiff.sort((a, b) => parseInt(a) - parseInt(b)).reverse()
-
-  let playerList = players.map((player) => player.id)
-
-  //If odd number of players, given lowest
-  if (playerList.length % 2 !== 0) {
-    let playerGivenBye = null
-
-    //Priority for byes: Players not given Byes, player with lowest score
-    randomizedArray(players).forEach((player, index) => {
-      if (index === 0) {
-        playerGivenBye = player
-      } else {
-        if (
-          player.byes <= playerGivenBye.byes &&
-          player.score < playerGivenBye.score
-        ) {
-          playerGivenBye = player
-        }
-      }
-    })
-
-    generatedMatches.push([playerGivenBye.id])
-    playersNotGivenMatches.splice(
-      playersNotGivenMatches.indexOf(playerGivenBye.id),
-      1
-    )
-
-    playersGivenMatches.push(playerGivenBye.id)
+  if (roundNumber > 1) {
+    lastRoundMatches = await db.round
+      .findFirst({ where: { tournamentId: id, roundNumber: roundNumber - 1 } })
+      .matches({ where: { active: true }, include: { players: true } })
   }
 
-  playerList.forEach((player) => {
-    if (playersNotGivenMatches.indexOf(player) !== -1) {
-      let match = []
-      let scoreDifToCheck = playerScores[player]
+  return composeMatchArrays({ players, matches, lastRoundMatches })
+}
 
-      let playersToAvoid = []
+export const composeMatchArrays = ({
+  players = [],
+  matches = [],
+  lastRoundMatches = [],
+}) => {
+  let matchArray = []
+  let lastPlayed = {}
+  lastRoundMatches.forEach((match) => {
+    let player1 = match.players[0].userId || match.players[0].playerName
 
-      scoreObjDiff.forEach((key) => {
-        //Players to avoid include players NOT with the same differential
-        if (parseInt(scoreDifToCheck) !== parseInt(key)) {
-          playersToAvoid = [...playersToAvoid, ...scoreObj[key]]
-        }
-      })
+    if (match.players.length > 1) {
+      let player2 = match.players[1].userId || match.players[1].playerName
 
-      let preferredPlayers = scoreObj[scoreDifToCheck]
-
-      //Players that player cannot play against include players who have been given matches
-      playersGivenMatches.push(player)
-
-      //Setup match for player (even if alone)
-      match.push(player)
-      playersNotGivenMatches.splice(playersNotGivenMatches.indexOf(player), 1)
-      let playersProhibited = [...playersGivenMatches]
-
-      let opponent = findOpponent({
-        preferredPlayers,
-        playersNotGivenMatches,
-        playersToAvoid,
-        playersProhibited,
-        playersPlayedAgainst:
-          player in playersPlayed ? playersPlayed[player] : [],
-      })
-
-      if (opponent) {
-        match.push(opponent)
-        playersGivenMatches.push(opponent)
-        playersNotGivenMatches.splice(
-          playersNotGivenMatches.indexOf(opponent),
-          1
-        )
-      }
-
-      generatedMatches.push(match)
+      lastPlayed[player2] = player1
+      lastPlayed[player1] = player2
     }
   })
 
-  return generatedMatches
-}
+  let numberOfRuns = 0
+  let setReRun = true
 
-const randomizedArray = (arr) =>
-  arr
-    .map((a) => ({ sort: Math.random(), value: a }))
-    .sort((a, b) => a.sort - b.sort)
-    .map((a) => a.value)
+  while (setReRun === true && numberOfRuns < 100) {
+    matchArray = []
+    setReRun = false
+    numberOfRuns++
 
-export const calcNumRounds = (numPlayers, power = 1) => {
-  if (2 ** power >= numPlayers) {
-    return power
-  } else {
-    return calcNumRounds(numPlayers, power + 1)
+    let playersNotGivenMatches = randomizedArray(
+      players.map((player) => player.id)
+    )
+
+    let playersGivenMatches = []
+    let playerScores = {}
+
+    let scoreObj = {}
+    let playersPlayed = {}
+
+    //Organize each user into a score differential
+    players.forEach((player) => {
+      let scoreDiff = player.wins - player.losses + 0.5 * player.draws
+      if (scoreDiff in scoreObj) {
+        scoreObj[scoreDiff].push(player.id)
+      } else {
+        scoreObj[scoreDiff] = [player.id]
+      }
+      playerScores[player.id] = scoreDiff
+    })
+
+    if (matches.length > 0) {
+      //Go through all previous matches, find which players played which and add to the player dictionary
+      matches.forEach((match) => {
+        let player1 = match.players[0].userId || match.players[0].playerName
+        if (!(player1 in playersPlayed)) {
+          playersPlayed[player1] = []
+        }
+
+        if (match.players.length > 1) {
+          let player2 = match.players[1].userId || match.players[1].playerName
+
+          if (!(player2 in playersPlayed)) {
+            playersPlayed[player2] = []
+          }
+
+          playersPlayed[player1] = [...playersPlayed[player1], player2]
+          playersPlayed[player2] = [...playersPlayed[player2], player1]
+        }
+      })
+    }
+
+    //Sort the score differentials
+    let scoreObjDiff = Object.keys(scoreObj)
+    scoreObjDiff.sort((a, b) => parseInt(a) - parseInt(b)).reverse()
+
+    let playerList = players.map((player) => player.id)
+
+    //If odd number of players, given lowest
+    if (playerList.length % 2 !== 0) {
+      let playerGivenBye = null
+
+      //Priority for byes: Players not given Byes, player with lowest score
+      randomizedArray(players).forEach((player, index) => {
+        if (index === 0) {
+          playerGivenBye = player
+        } else {
+          if (
+            player.byes <= playerGivenBye.byes &&
+            player.score < playerGivenBye.score
+          ) {
+            playerGivenBye = player
+          }
+        }
+      })
+
+      matchArray.push([playerGivenBye.id])
+      playersNotGivenMatches.splice(
+        playersNotGivenMatches.indexOf(playerGivenBye.id),
+        1
+      )
+
+      playersGivenMatches.push(playerGivenBye.id)
+    }
+
+    playerList.forEach((player) => {
+      if (playersNotGivenMatches.indexOf(player) !== -1) {
+        let match = []
+        let scoreDifToCheck = playerScores[player]
+
+        let playersToAvoid = []
+
+        scoreObjDiff.forEach((key) => {
+          //Players to avoid include players NOT with the same differential
+          if (parseInt(scoreDifToCheck) !== parseInt(key)) {
+            playersToAvoid = [
+              ...playersToAvoid,
+              randomizedArray([...scoreObj[key]]),
+            ]
+          }
+        })
+
+        let preferredPlayers = scoreObj[scoreDifToCheck]
+
+        //Players that player cannot play against include players who have been given matches
+        playersGivenMatches.push(player)
+
+        //Setup match for player (even if alone)
+        match.push(player)
+        playersNotGivenMatches.splice(playersNotGivenMatches.indexOf(player), 1)
+        let playersProhibited = [...playersGivenMatches]
+
+        if (playersNotGivenMatches.length > 2 && lastRoundMatches.length > 0) {
+          playersProhibited = [...playersProhibited, lastPlayed[player]]
+        }
+
+        let { opponent, rerun } = findOpponent({
+          preferredPlayers,
+          playersNotGivenMatches,
+          playersToAvoid,
+          playersProhibited,
+          playersPlayedAgainst:
+            player in playersPlayed ? playersPlayed[player] : [],
+        })
+
+        if (playerList.length > 2 && setReRun === false) {
+          setReRun = rerun
+        }
+
+        if (opponent) {
+          match.push(opponent)
+          playersGivenMatches.push(opponent)
+          playersNotGivenMatches.splice(
+            playersNotGivenMatches.indexOf(opponent),
+            1
+          )
+        }
+
+        matchArray.push(match)
+      }
+    })
   }
+
+  return matchArray
 }
 
-const findOpponent = ({
+export const findOpponent = ({
   preferredPlayers = [],
   playersNotGivenMatches = [],
   playersToAvoid = [],
@@ -183,6 +213,7 @@ const findOpponent = ({
   playersPlayedAgainst = [],
 }) => {
   let chosenOpponent = null
+  let rerun = false
 
   //We will go through the playersNotGivenMatches and try to find a player that is not in the playersProhibited array and playersToAvoid array
   if (playersNotGivenMatches.length > 0) {
@@ -192,6 +223,7 @@ const findOpponent = ({
         preferredPlayers.indexOf(possOpp) !== -1 &&
         playersProhibited.indexOf(possOpp) == -1 &&
         playersToAvoid.indexOf(possOpp) == -1 &&
+        playersPlayedAgainst.indexOf(possOpp) === -1 &&
         !chosenOpponent
       ) {
         chosenOpponent = possOpp
@@ -232,8 +264,26 @@ const findOpponent = ({
         }
       })
     }
+
+    if (playersPlayedAgainst.indexOf(chosenOpponent) !== -1) {
+      rerun = true
+    }
   }
 
   //Return ChosenOpponent
-  return chosenOpponent
+  return { opponent: chosenOpponent, rerun }
+}
+
+const randomizedArray = (arr) =>
+  arr
+    .map((a) => ({ sort: Math.random(), value: a }))
+    .sort((a, b) => a.sort - b.sort)
+    .map((a) => a.value)
+
+export const calcNumRounds = (numPlayers, power = 1) => {
+  if (2 ** power >= numPlayers) {
+    return power
+  } else {
+    return calcNumRounds(numPlayers, power + 1)
+  }
 }

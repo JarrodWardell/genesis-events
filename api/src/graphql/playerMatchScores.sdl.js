@@ -15,8 +15,8 @@ export const schema = gql`
   }
 
   type Query {
-    playerMatchScores: [PlayerMatchScore!]!
-    playerMatchScore(id: Int!): PlayerMatchScore
+    playerMatchScores: [PlayerMatchScore!]! @adminOnly
+    playerMatchScore(id: Int!): PlayerMatchScore @adminOnly
   }
 
   input CreatePlayerMatchScoreInput {
@@ -42,11 +42,11 @@ export const schema = gql`
   type Mutation {
     createPlayerMatchScore(
       input: CreatePlayerMatchScoreInput!
-    ): PlayerMatchScore!
+    ): PlayerMatchScore! @adminOnly
     updatePlayerMatchScore(
       id: Int!
       input: UpdatePlayerMatchScoreInput!
-    ): PlayerMatchScore!
-    deletePlayerMatchScore(id: Int!): PlayerMatchScore!
+    ): PlayerMatchScore! @adminOnly
+    deletePlayerMatchScore(id: Int!): PlayerMatchScore! @adminOnly
   }
 `

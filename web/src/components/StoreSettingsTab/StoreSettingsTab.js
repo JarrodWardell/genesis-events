@@ -9,7 +9,7 @@ import {
 } from '@redwoodjs/forms/dist'
 import { useMutation } from '@redwoodjs/web'
 import GooglePlacesAutocomplete from 'react-google-places-autocomplete'
-import { useForm, Controller } from 'react-hook-form'
+import { useForm, Controller } from '@redwoodjs/forms'
 import toast from 'react-hot-toast'
 import { getAddress } from 'src/helpers/formatAddress'
 

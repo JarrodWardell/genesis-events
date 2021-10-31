@@ -1,4 +1,4 @@
-import { AuthenticationError } from '@redwoodjs/api'
+import { AuthenticationError } from '@redwoodjs/graphql-server'
 import admin from 'firebase-admin'
 
 import { db } from './db'
@@ -16,6 +16,10 @@ const config = {
 const adminApp = admin.initializeApp(config)
 
 export const getCurrentUser = async (decoded, { token, type }) => {
+  if (!decoded) {
+    return null
+  }
+
   const data = await adminApp.auth().verifyIdToken(token)
   const { email, uid, firebase } = data
   let provider = await db.provider.findUnique({
@@ -51,8 +55,13 @@ export const getCurrentUser = async (decoded, { token, type }) => {
   return { email, uid, user, roles, stores }
 }
 
-export const requireAuth = () => {
+export const requireAuth = ({ roles = [] }) => {
   if (!context.currentUser) {
+    throw new AuthenticationError("You don't have permission to do that.")
+  }
+
+  let userRoles = context.currentUser.roles
+  if (roles.length > 0 && roles.indexOf(userRoles[0]) === -1) {
     throw new AuthenticationError("You don't have permission to do that.")
   }
 }

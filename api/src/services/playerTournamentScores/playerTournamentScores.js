@@ -1,5 +1,6 @@
 import { db } from 'src/lib/db'
 import { requireAuth } from 'src/lib/auth'
+import { Prisma } from '@prisma/client'
 
 // Used when the environment variable REDWOOD_SECURE_SERVICES=1
 export const beforeResolver = (rules) => {
@@ -15,7 +16,7 @@ export const playerLeaderboard = async ({
   skip = 0,
   take = 10,
 }) => {
-  let sqlQuery = `select ranked.*, count(*) OVER() AS full_count
+  let sqlQuery = Prisma.sql`select ranked.*, count(*) OVER() AS full_count
                   FROM (
                    select "playerId", COUNT(*) as "totalTournamentsPlayed", SUM(wins) as wins, SUM(losses) as losses, SUM(draws) as draws, SUM(byes) as byes, SUM(score) as "totalPoints", SUM(score) + count(*) as "totalScore", RANK () OVER (
                       ORDER BY SUM(score) + count(*) DESC
@@ -29,8 +30,8 @@ export const playerLeaderboard = async ({
                   ) AS ranked
                   ${
                     nicknameSearch
-                      ? `WHERE LOWER("ranked".nickname) LIKE LOWER('%${nicknameSearch}%')`
-                      : ``
+                      ? Prisma.sql`WHERE LOWER("ranked".nickname) LIKE LOWER('%${nicknameSearch}%')`
+                      : Prisma.sql``
                   }
                   limit ${take}
                   offset ${skip}

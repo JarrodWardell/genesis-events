@@ -19,19 +19,33 @@ export type Scalars = {
 };
 
 export type AddPlayerInput = {
-  playerName: Scalars['String'];
-  playerId?: Maybe<Scalars['String']>;
-  wins?: Maybe<Scalars['Int']>;
-  losses?: Maybe<Scalars['Int']>;
   byes?: Maybe<Scalars['Int']>;
   draws?: Maybe<Scalars['Int']>;
+  losses?: Maybe<Scalars['Int']>;
+  playerId?: Maybe<Scalars['String']>;
+  playerName: Scalars['String'];
   score?: Maybe<Scalars['Float']>;
+  wins?: Maybe<Scalars['Int']>;
 };
 
 export type Banner = {
   __typename?: 'Banner';
-  id: Scalars['Int'];
+  active: Scalars['Boolean'];
   backgroundUrl: Scalars['String'];
+  button1BackgroundColor?: Maybe<Scalars['String']>;
+  button1Link?: Maybe<Scalars['String']>;
+  button1Text?: Maybe<Scalars['String']>;
+  button1TextColor?: Maybe<Scalars['String']>;
+  button2BackgroundColor?: Maybe<Scalars['String']>;
+  button2Link?: Maybe<Scalars['String']>;
+  button2Text?: Maybe<Scalars['String']>;
+  button2TextColor?: Maybe<Scalars['String']>;
+  buttonsFontSize?: Maybe<Scalars['Int']>;
+  buttonsHorizontalPlacement?: Maybe<Placement>;
+  buttonsVerticalPlacement?: Maybe<Placement>;
+  condition?: Maybe<BannerCondition>;
+  createdAt: Scalars['DateTime'];
+  id: Scalars['Int'];
   mainText?: Maybe<Scalars['String']>;
   mainTextColor?: Maybe<Scalars['String']>;
   mainTextFontSize?: Maybe<Scalars['Int']>;
@@ -39,44 +53,43 @@ export type Banner = {
   subTextColor?: Maybe<Scalars['String']>;
   subTextFontSize?: Maybe<Scalars['Int']>;
   textPlacement?: Maybe<Placement>;
-  button1Link?: Maybe<Scalars['String']>;
-  button1Text?: Maybe<Scalars['String']>;
-  button1BackgroundColor?: Maybe<Scalars['String']>;
-  button1TextColor?: Maybe<Scalars['String']>;
-  button2Link?: Maybe<Scalars['String']>;
-  button2Text?: Maybe<Scalars['String']>;
-  button2BackgroundColor?: Maybe<Scalars['String']>;
-  button2TextColor?: Maybe<Scalars['String']>;
-  buttonsFontSize?: Maybe<Scalars['Int']>;
-  buttonsVerticalPlacement?: Maybe<Placement>;
-  buttonsHorizontalPlacement?: Maybe<Placement>;
-  condition?: Maybe<BannerCondition>;
-  createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
-  active: Scalars['Boolean'];
 };
 
 export type BannerCondition =
   | 'ALL'
+  | 'EO'
   | 'GUEST'
   | 'LOGGEDIN'
-  | 'EO'
   | 'PLAYER';
 
 export type Contact = {
   __typename?: 'Contact';
+  createdAt: Scalars['DateTime'];
+  email: Scalars['String'];
   id: Scalars['Int'];
   name: Scalars['String'];
-  email: Scalars['String'];
   text: Scalars['String'];
-  userId?: Maybe<Scalars['String']>;
-  createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
   userContact?: Maybe<User>;
+  userId?: Maybe<Scalars['String']>;
 };
 
 export type CreateBannerInput = {
+  active: Scalars['Boolean'];
   backgroundUrl: Scalars['String'];
+  button1BackgroundColor?: Maybe<Scalars['String']>;
+  button1Link?: Maybe<Scalars['String']>;
+  button1Text?: Maybe<Scalars['String']>;
+  button1TextColor?: Maybe<Scalars['String']>;
+  button2BackgroundColor?: Maybe<Scalars['String']>;
+  button2Link?: Maybe<Scalars['String']>;
+  button2Text?: Maybe<Scalars['String']>;
+  button2TextColor?: Maybe<Scalars['String']>;
+  buttonsFontSize?: Maybe<Scalars['Int']>;
+  buttonsHorizontalPlacement?: Maybe<Placement>;
+  buttonsVerticalPlacement?: Maybe<Placement>;
+  condition?: Maybe<BannerCondition>;
   mainText?: Maybe<Scalars['String']>;
   mainTextColor?: Maybe<Scalars['String']>;
   mainTextFontSize?: Maybe<Scalars['Int']>;
@@ -84,192 +97,175 @@ export type CreateBannerInput = {
   subTextColor?: Maybe<Scalars['String']>;
   subTextFontSize?: Maybe<Scalars['Int']>;
   textPlacement?: Maybe<Placement>;
-  button1Link?: Maybe<Scalars['String']>;
-  button1Text?: Maybe<Scalars['String']>;
-  button1BackgroundColor?: Maybe<Scalars['String']>;
-  button1TextColor?: Maybe<Scalars['String']>;
-  button2Link?: Maybe<Scalars['String']>;
-  button2Text?: Maybe<Scalars['String']>;
-  button2BackgroundColor?: Maybe<Scalars['String']>;
-  button2TextColor?: Maybe<Scalars['String']>;
-  buttonsFontSize?: Maybe<Scalars['Int']>;
-  buttonsVerticalPlacement?: Maybe<Placement>;
-  buttonsHorizontalPlacement?: Maybe<Placement>;
-  condition?: Maybe<BannerCondition>;
-  active: Scalars['Boolean'];
 };
 
 export type CreateContactInput = {
-  name: Scalars['String'];
   email: Scalars['String'];
+  name: Scalars['String'];
   text: Scalars['String'];
   userId?: Maybe<Scalars['String']>;
 };
 
 export type CreateMatchInput = {
+  active: Scalars['Boolean'];
   roundId: Scalars['Int'];
   tournamentId: Scalars['Int'];
-  active: Scalars['Boolean'];
 };
 
 export type CreatePlayerMatchScoreInput = {
+  active: Scalars['Boolean'];
+  bye: Scalars['Boolean'];
+  matchId: Scalars['Int'];
+  playerName?: Maybe<Scalars['String']>;
   score?: Maybe<Scalars['Int']>;
   userId?: Maybe<Scalars['String']>;
-  playerName?: Maybe<Scalars['String']>;
-  matchId: Scalars['Int'];
   wonMatch: Scalars['Boolean'];
-  bye: Scalars['Boolean'];
-  active: Scalars['Boolean'];
 };
 
 export type CreatePlayerTournamentScoreInput = {
-  wins: Scalars['Int'];
+  active: Scalars['Boolean'];
+  byes: Scalars['Int'];
+  draws: Scalars['Int'];
   losses: Scalars['Int'];
-  score: Scalars['Float'];
   playerId?: Maybe<Scalars['String']>;
   playerName?: Maybe<Scalars['String']>;
+  score: Scalars['Float'];
   tournamentId: Scalars['Int'];
-  draws: Scalars['Int'];
-  byes: Scalars['Int'];
-  active: Scalars['Boolean'];
+  wins: Scalars['Int'];
   wonTournament: Scalars['Boolean'];
 };
 
 export type CreateRoundInput = {
-  tournamentId: Scalars['Int'];
-  roundNumber: Scalars['Int'];
   active: Scalars['Boolean'];
-  startingTimerInSeconds?: Maybe<Scalars['Int']>;
+  roundNumber: Scalars['Int'];
   roundTimerLeftInSeconds?: Maybe<Scalars['Int']>;
+  startingTimerInSeconds?: Maybe<Scalars['Int']>;
+  tournamentId: Scalars['Int'];
 };
 
 export type CreateStoreInput = {
-  name: Scalars['String'];
-  ownerId: Scalars['String'];
-  email: Scalars['String'];
-  phone: Scalars['String'];
-  lat?: Maybe<Scalars['Float']>;
-  lng?: Maybe<Scalars['Float']>;
-  street1: Scalars['String'];
-  street2?: Maybe<Scalars['String']>;
-  city: Scalars['String'];
-  country: Scalars['String'];
-  state: Scalars['String'];
-  zip: Scalars['String'];
-  distributor: Scalars['String'];
   approved?: Maybe<Scalars['Boolean']>;
   approvedOn?: Maybe<Scalars['DateTime']>;
+  city: Scalars['String'];
+  country: Scalars['String'];
+  distributor: Scalars['String'];
+  email: Scalars['String'];
+  lat?: Maybe<Scalars['Float']>;
+  lng?: Maybe<Scalars['Float']>;
+  name: Scalars['String'];
+  ownerId: Scalars['String'];
+  phone: Scalars['String'];
+  state: Scalars['String'];
+  street1: Scalars['String'];
+  street2?: Maybe<Scalars['String']>;
+  zip: Scalars['String'];
 };
 
 export type CreateTournamentInput = {
-  name: Scalars['String'];
-  tournamentUrl?: Maybe<Scalars['String']>;
-  startDate: Scalars['DateTime'];
-  dateStarted?: Maybe<Scalars['DateTime']>;
-  dateEnded?: Maybe<Scalars['DateTime']>;
-  maxPlayers: Scalars['Int'];
-  locationName: Scalars['String'];
-  publicRegistration?: Maybe<Scalars['Boolean']>;
-  infoUrl?: Maybe<Scalars['String']>;
-  street1?: Maybe<Scalars['String']>;
-  street2?: Maybe<Scalars['String']>;
+  active?: Maybe<Scalars['Boolean']>;
   city?: Maybe<Scalars['String']>;
   country?: Maybe<Scalars['String']>;
-  state?: Maybe<Scalars['String']>;
-  zip?: Maybe<Scalars['String']>;
+  dateEnded?: Maybe<Scalars['DateTime']>;
+  dateStarted?: Maybe<Scalars['DateTime']>;
+  desc?: Maybe<Scalars['String']>;
+  infoUrl?: Maybe<Scalars['String']>;
   lat?: Maybe<Scalars['Float']>;
   lng?: Maybe<Scalars['Float']>;
-  storeId?: Maybe<Scalars['String']>;
+  locationName: Scalars['String'];
+  maxPlayers: Scalars['Int'];
+  name: Scalars['String'];
   ownerId?: Maybe<Scalars['String']>;
-  userId?: Maybe<Scalars['String']>;
-  desc?: Maybe<Scalars['String']>;
-  type?: Maybe<Scalars['String']>;
-  active?: Maybe<Scalars['Boolean']>;
+  publicRegistration?: Maybe<Scalars['Boolean']>;
+  startDate: Scalars['DateTime'];
   startingTimerInSeconds?: Maybe<Scalars['Int']>;
+  state?: Maybe<Scalars['String']>;
+  storeId?: Maybe<Scalars['String']>;
+  street1?: Maybe<Scalars['String']>;
+  street2?: Maybe<Scalars['String']>;
+  timerLastUpdated?: Maybe<Scalars['DateTime']>;
   timerLeftInSeconds?: Maybe<Scalars['Int']>;
   timerStatus?: Maybe<TimerStatus>;
-  timerLastUpdated?: Maybe<Scalars['DateTime']>;
+  tournamentUrl?: Maybe<Scalars['String']>;
+  type?: Maybe<Scalars['String']>;
+  userId?: Maybe<Scalars['String']>;
+  zip?: Maybe<Scalars['String']>;
 };
 
 export type CreateUserInput = {
-  firstname?: Maybe<Scalars['String']>;
-  lastname?: Maybe<Scalars['String']>;
-  gender?: Maybe<Scalars['String']>;
-  phone?: Maybe<Scalars['String']>;
-  city?: Maybe<Scalars['String']>;
-  state?: Maybe<Scalars['String']>;
-  country?: Maybe<Scalars['String']>;
-  zip?: Maybe<Scalars['String']>;
-  howHeard?: Maybe<Scalars['String']>;
-  flags?: Maybe<Scalars['Int']>;
-  adminComments?: Maybe<Scalars['String']>;
-  disabled?: Maybe<Scalars['Boolean']>;
-  disabledOn?: Maybe<Scalars['DateTime']>;
-  nickname: Scalars['String'];
-  userPictureId?: Maybe<Scalars['Int']>;
-  disabledBy?: Maybe<Scalars['String']>;
-  email: Scalars['String'];
-  dob?: Maybe<Scalars['String']>;
   active?: Maybe<Scalars['Boolean']>;
-  role?: Maybe<Role>;
+  adminComments?: Maybe<Scalars['String']>;
+  city?: Maybe<Scalars['String']>;
+  country?: Maybe<Scalars['String']>;
+  disabled?: Maybe<Scalars['Boolean']>;
+  disabledBy?: Maybe<Scalars['String']>;
+  disabledOn?: Maybe<Scalars['DateTime']>;
+  dob?: Maybe<Scalars['String']>;
+  email: Scalars['String'];
+  firstname?: Maybe<Scalars['String']>;
+  flags?: Maybe<Scalars['Int']>;
+  gender?: Maybe<Scalars['String']>;
+  howHeard?: Maybe<Scalars['String']>;
   imageId?: Maybe<Scalars['Int']>;
+  lastname?: Maybe<Scalars['String']>;
+  nickname: Scalars['String'];
+  phone?: Maybe<Scalars['String']>;
+  role?: Maybe<Role>;
+  state?: Maybe<Scalars['String']>;
+  userPictureId?: Maybe<Scalars['Int']>;
+  zip?: Maybe<Scalars['String']>;
 };
 
 export type CreateUserPictureInput = {
-  name?: Maybe<Scalars['String']>;
-  url: Scalars['String'];
-  smallUrl?: Maybe<Scalars['String']>;
   active?: Maybe<Scalars['Boolean']>;
+  name?: Maybe<Scalars['String']>;
+  smallUrl?: Maybe<Scalars['String']>;
+  url: Scalars['String'];
 };
 
 export type CreateUserStoreInput = {
-  name: Scalars['String'];
-  email: Scalars['String'];
-  phone: Scalars['String'];
-  lat: Scalars['Float'];
-  lng: Scalars['Float'];
-  street1: Scalars['String'];
   city: Scalars['String'];
   country: Scalars['String'];
-  state: Scalars['String'];
-  zip: Scalars['String'];
   distributor: Scalars['String'];
+  email: Scalars['String'];
+  lat: Scalars['Float'];
+  lng: Scalars['Float'];
+  name: Scalars['String'];
+  phone: Scalars['String'];
+  state: Scalars['String'];
+  street1: Scalars['String'];
+  zip: Scalars['String'];
 };
 
 export type CreateUserUserRoleInput = {
+  active: Scalars['Boolean'];
   userId: Scalars['String'];
   userRoleId: Scalars['Int'];
-  active: Scalars['Boolean'];
 };
-
-
-
-
 
 export type Match = {
   __typename?: 'Match';
-  id: Scalars['Int'];
-  roundId: Scalars['Int'];
-  createdAt: Scalars['DateTime'];
-  updatedAt: Scalars['DateTime'];
-  tournamentId: Scalars['Int'];
   active: Scalars['Boolean'];
-  round: Round;
-  tournament: Tournament;
+  createdAt: Scalars['DateTime'];
+  id: Scalars['Int'];
   players: Array<Maybe<PlayerMatchScore>>;
+  round: Round;
+  roundId: Scalars['Int'];
+  tournament: Tournament;
+  tournamentId: Scalars['Int'];
+  updatedAt: Scalars['DateTime'];
 };
 
 export type MatchResult =
-  | 'WIN'
+  | 'LOSS'
   | 'TIED'
-  | 'LOSS';
+  | 'WIN';
 
 export type MatchScore = {
-  userId?: Maybe<Scalars['String']>;
-  playerName?: Maybe<Scalars['String']>;
   playerMatchScore: Scalars['Int'];
-  score: Scalars['Int'];
+  playerName?: Maybe<Scalars['String']>;
   result: MatchResult;
+  score: Scalars['Int'];
+  userId?: Maybe<Scalars['String']>;
 };
 
 export type Mutation = {
@@ -569,15 +565,15 @@ export type MutationUpdateUserUserRoleArgs = {
 };
 
 export type OrderByInput = {
-  orderByKey?: Maybe<Scalars['String']>;
   orderByDirection?: Maybe<Scalars['String']>;
+  orderByKey?: Maybe<Scalars['String']>;
 };
 
 export type PaginatedLeaderboard = {
   __typename?: 'PaginatedLeaderboard';
+  leaderboard: Array<PlayerTournamentScore>;
   more?: Maybe<Scalars['Boolean']>;
   totalCount?: Maybe<Scalars['Int']>;
-  leaderboard: Array<PlayerTournamentScore>;
 };
 
 export type PaginatedTournaments = {
@@ -589,56 +585,56 @@ export type PaginatedTournaments = {
 
 export type Placement =
   | 'center'
-  | 'start'
-  | 'end';
+  | 'end'
+  | 'start';
 
 export type PlayerMatchScore = {
   __typename?: 'PlayerMatchScore';
-  id: Scalars['Int'];
-  score?: Maybe<Scalars['Int']>;
-  userId?: Maybe<Scalars['String']>;
-  playerName?: Maybe<Scalars['String']>;
-  matchId: Scalars['Int'];
-  createdAt: Scalars['DateTime'];
-  updatedAt: Scalars['DateTime'];
-  wonMatch: Scalars['Boolean'];
-  bye: Scalars['Boolean'];
   active: Scalars['Boolean'];
+  bye: Scalars['Boolean'];
+  createdAt: Scalars['DateTime'];
+  id: Scalars['Int'];
   match: Match;
+  matchId: Scalars['Int'];
+  playerName?: Maybe<Scalars['String']>;
+  score?: Maybe<Scalars['Int']>;
+  updatedAt: Scalars['DateTime'];
   user?: Maybe<User>;
+  userId?: Maybe<Scalars['String']>;
+  wonMatch: Scalars['Boolean'];
 };
 
 export type PlayerTournamentScore = {
   __typename?: 'PlayerTournamentScore';
-  id?: Maybe<Scalars['Int']>;
-  wins: Scalars['Int'];
-  losses: Scalars['Int'];
-  score: Scalars['Float'];
-  rank?: Maybe<Scalars['Int']>;
-  totalScore?: Maybe<Scalars['Float']>;
-  totalPoints?: Maybe<Scalars['Float']>;
-  totalTournamentsPlayed?: Maybe<Scalars['Int']>;
-  playerName?: Maybe<Scalars['String']>;
-  playerId?: Maybe<Scalars['String']>;
-  tournamentId: Scalars['Int'];
-  createdAt: Scalars['DateTime'];
-  updatedAt: Scalars['DateTime'];
-  draws: Scalars['Int'];
-  byes: Scalars['Int'];
   active: Scalars['Boolean'];
-  wonTournament: Scalars['Boolean'];
+  byes: Scalars['Int'];
+  createdAt: Scalars['DateTime'];
+  draws: Scalars['Int'];
+  id?: Maybe<Scalars['Int']>;
+  losses: Scalars['Int'];
   player?: Maybe<User>;
+  playerId?: Maybe<Scalars['String']>;
+  playerName?: Maybe<Scalars['String']>;
+  rank?: Maybe<Scalars['Int']>;
+  score: Scalars['Float'];
+  totalPoints?: Maybe<Scalars['Float']>;
+  totalScore?: Maybe<Scalars['Float']>;
+  totalTournamentsPlayed?: Maybe<Scalars['Int']>;
   tournament: Tournament;
+  tournamentId: Scalars['Int'];
+  updatedAt: Scalars['DateTime'];
+  wins: Scalars['Int'];
+  wonTournament: Scalars['Boolean'];
 };
 
 export type Provider = {
   __typename?: 'Provider';
-  id: Scalars['Int'];
-  uuid: Scalars['String'];
-  type: Scalars['String'];
-  user?: Maybe<User>;
   createdAt: Scalars['DateTime'];
+  id: Scalars['Int'];
+  type: Scalars['String'];
   updatedAt: Scalars['DateTime'];
+  user?: Maybe<User>;
+  uuid: Scalars['String'];
 };
 
 export type Query = {
@@ -769,8 +765,8 @@ export type QueryTournamentByUrlArgs = {
 
 
 export type QueryTournamentsArgs = {
-  searchTerm?: Maybe<Scalars['String']>;
   orderBy?: Maybe<OrderByInput>;
+  searchTerm?: Maybe<Scalars['String']>;
 };
 
 
@@ -800,127 +796,126 @@ export type QueryUsersArgs = {
 
 export type Redwood = {
   __typename?: 'Redwood';
-  version?: Maybe<Scalars['String']>;
   currentUser?: Maybe<Scalars['JSON']>;
   prismaVersion?: Maybe<Scalars['String']>;
+  version?: Maybe<Scalars['String']>;
 };
 
 export type Role =
-  | 'PLAYER'
-  | 'EO';
+  | 'EO'
+  | 'PLAYER';
 
 export type Round = {
   __typename?: 'Round';
-  id: Scalars['Int'];
-  createdAt: Scalars['DateTime'];
-  updatedAt: Scalars['DateTime'];
-  tournamentId: Scalars['Int'];
-  roundNumber: Scalars['Int'];
   active: Scalars['Boolean'];
-  startingTimerInSeconds?: Maybe<Scalars['Int']>;
-  roundTimerLeftInSeconds?: Maybe<Scalars['Int']>;
-  tournament: Tournament;
+  createdAt: Scalars['DateTime'];
+  id: Scalars['Int'];
   matches: Array<Maybe<Match>>;
+  roundNumber: Scalars['Int'];
+  roundTimerLeftInSeconds?: Maybe<Scalars['Int']>;
+  startingTimerInSeconds?: Maybe<Scalars['Int']>;
+  tournament: Tournament;
+  tournamentId: Scalars['Int'];
+  updatedAt: Scalars['DateTime'];
 };
 
 export type SearchTournamentInput = {
-  take?: Maybe<Scalars['Int']>;
-  skip?: Maybe<Scalars['Int']>;
-  name?: Maybe<Scalars['String']>;
-  location?: Maybe<Scalars['String']>;
+  city?: Maybe<Scalars['String']>;
+  country?: Maybe<Scalars['String']>;
+  dateEnd?: Maybe<Scalars['Date']>;
+  dateStart?: Maybe<Scalars['Date']>;
+  distance?: Maybe<Scalars['Int']>;
+  finishedTournaments?: Maybe<Scalars['Boolean']>;
   lat?: Maybe<Scalars['Float']>;
   lng?: Maybe<Scalars['Float']>;
-  country?: Maybe<Scalars['String']>;
-  state?: Maybe<Scalars['String']>;
-  city?: Maybe<Scalars['String']>;
+  location?: Maybe<Scalars['String']>;
+  name?: Maybe<Scalars['String']>;
   openSpotsOnly?: Maybe<Scalars['Boolean']>;
-  finishedTournaments?: Maybe<Scalars['Boolean']>;
-  type?: Maybe<Scalars['String']>;
+  skip?: Maybe<Scalars['Int']>;
+  state?: Maybe<Scalars['String']>;
   store?: Maybe<Scalars['String']>;
-  dateStart?: Maybe<Scalars['Date']>;
-  dateEnd?: Maybe<Scalars['Date']>;
-  distance?: Maybe<Scalars['Int']>;
+  take?: Maybe<Scalars['Int']>;
+  type?: Maybe<Scalars['String']>;
 };
 
 export type Store = {
   __typename?: 'Store';
-  id: Scalars['String'];
-  name: Scalars['String'];
-  tournaments: Array<Maybe<Tournament>>;
-  owner: User;
-  ownerId: Scalars['String'];
-  email: Scalars['String'];
-  phone: Scalars['String'];
-  lat?: Maybe<Scalars['Float']>;
-  lng?: Maybe<Scalars['Float']>;
-  street1: Scalars['String'];
-  street2?: Maybe<Scalars['String']>;
-  city: Scalars['String'];
-  country: Scalars['String'];
-  state: Scalars['String'];
-  zip: Scalars['String'];
-  distributor: Scalars['String'];
   approved?: Maybe<Scalars['Boolean']>;
   approvedBy?: Maybe<User>;
-  approverId?: Maybe<Scalars['String']>;
   approvedOn?: Maybe<Scalars['DateTime']>;
+  approverId?: Maybe<Scalars['String']>;
+  city: Scalars['String'];
+  country: Scalars['String'];
+  distributor: Scalars['String'];
+  email: Scalars['String'];
+  id: Scalars['String'];
+  lat?: Maybe<Scalars['Float']>;
+  lng?: Maybe<Scalars['Float']>;
+  name: Scalars['String'];
+  owner: User;
+  ownerId: Scalars['String'];
+  phone: Scalars['String'];
+  state: Scalars['String'];
+  street1: Scalars['String'];
+  street2?: Maybe<Scalars['String']>;
+  tournaments: Array<Maybe<Tournament>>;
+  zip: Scalars['String'];
 };
 
-
 export type TimerInput = {
-  tournamentId: Scalars['Int'];
+  startingTimerInSeconds?: Maybe<Scalars['Int']>;
   timerLeftInSeconds?: Maybe<Scalars['Int']>;
   timerStatus: TimerStatus;
-  startingTimerInSeconds?: Maybe<Scalars['Int']>;
+  tournamentId: Scalars['Int'];
 };
 
 export type TimerStatus =
-  | 'PENDING'
   | 'INPROGRESS'
   | 'PAUSED'
+  | 'PENDING'
   | 'STOPPED';
 
 export type Tournament = {
   __typename?: 'Tournament';
-  id: Scalars['Int'];
-  name: Scalars['String'];
-  desc?: Maybe<Scalars['String']>;
-  type?: Maybe<Scalars['String']>;
-  tournamentUrl: Scalars['String'];
-  distance?: Maybe<Scalars['Float']>;
-  playerCount?: Maybe<Scalars['Int']>;
-  startDate: Scalars['DateTime'];
-  dateStarted?: Maybe<Scalars['DateTime']>;
-  dateEnded?: Maybe<Scalars['DateTime']>;
-  maxPlayers: Scalars['Int'];
-  locationName: Scalars['String'];
-  publicRegistration?: Maybe<Scalars['Boolean']>;
-  infoUrl?: Maybe<Scalars['String']>;
-  street1?: Maybe<Scalars['String']>;
-  street2?: Maybe<Scalars['String']>;
+  active: Scalars['Boolean'];
   city?: Maybe<Scalars['String']>;
   country?: Maybe<Scalars['String']>;
-  state?: Maybe<Scalars['String']>;
-  zip?: Maybe<Scalars['String']>;
+  createdAt: Scalars['DateTime'];
+  dateEnded?: Maybe<Scalars['DateTime']>;
+  dateStarted?: Maybe<Scalars['DateTime']>;
+  desc?: Maybe<Scalars['String']>;
+  distance?: Maybe<Scalars['Float']>;
+  id: Scalars['Int'];
+  infoUrl?: Maybe<Scalars['String']>;
   lat?: Maybe<Scalars['Float']>;
   lng?: Maybe<Scalars['Float']>;
-  userId?: Maybe<Scalars['String']>;
+  locationName: Scalars['String'];
+  matches: Array<Maybe<Match>>;
+  maxPlayers: Scalars['Int'];
+  name: Scalars['String'];
+  owner?: Maybe<User>;
+  ownerId?: Maybe<Scalars['String']>;
+  playerCount?: Maybe<Scalars['Int']>;
+  players: Array<Maybe<PlayerTournamentScore>>;
+  publicRegistration?: Maybe<Scalars['Boolean']>;
+  round: Array<Maybe<Round>>;
+  startDate: Scalars['DateTime'];
   startingTimerInSeconds?: Maybe<Scalars['Int']>;
+  state?: Maybe<Scalars['String']>;
+  store?: Maybe<Store>;
+  storeId?: Maybe<Scalars['String']>;
+  street1?: Maybe<Scalars['String']>;
+  street2?: Maybe<Scalars['String']>;
+  timerLastUpdated?: Maybe<Scalars['DateTime']>;
   timerLeftInSeconds?: Maybe<Scalars['Int']>;
   timerStatus?: Maybe<TimerStatus>;
-  timerLastUpdated?: Maybe<Scalars['DateTime']>;
-  storeId?: Maybe<Scalars['String']>;
-  ownerId?: Maybe<Scalars['String']>;
-  createdAt: Scalars['DateTime'];
+  tournamentUrl: Scalars['String'];
+  type?: Maybe<Scalars['String']>;
   updatedAt: Scalars['DateTime'];
-  owner?: Maybe<User>;
-  store?: Maybe<Store>;
   user?: Maybe<User>;
-  matches: Array<Maybe<Match>>;
-  players: Array<Maybe<PlayerTournamentScore>>;
+  userId?: Maybe<Scalars['String']>;
   winners?: Maybe<Array<Maybe<PlayerTournamentScore>>>;
-  round: Array<Maybe<Round>>;
-  active: Scalars['Boolean'];
+  zip?: Maybe<Scalars['String']>;
 };
 
 export type TournamentMatchScoreInput = {
@@ -929,7 +924,20 @@ export type TournamentMatchScoreInput = {
 };
 
 export type UpdateBannerInput = {
+  active?: Maybe<Scalars['Boolean']>;
   backgroundUrl?: Maybe<Scalars['String']>;
+  button1BackgroundColor?: Maybe<Scalars['String']>;
+  button1Link?: Maybe<Scalars['String']>;
+  button1Text?: Maybe<Scalars['String']>;
+  button1TextColor?: Maybe<Scalars['String']>;
+  button2BackgroundColor?: Maybe<Scalars['String']>;
+  button2Link?: Maybe<Scalars['String']>;
+  button2Text?: Maybe<Scalars['String']>;
+  button2TextColor?: Maybe<Scalars['String']>;
+  buttonsFontSize?: Maybe<Scalars['Int']>;
+  buttonsHorizontalPlacement?: Maybe<Placement>;
+  buttonsVerticalPlacement?: Maybe<Placement>;
+  condition?: Maybe<BannerCondition>;
   mainText?: Maybe<Scalars['String']>;
   mainTextColor?: Maybe<Scalars['String']>;
   mainTextFontSize?: Maybe<Scalars['Int']>;
@@ -937,215 +945,202 @@ export type UpdateBannerInput = {
   subTextColor?: Maybe<Scalars['String']>;
   subTextFontSize?: Maybe<Scalars['Int']>;
   textPlacement?: Maybe<Placement>;
-  button1Link?: Maybe<Scalars['String']>;
-  button1Text?: Maybe<Scalars['String']>;
-  button1BackgroundColor?: Maybe<Scalars['String']>;
-  button1TextColor?: Maybe<Scalars['String']>;
-  button2Link?: Maybe<Scalars['String']>;
-  button2Text?: Maybe<Scalars['String']>;
-  button2BackgroundColor?: Maybe<Scalars['String']>;
-  button2TextColor?: Maybe<Scalars['String']>;
-  buttonsFontSize?: Maybe<Scalars['Int']>;
-  buttonsVerticalPlacement?: Maybe<Placement>;
-  buttonsHorizontalPlacement?: Maybe<Placement>;
-  condition?: Maybe<BannerCondition>;
-  active?: Maybe<Scalars['Boolean']>;
 };
 
 export type UpdateContactInput = {
-  name?: Maybe<Scalars['String']>;
   email?: Maybe<Scalars['String']>;
+  name?: Maybe<Scalars['String']>;
   text?: Maybe<Scalars['String']>;
   userId?: Maybe<Scalars['String']>;
 };
 
 export type UpdateMatchInput = {
+  active?: Maybe<Scalars['Boolean']>;
   roundId?: Maybe<Scalars['Int']>;
   tournamentId?: Maybe<Scalars['Int']>;
-  active?: Maybe<Scalars['Boolean']>;
 };
 
 export type UpdatePlayerMatchScoreInput = {
+  active?: Maybe<Scalars['Boolean']>;
+  bye?: Maybe<Scalars['Boolean']>;
+  matchId?: Maybe<Scalars['Int']>;
+  playerName?: Maybe<Scalars['String']>;
   score?: Maybe<Scalars['Int']>;
   userId?: Maybe<Scalars['String']>;
-  playerName?: Maybe<Scalars['String']>;
-  matchId?: Maybe<Scalars['Int']>;
   wonMatch?: Maybe<Scalars['Boolean']>;
-  bye?: Maybe<Scalars['Boolean']>;
-  active?: Maybe<Scalars['Boolean']>;
 };
 
 export type UpdatePlayerTournamentScoreInput = {
-  wins?: Maybe<Scalars['Int']>;
+  active?: Maybe<Scalars['Boolean']>;
+  byes?: Maybe<Scalars['Int']>;
+  draws?: Maybe<Scalars['Int']>;
   losses?: Maybe<Scalars['Int']>;
-  score?: Maybe<Scalars['Float']>;
   playerId?: Maybe<Scalars['String']>;
   playerName?: Maybe<Scalars['String']>;
+  score?: Maybe<Scalars['Float']>;
   tournamentId?: Maybe<Scalars['Int']>;
-  draws?: Maybe<Scalars['Int']>;
-  byes?: Maybe<Scalars['Int']>;
-  active?: Maybe<Scalars['Boolean']>;
+  wins?: Maybe<Scalars['Int']>;
   wonTournament?: Maybe<Scalars['Boolean']>;
 };
 
 export type UpdateRoundInput = {
-  tournamentId?: Maybe<Scalars['Int']>;
-  roundNumber?: Maybe<Scalars['Int']>;
   active?: Maybe<Scalars['Boolean']>;
-  startingTimerInSeconds?: Maybe<Scalars['Int']>;
+  roundNumber?: Maybe<Scalars['Int']>;
   roundTimerLeftInSeconds?: Maybe<Scalars['Int']>;
+  startingTimerInSeconds?: Maybe<Scalars['Int']>;
+  tournamentId?: Maybe<Scalars['Int']>;
 };
 
 export type UpdateStoreInput = {
-  name?: Maybe<Scalars['String']>;
-  ownerId?: Maybe<Scalars['String']>;
-  email?: Maybe<Scalars['String']>;
-  phone?: Maybe<Scalars['String']>;
-  lat?: Maybe<Scalars['Float']>;
-  lng?: Maybe<Scalars['Float']>;
-  street1?: Maybe<Scalars['String']>;
-  street2?: Maybe<Scalars['String']>;
-  city?: Maybe<Scalars['String']>;
-  country?: Maybe<Scalars['String']>;
-  state?: Maybe<Scalars['String']>;
-  zip?: Maybe<Scalars['String']>;
-  distributor?: Maybe<Scalars['String']>;
   approved?: Maybe<Scalars['Boolean']>;
   approvedOn?: Maybe<Scalars['DateTime']>;
+  city?: Maybe<Scalars['String']>;
+  country?: Maybe<Scalars['String']>;
+  distributor?: Maybe<Scalars['String']>;
+  email?: Maybe<Scalars['String']>;
+  lat?: Maybe<Scalars['Float']>;
+  lng?: Maybe<Scalars['Float']>;
+  name?: Maybe<Scalars['String']>;
+  ownerId?: Maybe<Scalars['String']>;
+  phone?: Maybe<Scalars['String']>;
+  state?: Maybe<Scalars['String']>;
+  street1?: Maybe<Scalars['String']>;
+  street2?: Maybe<Scalars['String']>;
+  zip?: Maybe<Scalars['String']>;
 };
 
 export type UpdateTournamentInput = {
-  name?: Maybe<Scalars['String']>;
-  tournamentUrl?: Maybe<Scalars['String']>;
-  startDate?: Maybe<Scalars['DateTime']>;
-  dateStarted?: Maybe<Scalars['DateTime']>;
-  dateEnded?: Maybe<Scalars['DateTime']>;
-  maxPlayers?: Maybe<Scalars['Int']>;
-  publicRegistration?: Maybe<Scalars['Boolean']>;
-  locationName?: Maybe<Scalars['String']>;
-  infoUrl?: Maybe<Scalars['String']>;
-  street1?: Maybe<Scalars['String']>;
-  street2?: Maybe<Scalars['String']>;
+  active?: Maybe<Scalars['Boolean']>;
   city?: Maybe<Scalars['String']>;
   country?: Maybe<Scalars['String']>;
-  state?: Maybe<Scalars['String']>;
-  zip?: Maybe<Scalars['String']>;
+  dateEnded?: Maybe<Scalars['DateTime']>;
+  dateStarted?: Maybe<Scalars['DateTime']>;
+  desc?: Maybe<Scalars['String']>;
+  infoUrl?: Maybe<Scalars['String']>;
   lat?: Maybe<Scalars['Float']>;
   lng?: Maybe<Scalars['Float']>;
-  storeId?: Maybe<Scalars['String']>;
+  locationName?: Maybe<Scalars['String']>;
+  maxPlayers?: Maybe<Scalars['Int']>;
+  name?: Maybe<Scalars['String']>;
   ownerId?: Maybe<Scalars['String']>;
-  userId?: Maybe<Scalars['String']>;
-  desc?: Maybe<Scalars['String']>;
-  type?: Maybe<Scalars['String']>;
-  active?: Maybe<Scalars['Boolean']>;
+  publicRegistration?: Maybe<Scalars['Boolean']>;
+  startDate?: Maybe<Scalars['DateTime']>;
   startingTimerInSeconds?: Maybe<Scalars['Int']>;
+  state?: Maybe<Scalars['String']>;
+  storeId?: Maybe<Scalars['String']>;
+  street1?: Maybe<Scalars['String']>;
+  street2?: Maybe<Scalars['String']>;
+  timerLastUpdated?: Maybe<Scalars['DateTime']>;
   timerLeftInSeconds?: Maybe<Scalars['Int']>;
   timerStatus?: Maybe<TimerStatus>;
-  timerLastUpdated?: Maybe<Scalars['DateTime']>;
+  tournamentUrl?: Maybe<Scalars['String']>;
+  type?: Maybe<Scalars['String']>;
+  userId?: Maybe<Scalars['String']>;
+  zip?: Maybe<Scalars['String']>;
 };
 
 export type UpdateUserInput = {
-  firstname?: Maybe<Scalars['String']>;
-  lastname?: Maybe<Scalars['String']>;
-  gender?: Maybe<Scalars['String']>;
-  phone?: Maybe<Scalars['String']>;
-  city?: Maybe<Scalars['String']>;
-  state?: Maybe<Scalars['String']>;
-  country?: Maybe<Scalars['String']>;
-  zip?: Maybe<Scalars['String']>;
-  howHeard?: Maybe<Scalars['String']>;
-  flags?: Maybe<Scalars['Int']>;
-  adminComments?: Maybe<Scalars['String']>;
-  disabled?: Maybe<Scalars['Boolean']>;
-  disabledOn?: Maybe<Scalars['DateTime']>;
-  nickname?: Maybe<Scalars['String']>;
-  userPictureId?: Maybe<Scalars['Int']>;
-  disabledBy?: Maybe<Scalars['String']>;
-  email?: Maybe<Scalars['String']>;
-  dob?: Maybe<Scalars['String']>;
   active?: Maybe<Scalars['Boolean']>;
+  adminComments?: Maybe<Scalars['String']>;
+  city?: Maybe<Scalars['String']>;
+  country?: Maybe<Scalars['String']>;
+  disabled?: Maybe<Scalars['Boolean']>;
+  disabledBy?: Maybe<Scalars['String']>;
+  disabledOn?: Maybe<Scalars['DateTime']>;
+  dob?: Maybe<Scalars['String']>;
+  email?: Maybe<Scalars['String']>;
+  firstname?: Maybe<Scalars['String']>;
+  flags?: Maybe<Scalars['Int']>;
+  gender?: Maybe<Scalars['String']>;
+  howHeard?: Maybe<Scalars['String']>;
   imageId?: Maybe<Scalars['Int']>;
+  lastname?: Maybe<Scalars['String']>;
+  nickname?: Maybe<Scalars['String']>;
+  phone?: Maybe<Scalars['String']>;
+  state?: Maybe<Scalars['String']>;
+  userPictureId?: Maybe<Scalars['Int']>;
+  zip?: Maybe<Scalars['String']>;
 };
 
 export type UpdateUserPictureInput = {
-  name?: Maybe<Scalars['String']>;
-  url?: Maybe<Scalars['String']>;
-  smallUrl?: Maybe<Scalars['String']>;
   active?: Maybe<Scalars['Boolean']>;
+  name?: Maybe<Scalars['String']>;
+  smallUrl?: Maybe<Scalars['String']>;
+  url?: Maybe<Scalars['String']>;
 };
 
 export type UpdateUserUserRoleInput = {
+  active?: Maybe<Scalars['Boolean']>;
   userId?: Maybe<Scalars['String']>;
   userRoleId?: Maybe<Scalars['Int']>;
-  active?: Maybe<Scalars['Boolean']>;
 };
 
 export type User = {
   __typename?: 'User';
-  id: Scalars['String'];
-  firstname?: Maybe<Scalars['String']>;
-  lastname?: Maybe<Scalars['String']>;
-  gender?: Maybe<Scalars['String']>;
-  phone?: Maybe<Scalars['String']>;
-  city?: Maybe<Scalars['String']>;
-  state?: Maybe<Scalars['String']>;
-  country?: Maybe<Scalars['String']>;
-  zip?: Maybe<Scalars['String']>;
-  createdAt: Scalars['DateTime'];
-  updatedAt: Scalars['DateTime'];
-  howHeard?: Maybe<Scalars['String']>;
-  flags: Scalars['Int'];
-  adminComments?: Maybe<Scalars['String']>;
-  disabled: Scalars['Boolean'];
-  disabledOn?: Maybe<Scalars['DateTime']>;
-  nickname: Scalars['String'];
-  userPictureId?: Maybe<Scalars['Int']>;
-  disabledBy?: Maybe<Scalars['String']>;
-  email: Scalars['String'];
-  dob?: Maybe<Scalars['String']>;
-  active: Scalars['Boolean'];
-  photo?: Maybe<UserPicture>;
   Contact: Array<Maybe<Contact>>;
-  matches: Array<Maybe<PlayerMatchScore>>;
-  tournamentsPlayed: Array<Maybe<PlayerTournamentScore>>;
-  providers: Array<Maybe<Provider>>;
   Store: Array<Maybe<Store>>;
-  tournamentsOwned: Array<Maybe<Tournament>>;
   Tournament: Array<Maybe<Tournament>>;
   UserRole: Array<Maybe<UserRole>>;
+  active: Scalars['Boolean'];
+  adminComments?: Maybe<Scalars['String']>;
+  city?: Maybe<Scalars['String']>;
+  country?: Maybe<Scalars['String']>;
+  createdAt: Scalars['DateTime'];
+  disabled: Scalars['Boolean'];
+  disabledBy?: Maybe<Scalars['String']>;
+  disabledOn?: Maybe<Scalars['DateTime']>;
+  dob?: Maybe<Scalars['String']>;
+  email: Scalars['String'];
+  firstname?: Maybe<Scalars['String']>;
+  flags: Scalars['Int'];
+  gender?: Maybe<Scalars['String']>;
+  howHeard?: Maybe<Scalars['String']>;
+  id: Scalars['String'];
+  lastname?: Maybe<Scalars['String']>;
+  matches: Array<Maybe<PlayerMatchScore>>;
+  nickname: Scalars['String'];
+  phone?: Maybe<Scalars['String']>;
+  photo?: Maybe<UserPicture>;
+  providers: Array<Maybe<Provider>>;
+  state?: Maybe<Scalars['String']>;
+  tournamentsOwned: Array<Maybe<Tournament>>;
+  tournamentsPlayed: Array<Maybe<PlayerTournamentScore>>;
+  updatedAt: Scalars['DateTime'];
+  userPictureId?: Maybe<Scalars['Int']>;
+  zip?: Maybe<Scalars['String']>;
 };
 
 export type UserPicture = {
   __typename?: 'UserPicture';
+  active?: Maybe<Scalars['Boolean']>;
+  createdAt: Scalars['DateTime'];
   id: Scalars['Int'];
   name?: Maybe<Scalars['String']>;
-  url: Scalars['String'];
   smallUrl?: Maybe<Scalars['String']>;
-  createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
+  url: Scalars['String'];
   user: Array<Maybe<User>>;
-  active?: Maybe<Scalars['Boolean']>;
 };
 
 export type UserRole = {
   __typename?: 'UserRole';
+  createdAt: Scalars['DateTime'];
   id: Scalars['Int'];
   name: Scalars['String'];
-  user?: Maybe<User>;
-  createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
+  user?: Maybe<User>;
 };
 
 export type UserUserRole = {
   __typename?: 'UserUserRole';
-  id: Scalars['Int'];
-  userId: Scalars['String'];
-  userRoleId: Scalars['Int'];
   active: Scalars['Boolean'];
   createdAt: Scalars['DateTime'];
+  id: Scalars['Int'];
   updatedAt: Scalars['DateTime'];
   user: User;
+  userId: Scalars['String'];
   userRole: UserRole;
+  userRoleId: Scalars['Int'];
 };
 
 
@@ -1153,19 +1148,10 @@ export type UserUserRole = {
 export type ResolverTypeWrapper<T> = Promise<T> | T;
 
 
-export type LegacyStitchingResolver<TResult, TParent, TContext, TArgs> = {
-  fragment: string;
+export type ResolverWithResolve<TResult, TParent, TContext, TArgs> = {
   resolve: ResolverFn<TResult, TParent, TContext, TArgs>;
 };
-
-export type NewStitchingResolver<TResult, TParent, TContext, TArgs> = {
-  selectionSet: string;
-  resolve: ResolverFn<TResult, TParent, TContext, TArgs>;
-};
-export type StitchingResolver<TResult, TParent, TContext, TArgs> = LegacyStitchingResolver<TResult, TParent, TContext, TArgs> | NewStitchingResolver<TResult, TParent, TContext, TArgs>;
-export type Resolver<TResult, TParent = {}, TContext = {}, TArgs = {}> =
-  | ResolverFn<TResult, TParent, TContext, TArgs>
-  | StitchingResolver<TResult, TParent, TContext, TArgs>;
+export type Resolver<TResult, TParent = {}, TContext = {}, TArgs = {}> = ResolverFn<TResult, TParent, TContext, TArgs> | ResolverWithResolve<TResult, TParent, TContext, TArgs>;
 
 export type ResolverFn<TResult, TParent, TContext, TArgs> = (
   parent: TParent,
@@ -1227,12 +1213,9 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
   AddPlayerInput: AddPlayerInput;
-  String: ResolverTypeWrapper<Scalars['String']>;
-  Int: ResolverTypeWrapper<Scalars['Int']>;
-  Float: ResolverTypeWrapper<Scalars['Float']>;
   Banner: ResolverTypeWrapper<Banner>;
-  Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   BannerCondition: BannerCondition;
+  Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   Contact: ResolverTypeWrapper<Contact>;
   CreateBannerInput: CreateBannerInput;
   CreateContactInput: CreateContactInput;
@@ -1248,6 +1231,8 @@ export type ResolversTypes = {
   CreateUserUserRoleInput: CreateUserUserRoleInput;
   Date: ResolverTypeWrapper<Scalars['Date']>;
   DateTime: ResolverTypeWrapper<Scalars['DateTime']>;
+  Float: ResolverTypeWrapper<Scalars['Float']>;
+  Int: ResolverTypeWrapper<Scalars['Int']>;
   JSON: ResolverTypeWrapper<Scalars['JSON']>;
   JSONObject: ResolverTypeWrapper<Scalars['JSONObject']>;
   Match: ResolverTypeWrapper<Match>;
@@ -1267,6 +1252,7 @@ export type ResolversTypes = {
   Round: ResolverTypeWrapper<Round>;
   SearchTournamentInput: SearchTournamentInput;
   Store: ResolverTypeWrapper<Store>;
+  String: ResolverTypeWrapper<Scalars['String']>;
   Time: ResolverTypeWrapper<Scalars['Time']>;
   TimerInput: TimerInput;
   TimerStatus: TimerStatus;
@@ -1292,9 +1278,6 @@ export type ResolversTypes = {
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
   AddPlayerInput: AddPlayerInput;
-  String: Scalars['String'];
-  Int: Scalars['Int'];
-  Float: Scalars['Float'];
   Banner: Banner;
   Boolean: Scalars['Boolean'];
   Contact: Contact;
@@ -1312,6 +1295,8 @@ export type ResolversParentTypes = {
   CreateUserUserRoleInput: CreateUserUserRoleInput;
   Date: Scalars['Date'];
   DateTime: Scalars['DateTime'];
+  Float: Scalars['Float'];
+  Int: Scalars['Int'];
   JSON: Scalars['JSON'];
   JSONObject: Scalars['JSONObject'];
   Match: Match;
@@ -1328,6 +1313,7 @@ export type ResolversParentTypes = {
   Round: Round;
   SearchTournamentInput: SearchTournamentInput;
   Store: Store;
+  String: Scalars['String'];
   Time: Scalars['Time'];
   TimerInput: TimerInput;
   Tournament: Tournament;
@@ -1349,9 +1335,37 @@ export type ResolversParentTypes = {
   UserUserRole: UserUserRole;
 };
 
+export type AdminOnlyDirectiveArgs = { };
+
+export type AdminOnlyDirectiveResolver<Result, Parent, ContextType = any, Args = AdminOnlyDirectiveArgs> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
+
+export type RequireAuthDirectiveArgs = {
+  roles?: Maybe<Array<Maybe<Scalars['String']>>>;
+};
+
+export type RequireAuthDirectiveResolver<Result, Parent, ContextType = any, Args = RequireAuthDirectiveArgs> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
+
+export type SkipAuthDirectiveArgs = { };
+
+export type SkipAuthDirectiveResolver<Result, Parent, ContextType = any, Args = SkipAuthDirectiveArgs> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
+
 export type BannerResolvers<ContextType = any, ParentType extends ResolversParentTypes['Banner'] = ResolversParentTypes['Banner']> = {
-  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  active?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   backgroundUrl?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  button1BackgroundColor?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  button1Link?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  button1Text?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  button1TextColor?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  button2BackgroundColor?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  button2Link?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  button2Text?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  button2TextColor?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  buttonsFontSize?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  buttonsHorizontalPlacement?: Resolver<Maybe<ResolversTypes['Placement']>, ParentType, ContextType>;
+  buttonsVerticalPlacement?: Resolver<Maybe<ResolversTypes['Placement']>, ParentType, ContextType>;
+  condition?: Resolver<Maybe<ResolversTypes['BannerCondition']>, ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   mainText?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   mainTextColor?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   mainTextFontSize?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
@@ -1359,33 +1373,19 @@ export type BannerResolvers<ContextType = any, ParentType extends ResolversParen
   subTextColor?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   subTextFontSize?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   textPlacement?: Resolver<Maybe<ResolversTypes['Placement']>, ParentType, ContextType>;
-  button1Link?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  button1Text?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  button1BackgroundColor?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  button1TextColor?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  button2Link?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  button2Text?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  button2BackgroundColor?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  button2TextColor?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  buttonsFontSize?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  buttonsVerticalPlacement?: Resolver<Maybe<ResolversTypes['Placement']>, ParentType, ContextType>;
-  buttonsHorizontalPlacement?: Resolver<Maybe<ResolversTypes['Placement']>, ParentType, ContextType>;
-  condition?: Resolver<Maybe<ResolversTypes['BannerCondition']>, ParentType, ContextType>;
-  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
-  active?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type ContactResolvers<ContextType = any, ParentType extends ResolversParentTypes['Contact'] = ResolversParentTypes['Contact']> = {
+  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   text?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  userId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   userContact?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
+  userId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1406,15 +1406,15 @@ export interface JsonObjectScalarConfig extends GraphQLScalarTypeConfig<Resolver
 }
 
 export type MatchResolvers<ContextType = any, ParentType extends ResolversParentTypes['Match'] = ResolversParentTypes['Match']> = {
-  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  roundId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
-  updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
-  tournamentId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   active?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  round?: Resolver<ResolversTypes['Round'], ParentType, ContextType>;
-  tournament?: Resolver<ResolversTypes['Tournament'], ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   players?: Resolver<Array<Maybe<ResolversTypes['PlayerMatchScore']>>, ParentType, ContextType>;
+  round?: Resolver<ResolversTypes['Round'], ParentType, ContextType>;
+  roundId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  tournament?: Resolver<ResolversTypes['Tournament'], ParentType, ContextType>;
+  tournamentId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1468,9 +1468,9 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
 };
 
 export type PaginatedLeaderboardResolvers<ContextType = any, ParentType extends ResolversParentTypes['PaginatedLeaderboard'] = ResolversParentTypes['PaginatedLeaderboard']> = {
+  leaderboard?: Resolver<Array<ResolversTypes['PlayerTournamentScore']>, ParentType, ContextType>;
   more?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   totalCount?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  leaderboard?: Resolver<Array<ResolversTypes['PlayerTournamentScore']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1482,51 +1482,51 @@ export type PaginatedTournamentsResolvers<ContextType = any, ParentType extends 
 };
 
 export type PlayerMatchScoreResolvers<ContextType = any, ParentType extends ResolversParentTypes['PlayerMatchScore'] = ResolversParentTypes['PlayerMatchScore']> = {
-  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  score?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  userId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  playerName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  matchId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
-  updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
-  wonMatch?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  bye?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   active?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  bye?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   match?: Resolver<ResolversTypes['Match'], ParentType, ContextType>;
+  matchId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  playerName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  score?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
+  userId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  wonMatch?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type PlayerTournamentScoreResolvers<ContextType = any, ParentType extends ResolversParentTypes['PlayerTournamentScore'] = ResolversParentTypes['PlayerTournamentScore']> = {
-  id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  wins?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  losses?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  score?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
-  rank?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  totalScore?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
-  totalPoints?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
-  totalTournamentsPlayed?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  playerName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  playerId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  tournamentId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
-  updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
-  draws?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  byes?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   active?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  wonTournament?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  byes?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  draws?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  losses?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   player?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
+  playerId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  playerName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  rank?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  score?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  totalPoints?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  totalScore?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  totalTournamentsPlayed?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   tournament?: Resolver<ResolversTypes['Tournament'], ParentType, ContextType>;
+  tournamentId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  wins?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  wonTournament?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type ProviderResolvers<ContextType = any, ParentType extends ResolversParentTypes['Provider'] = ResolversParentTypes['Provider']> = {
-  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  uuid?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  type?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  type?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
+  uuid?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1568,47 +1568,47 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
 };
 
 export type RedwoodResolvers<ContextType = any, ParentType extends ResolversParentTypes['Redwood'] = ResolversParentTypes['Redwood']> = {
-  version?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   currentUser?: Resolver<Maybe<ResolversTypes['JSON']>, ParentType, ContextType>;
   prismaVersion?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  version?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type RoundResolvers<ContextType = any, ParentType extends ResolversParentTypes['Round'] = ResolversParentTypes['Round']> = {
-  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
-  updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
-  tournamentId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  roundNumber?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   active?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  startingTimerInSeconds?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  roundTimerLeftInSeconds?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  tournament?: Resolver<ResolversTypes['Tournament'], ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   matches?: Resolver<Array<Maybe<ResolversTypes['Match']>>, ParentType, ContextType>;
+  roundNumber?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  roundTimerLeftInSeconds?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  startingTimerInSeconds?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  tournament?: Resolver<ResolversTypes['Tournament'], ParentType, ContextType>;
+  tournamentId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type StoreResolvers<ContextType = any, ParentType extends ResolversParentTypes['Store'] = ResolversParentTypes['Store']> = {
-  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  tournaments?: Resolver<Array<Maybe<ResolversTypes['Tournament']>>, ParentType, ContextType>;
-  owner?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
-  ownerId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  phone?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  lat?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
-  lng?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
-  street1?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  street2?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  city?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  country?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  state?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  zip?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  distributor?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   approved?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   approvedBy?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
-  approverId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   approvedOn?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
+  approverId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  city?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  country?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  distributor?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  lat?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  lng?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  owner?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
+  ownerId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  phone?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  state?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  street1?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  street2?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  tournaments?: Resolver<Array<Maybe<ResolversTypes['Tournament']>>, ParentType, ContextType>;
+  zip?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1617,113 +1617,113 @@ export interface TimeScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes
 }
 
 export type TournamentResolvers<ContextType = any, ParentType extends ResolversParentTypes['Tournament'] = ResolversParentTypes['Tournament']> = {
-  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  desc?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  type?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  tournamentUrl?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  distance?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
-  playerCount?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  startDate?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
-  dateStarted?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
-  dateEnded?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
-  maxPlayers?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  locationName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  publicRegistration?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
-  infoUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  street1?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  street2?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  active?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   city?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   country?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  state?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  zip?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  dateEnded?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
+  dateStarted?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
+  desc?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  distance?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  infoUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   lat?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   lng?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
-  userId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  locationName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  matches?: Resolver<Array<Maybe<ResolversTypes['Match']>>, ParentType, ContextType>;
+  maxPlayers?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  owner?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
+  ownerId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  playerCount?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  players?: Resolver<Array<Maybe<ResolversTypes['PlayerTournamentScore']>>, ParentType, ContextType>;
+  publicRegistration?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  round?: Resolver<Array<Maybe<ResolversTypes['Round']>>, ParentType, ContextType>;
+  startDate?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   startingTimerInSeconds?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  state?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  store?: Resolver<Maybe<ResolversTypes['Store']>, ParentType, ContextType>;
+  storeId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  street1?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  street2?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  timerLastUpdated?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
   timerLeftInSeconds?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   timerStatus?: Resolver<Maybe<ResolversTypes['TimerStatus']>, ParentType, ContextType>;
-  timerLastUpdated?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
-  storeId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  ownerId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  tournamentUrl?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  type?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
-  owner?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
-  store?: Resolver<Maybe<ResolversTypes['Store']>, ParentType, ContextType>;
   user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
-  matches?: Resolver<Array<Maybe<ResolversTypes['Match']>>, ParentType, ContextType>;
-  players?: Resolver<Array<Maybe<ResolversTypes['PlayerTournamentScore']>>, ParentType, ContextType>;
+  userId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   winners?: Resolver<Maybe<Array<Maybe<ResolversTypes['PlayerTournamentScore']>>>, ParentType, ContextType>;
-  round?: Resolver<Array<Maybe<ResolversTypes['Round']>>, ParentType, ContextType>;
-  active?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  zip?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
-  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  firstname?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  lastname?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  gender?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  phone?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  city?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  state?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  country?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  zip?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
-  updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
-  howHeard?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  flags?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  adminComments?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  disabled?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  disabledOn?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
-  nickname?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  userPictureId?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  disabledBy?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  dob?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  active?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  photo?: Resolver<Maybe<ResolversTypes['UserPicture']>, ParentType, ContextType>;
   Contact?: Resolver<Array<Maybe<ResolversTypes['Contact']>>, ParentType, ContextType>;
-  matches?: Resolver<Array<Maybe<ResolversTypes['PlayerMatchScore']>>, ParentType, ContextType>;
-  tournamentsPlayed?: Resolver<Array<Maybe<ResolversTypes['PlayerTournamentScore']>>, ParentType, ContextType>;
-  providers?: Resolver<Array<Maybe<ResolversTypes['Provider']>>, ParentType, ContextType>;
   Store?: Resolver<Array<Maybe<ResolversTypes['Store']>>, ParentType, ContextType>;
-  tournamentsOwned?: Resolver<Array<Maybe<ResolversTypes['Tournament']>>, ParentType, ContextType>;
   Tournament?: Resolver<Array<Maybe<ResolversTypes['Tournament']>>, ParentType, ContextType>;
   UserRole?: Resolver<Array<Maybe<ResolversTypes['UserRole']>>, ParentType, ContextType>;
+  active?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  adminComments?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  city?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  country?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  disabled?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  disabledBy?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  disabledOn?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
+  dob?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  firstname?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  flags?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  gender?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  howHeard?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  lastname?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  matches?: Resolver<Array<Maybe<ResolversTypes['PlayerMatchScore']>>, ParentType, ContextType>;
+  nickname?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  phone?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  photo?: Resolver<Maybe<ResolversTypes['UserPicture']>, ParentType, ContextType>;
+  providers?: Resolver<Array<Maybe<ResolversTypes['Provider']>>, ParentType, ContextType>;
+  state?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  tournamentsOwned?: Resolver<Array<Maybe<ResolversTypes['Tournament']>>, ParentType, ContextType>;
+  tournamentsPlayed?: Resolver<Array<Maybe<ResolversTypes['PlayerTournamentScore']>>, ParentType, ContextType>;
+  updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  userPictureId?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  zip?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type UserPictureResolvers<ContextType = any, ParentType extends ResolversParentTypes['UserPicture'] = ResolversParentTypes['UserPicture']> = {
+  active?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  url?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   smallUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  url?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   user?: Resolver<Array<Maybe<ResolversTypes['User']>>, ParentType, ContextType>;
-  active?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type UserRoleResolvers<ContextType = any, ParentType extends ResolversParentTypes['UserRole'] = ResolversParentTypes['UserRole']> = {
+  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
-  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type UserUserRoleResolvers<ContextType = any, ParentType extends ResolversParentTypes['UserUserRole'] = ResolversParentTypes['UserUserRole']> = {
-  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  userId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  userRoleId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   active?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   user?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
+  userId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   userRole?: Resolver<ResolversTypes['UserRole'], ParentType, ContextType>;
+  userRoleId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1753,9 +1753,8 @@ export type Resolvers<ContextType = any> = {
   UserUserRole?: UserUserRoleResolvers<ContextType>;
 };
 
-
-/**
- * @deprecated
- * Use "Resolvers" root object instead. If you wish to get "IResolvers", add "typesPrefix: I" to your config.
- */
-export type IResolvers<ContextType = any> = Resolvers<ContextType>;
+export type DirectiveResolvers<ContextType = any> = {
+  adminOnly?: AdminOnlyDirectiveResolver<any, any, ContextType>;
+  requireAuth?: RequireAuthDirectiveResolver<any, any, ContextType>;
+  skipAuth?: SkipAuthDirectiveResolver<any, any, ContextType>;
+};

@@ -11,8 +11,8 @@ export const schema = gql`
   }
 
   type Query {
-    userUserRoles: [UserUserRole!]!
-    userUserRole(id: Int!): UserUserRole
+    userUserRoles: [UserUserRole!]! @adminOnly
+    userUserRole(id: Int!): UserUserRole @adminOnly
   }
 
   input CreateUserUserRoleInput {
@@ -29,7 +29,11 @@ export const schema = gql`
 
   type Mutation {
     createUserUserRole(input: CreateUserUserRoleInput!): UserUserRole!
-    updateUserUserRole(id: Int!, input: UpdateUserUserRoleInput!): UserUserRole!
-    deleteUserUserRole(id: Int!): UserUserRole!
+      @adminOnly
+    updateUserUserRole(
+      id: Int!
+      input: UpdateUserUserRoleInput!
+    ): UserUserRole! @adminOnly
+    deleteUserUserRole(id: Int!): UserUserRole! @adminOnly
   }
 `

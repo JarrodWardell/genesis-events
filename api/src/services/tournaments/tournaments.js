@@ -1,3 +1,4 @@
+import { Prisma } from '@prisma/client'
 import newPlayerRegisteredEO from 'src/emails/newPlayerRegisteredEO'
 import newPlayerRegistered from 'src/emails/newPlayerRegisteredEO'
 import newPlayerRegisteredPlayer from 'src/emails/newPlayerRegisteredPlayer'
@@ -171,10 +172,19 @@ export const upcomingTournaments = ({ input = {}, take = 6 }) => {
             active: true,
           },
           {
-            country: {
-              contains: input.country,
-              mode: 'insensitive',
-            },
+            OR: [
+              {
+                country: {
+                  contains: input.country,
+                  mode: 'insensitive',
+                },
+              },
+              {
+                country: {
+                  equals: null,
+                },
+              },
+            ],
           },
         ],
       },
@@ -210,12 +220,6 @@ export const finishedTournaments = ({ input = {}, take = 6 }) => {
           {
             active: true,
           },
-          {
-            country: {
-              contains: input.country,
-              mode: 'insensitive',
-            },
-          },
         ],
       },
       orderBy: {
@@ -231,14 +235,14 @@ export const finishedTournaments = ({ input = {}, take = 6 }) => {
 export const searchTournaments = async ({ input }) => {
   let earthsRadius = 6371
 
-  let distanceQuery = `111.111 *
+  let distanceQuery = Prisma.sql`111.111 *
   DEGREES(ACOS(LEAST(1.0, COS(RADIANS("Tournament".lat))
        * COS(RADIANS(${input.lat}))
        * COS(RADIANS("Tournament".lng - ${input.lng}))
        + SIN(RADIANS("Tournament".lat))
        * SIN(RADIANS(${input.lat}))))) AS distance`
 
-  let sqlQuery = `
+  let sqlQuery = Prisma.sql`
     SELECT "Tournament".id, "Tournament"."name", "Tournament"."desc", "tournamentUrl", "Tournament"."city", "Tournament"."maxPlayers", "storeId", "Tournament"."locationName", "Tournament".lat, "Tournament".lng, "dateStarted", "startDate", "dateEnded", "Tournament"."createdAt", "Tournament"."updatedAt", "Tournament"."street1", "Tournament"."street2",  "Tournament"."country", "Tournament"."state", "Tournament"."zip", "timerLeftInSeconds", "timerStatus", "Tournament".active,
     COUNT("PlayerTournamentScore"."tournamentId") AS "playerCount", COUNT(*) OVER() AS full_count,
     ${distanceQuery}
@@ -247,48 +251,48 @@ export const searchTournaments = async ({ input }) => {
     LEFT JOIN "Store" ON "Tournament"."storeId"="Store".id
     WHERE "Tournament".active = true ${
       input.name
-        ? `AND LOWER("Tournament".name) LIKE LOWER('%${input.name}%')`
-        : ``
+        ? Prisma.sql`AND LOWER("Tournament".name) LIKE LOWER(${input.name})`
+        : Prisma.sql``
     }
     ${
       input.type && input.type !== 'ALL'
-        ? `AND LOWER("Tournament".type) LIKE LOWER('%${input.type}%')`
-        : ``
+        ? Prisma.sql`AND LOWER("Tournament".type) LIKE LOWER(${input.type})`
+        : Prisma.sql``
     }
     ${
       input.store
-        ? `AND LOWER("Store".name) LIKE LOWER('%${input.store}%')`
-        : ``
+        ? Prisma.sql`AND LOWER("Store".name) LIKE LOWER(${input.store})`
+        : Prisma.sql``
     }
     ${
       input.dateStart
-        ? `AND "Tournament"."startDate" >= '${
+        ? Prisma.sql`AND "Tournament"."startDate" >= '${
             new Date(input.dateStart).toISOString().split('T')[0]
           }'`
-        : ``
+        : Prisma.sql``
     }
     ${
       input.dateEnd
-        ? `AND "Tournament"."startDate" <= '${
+        ? Prisma.sql`AND "Tournament"."startDate" <= '${
             new Date(input.dateEnd).toISOString().split('T')[0]
           }'`
-        : ``
+        : Prisma.sql``
     }
     ${
       input.finishedTournaments
-        ? `AND "Tournament"."dateEnded" IS NOT NULL`
-        : `AND "Tournament"."dateEnded" IS NULL`
+        ? Prisma.sql`AND "Tournament"."dateEnded" IS NOT NULL`
+        : Prisma.sql`AND "Tournament"."dateEnded" IS NULL`
     }
     GROUP BY "Tournament".id
     ${
       input.openSpotsOnly
-        ? `HAVING COUNT("PlayerTournamentScore"."tournamentId") < "Tournament"."maxPlayers"`
-        : ``
+        ? Prisma.sql`HAVING COUNT("PlayerTournamentScore"."tournamentId") < "Tournament"."maxPlayers"`
+        : Prisma.sql``
     }
     ${
       input.lat && input.lng
-        ? `ORDER BY acos(sin(${input.lat}) * sin("Tournament".lat) + cos(${input.lat}) * cos("Tournament".lat) * cos("Tournament".lng - (${input.lng}))) * ${earthsRadius} ASC`
-        : ``
+        ? Prisma.sql`ORDER BY acos(sin(${input.lat}) * sin("Tournament".lat) + cos(${input.lat}) * cos("Tournament".lat) * cos("Tournament".lng - (${input.lng}))) * ${earthsRadius} ASC`
+        : Prisma.sql`ORDER BY "Tournament"."startDate" ASC`
     }
     LIMIT ${input.take}
     OFFSET ${input.skip};

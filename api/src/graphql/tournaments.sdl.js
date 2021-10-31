@@ -183,14 +183,16 @@ export const schema = gql`
 
   type Query {
     tournaments(searchTerm: String, orderBy: OrderByInput): [Tournament!]!
+      @adminOnly
     searchTournaments(input: SearchTournamentInput!): PaginatedTournaments!
-    tournament(id: Int!): Tournament
-    tournamentByUrl(url: String): Tournament
-    myTournaments: [Tournament!]!
-    currentTournaments(input: SearchTournamentInput): [Tournament!]!
-    upcomingTournaments(input: SearchTournamentInput): [Tournament!]!
-    finishedTournaments(input: SearchTournamentInput): [Tournament!]!
-    searchNonPlayers(id: Int!, searchTerm: String): [User!]!
+      @skipAuth
+    tournament(id: Int!): Tournament @adminOnly
+    tournamentByUrl(url: String): Tournament @skipAuth
+    myTournaments: [Tournament!]! @skipAuth
+    currentTournaments(input: SearchTournamentInput): [Tournament!]! @skipAuth
+    upcomingTournaments(input: SearchTournamentInput): [Tournament!]! @skipAuth
+    finishedTournaments(input: SearchTournamentInput): [Tournament!]! @skipAuth
+    searchNonPlayers(id: Int!, searchTerm: String): [User!]! @requireAuth
   }
 
   input CreateTournamentInput {
@@ -315,19 +317,21 @@ export const schema = gql`
   }
 
   type Mutation {
-    createTournament(input: CreateTournamentInput!): Tournament!
+    createTournament(input: CreateTournamentInput!): Tournament! @requireAuth
     updateTournament(id: Int!, input: UpdateTournamentInput!): Tournament!
-    addPlayer(id: Int!, input: AddPlayerInput!): Tournament!
-    deleteTournament(id: Int!): Tournament!
-    registerForTournament(id: Int!): String!
-    startTournament(id: Int!): Tournament!
-    updateTimer(input: TimerInput!): Tournament!
-    addMatchScore(input: TournamentMatchScoreInput!): Tournament!
+      @requireAuth
+    addPlayer(id: Int!, input: AddPlayerInput!): Tournament! @requireAuth
+    deleteTournament(id: Int!): Tournament! @adminOnly
+    registerForTournament(id: Int!): String! @requireAuth
+    startTournament(id: Int!): Tournament! @requireAuth
+    updateTimer(input: TimerInput!): Tournament! @requireAuth
+    addMatchScore(input: TournamentMatchScoreInput!): Tournament! @requireAuth
     updateMatchScore(input: TournamentMatchScoreInput!): Tournament!
-    advanceRound(id: Int!, roundNumber: Int!): Tournament
-    endTournament(id: Int!): Tournament!
-    cancelTournament(id: Int!): Tournament!
-    leaveTournament(id: Int!): String!
-    removePlayer(id: Int!): String!
+      @requireAuth
+    advanceRound(id: Int!, roundNumber: Int!): Tournament @requireAuth
+    endTournament(id: Int!): Tournament! @requireAuth
+    cancelTournament(id: Int!): Tournament! @requireAuth
+    leaveTournament(id: Int!): String! @requireAuth
+    removePlayer(id: Int!): String! @requireAuth
   }
 `
