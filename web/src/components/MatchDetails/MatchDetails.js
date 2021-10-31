@@ -379,35 +379,37 @@ const MatchDetails = ({
                 </Button>
               )}
             {!addedScore &&
-              player1 &&
-              player2 &&
-              !scoreSubmitted(currentMatch?.players[0]?.score) && (
-                <Button
-                  type="submit"
-                  loading={addMatchScoreLoading}
-                  className="rounded-full"
-                  my="0"
-                  py="2"
-                  px="2"
-                  full={false}
-                  colorWeight={400}
+            player1 >= 0 &&
+            player2 >= 0 &&
+            !scoreSubmitted(currentMatch?.players[0]?.score) ? (
+              <Button
+                type="submit"
+                loading={addMatchScoreLoading}
+                className="rounded-full"
+                my="0"
+                py="2"
+                px="2"
+                full={false}
+                colorWeight={400}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-6 w-6"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M5 13l4 4L19 7"
-                    />
-                  </svg>
-                </Button>
-              )}
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+              </Button>
+            ) : (
+              <div />
+            )}
           </div>
         </Form>
       ) : (

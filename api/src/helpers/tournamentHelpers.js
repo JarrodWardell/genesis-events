@@ -69,9 +69,7 @@ export const composeMatchArrays = ({
     setReRun = false
     numberOfRuns++
 
-    let playersNotGivenMatches = randomizedArray(
-      players.map((player) => player.id)
-    )
+    let playersNotGivenMatches = players.map((player) => player.id)
 
     let playersGivenMatches = []
     let playerScores = {}
@@ -144,7 +142,7 @@ export const composeMatchArrays = ({
       playersGivenMatches.push(playerGivenBye.id)
     }
 
-    playerList.forEach((player) => {
+    randomizedArray([...playerList]).forEach((player) => {
       if (playersNotGivenMatches.indexOf(player) !== -1) {
         let match = []
         let scoreDifToCheck = playerScores[player]
