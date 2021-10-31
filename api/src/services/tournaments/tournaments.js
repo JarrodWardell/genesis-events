@@ -220,12 +220,6 @@ export const finishedTournaments = ({ input = {}, take = 6 }) => {
           {
             active: true,
           },
-          {
-            country: {
-              contains: input.country,
-              mode: 'insensitive',
-            },
-          },
         ],
       },
       orderBy: {
@@ -298,7 +292,7 @@ export const searchTournaments = async ({ input }) => {
     ${
       input.lat && input.lng
         ? Prisma.sql`ORDER BY acos(sin(${input.lat}) * sin("Tournament".lat) + cos(${input.lat}) * cos("Tournament".lat) * cos("Tournament".lng - (${input.lng}))) * ${earthsRadius} ASC`
-        : Prisma.sql``
+        : Prisma.sql`ORDER BY "Tournament"."startDate" ASC`
     }
     LIMIT ${input.take}
     OFFSET ${input.skip};
