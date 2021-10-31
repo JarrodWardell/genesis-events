@@ -172,10 +172,19 @@ export const upcomingTournaments = ({ input = {}, take = 6 }) => {
             active: true,
           },
           {
-            country: {
-              contains: input.country,
-              mode: 'insensitive',
-            },
+            OR: [
+              {
+                country: {
+                  contains: input.country,
+                  mode: 'insensitive',
+                },
+              },
+              {
+                country: {
+                  equals: null,
+                },
+              },
+            ],
           },
         ],
       },
