@@ -5,6 +5,7 @@
   "dependencies": {
     "@redwoodjs/api": "^0.38.0",
     "@redwoodjs/api-server": "^0.38.0",
+    "@redwoodjs/core": "^0.38.0",
     "@redwoodjs/graphql-server": "^0.38.0",
     "@sentry/browser": "^6.10.0",
     "@sentry/node": "^6.10.0",

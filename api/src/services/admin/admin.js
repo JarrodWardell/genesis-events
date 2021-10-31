@@ -1,4 +1,3 @@
-import { randomWordGenerator } from 'src/helpers/tournamentHelpers'
 import { db } from 'src/lib/db'
 
 export const seedTournaments = ({ country = '', numTournaments = 5 }) => {

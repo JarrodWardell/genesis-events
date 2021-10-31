@@ -452,9 +452,6 @@ const SignupPage = ({ type }) => {
               <Controller
                 control={formMethods.control}
                 name="country"
-                rules={{
-                  required: true,
-                }}
                 render={({ field: { onChange, value, name, ref } }) => (
                   <Select
                     name={name}

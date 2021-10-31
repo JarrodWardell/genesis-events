@@ -188,7 +188,7 @@ export const schema = gql`
       @skipAuth
     tournament(id: Int!): Tournament @requireAuth
     tournamentByUrl(url: String): Tournament @requireAuth
-    myTournaments: [Tournament!]! @requireAuth
+    myTournaments: [Tournament!]! @skipAuth
     currentTournaments(input: SearchTournamentInput): [Tournament!]! @skipAuth
     upcomingTournaments(input: SearchTournamentInput): [Tournament!]! @skipAuth
     finishedTournaments(input: SearchTournamentInput): [Tournament!]! @skipAuth
