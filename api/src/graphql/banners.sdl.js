@@ -27,9 +27,9 @@ export const schema = gql`
   }
 
   type Query {
-    banners: [Banner!]!
-    homeBanners: [Banner!]!
-    banner(id: Int!): Banner
+    banners: [Banner!]! @skipAuth
+    homeBanners: [Banner!]! @skipAuth
+    banner(id: Int!): Banner @skipAuth
   }
 
   input CreateBannerInput {
@@ -81,9 +81,9 @@ export const schema = gql`
   }
 
   type Mutation {
-    createBanner(input: CreateBannerInput!): Banner!
-    updateBanner(id: Int!, input: UpdateBannerInput!): Banner!
-    deleteBanner(id: Int!): Banner!
+    createBanner(input: CreateBannerInput!): Banner! @requireAuth
+    updateBanner(id: Int!, input: UpdateBannerInput!): Banner! @requireAuth
+    deleteBanner(id: Int!): Banner! @requireAuth
   }
 
   enum Placement {

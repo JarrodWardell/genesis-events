@@ -1,4 +1,4 @@
-import { AuthenticationError } from '@redwoodjs/api'
+import { AuthenticationError } from '@redwoodjs/graphql-server'
 import admin from 'firebase-admin'
 
 import { db } from './db'
@@ -16,6 +16,10 @@ const config = {
 const adminApp = admin.initializeApp(config)
 
 export const getCurrentUser = async (decoded, { token, type }) => {
+  if (!decoded) {
+    return null
+  }
+
   const data = await adminApp.auth().verifyIdToken(token)
   const { email, uid, firebase } = data
   let provider = await db.provider.findUnique({

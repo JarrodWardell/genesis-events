@@ -1,10 +1,11 @@
 import { AuthProvider } from '@redwoodjs/auth'
-import firebase from 'firebase/app'
-import 'firebase/analytics'
-import 'firebase/auth'
+import { getAnalytics } from 'firebase/analytics'
+
+import { initializeApp, getApps, getApp } from '@firebase/app'
+import * as firebaseAuth from '@firebase/auth'
 import * as Sentry from '@sentry/react'
 import { Integrations } from '@sentry/tracing'
-import { FatalErrorBoundary } from '@redwoodjs/web'
+import { FatalErrorBoundary, RedwoodProvider } from '@redwoodjs/web'
 import { RedwoodApolloProvider } from '@redwoodjs/web/apollo'
 
 import FatalErrorPage from 'src/pages/FatalErrorPage'
@@ -26,27 +27,33 @@ const firebaseClientConfig = {
 Sentry.init({
   dsn: 'https://e10d59f45d0d41e2ace822d4c222c093@o937181.ingest.sentry.io/5887601',
   integrations: [new Integrations.BrowserTracing()],
-
-  // Set tracesSampleRate to 1.0 to capture 100%
-  // of transactions for performance monitoring.
-  // We recommend adjusting this value in production
   tracesSampleRate: 1.0,
 })
 
-const firebaseClient = ((config) => {
-  firebase.initializeApp(config)
-  return firebase
+const firebaseApp = ((config) => {
+  const apps = getApps()
+  if (!apps.length) {
+    initializeApp(config)
+  }
+  return getApp()
 })(firebaseClientConfig)
 
-export const analytics = firebaseClient.analytics()
+export const firebaseClient = {
+  firebaseAuth,
+  firebaseApp,
+}
+
+export const analytics = getAnalytics()
 
 const App = () => (
   <FatalErrorBoundary page={FatalErrorPage}>
-    <AuthProvider client={firebaseClient} type="firebase">
-      <RedwoodApolloProvider>
-        <Routes />
-      </RedwoodApolloProvider>
-    </AuthProvider>
+    <RedwoodProvider>
+      <AuthProvider client={firebaseClient} type={'firebase'}>
+        <RedwoodApolloProvider>
+          <Routes />
+        </RedwoodApolloProvider>
+      </AuthProvider>
+    </RedwoodProvider>
   </FatalErrorBoundary>
 )
 

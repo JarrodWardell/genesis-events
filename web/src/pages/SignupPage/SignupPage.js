@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react'
 import {
   Form,
   TextField,
@@ -6,11 +7,10 @@ import {
   TextAreaField,
   FormError,
   SelectField,
+  useForm,
+  Controller,
 } from '@redwoodjs/forms'
 import GooglePlacesAutocomplete from 'react-google-places-autocomplete'
-
-import { useEffect, useRef } from 'react'
-import { useForm, Controller } from 'react-hook-form'
 
 import { useAuth } from '@redwoodjs/auth'
 import { useMutation } from '@redwoodjs/web'
@@ -18,12 +18,9 @@ import { navigate, routes, Redirect, useParams } from '@redwoodjs/router'
 
 import NicknameCheckField from 'src/components/NicknameCheckField/NicknameCheckField'
 import { getAddress } from 'src/helpers/formatAddress'
-import { analytics } from 'src/App'
 import UserPictureSelector from 'src/components/UserPictureSelector/UserPictureSelector'
 import PasswordCheck from 'src/components/PasswordCheck/PasswordCheck'
 import { GoogleIcon } from 'src/components/Icons/Google'
-import { FacebookIcon } from 'src/components/Icons/Facebook'
-import { TwitterIcon } from 'src/components/Icons/Twitter'
 import Button from 'src/components/Button/Button'
 import DatePicker from 'react-datepicker'
 
@@ -240,9 +237,7 @@ const SignupPage = ({ type }) => {
     formMethods.setValue('store-street1', addr.formatted_address)
   }
 
-  useEffect(() => {
-    analytics.logEvent('User entered Signup page')
-  })
+  useEffect(() => {})
 
   const renderStep = () => {
     if (step === 1) {
@@ -398,7 +393,7 @@ const SignupPage = ({ type }) => {
                 rules={{
                   required: true,
                 }}
-                render={({ name, value, onChange, ref, onBlur }) => (
+                render={({ field: { name, value, onChange, ref, onBlur } }) => (
                   <DatePicker
                     onChange={onChange}
                     autoComplete="off"
@@ -460,7 +455,7 @@ const SignupPage = ({ type }) => {
                 rules={{
                   required: true,
                 }}
-                render={({ onChange, value, name, ref }) => (
+                render={({ field: { onChange, value, name, ref } }) => (
                   <Select
                     name={name}
                     inputRef={ref}
@@ -632,7 +627,7 @@ const SignupPage = ({ type }) => {
                 rules={{
                   required: true,
                 }}
-                render={({ name, ref }) => (
+                render={({ field: { name, ref } }) => (
                   <GooglePlacesAutocomplete
                     apiKey={process.env.GOOGLE_API_KEY}
                     ref={ref}

@@ -11,8 +11,8 @@ export const schema = gql`
   }
 
   type Query {
-    userPictures: [UserPicture!]!
-    userPicture(id: Int!): UserPicture
+    userPictures: [UserPicture!]! @skipAuth
+    userPicture(id: Int!): UserPicture @requireAuth
   }
 
   input CreateUserPictureInput {
@@ -30,8 +30,9 @@ export const schema = gql`
   }
 
   type Mutation {
-    createUserPicture(input: CreateUserPictureInput!): UserPicture!
+    createUserPicture(input: CreateUserPictureInput!): UserPicture! @requireAuth
     updateUserPicture(id: Int!, input: UpdateUserPictureInput!): UserPicture!
-    deleteUserPicture(id: Int!): UserPicture!
+      @requireAuth
+    deleteUserPicture(id: Int!): UserPicture! @requireAuth
   }
 `
