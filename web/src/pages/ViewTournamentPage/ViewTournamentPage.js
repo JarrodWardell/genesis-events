@@ -37,11 +37,11 @@ const ViewTournamentPage = ({ url, tab, tabOptions }) => {
       path: 'rounds',
     },
     leaderboard: {
-      text: 'Leaderboard',
+      text: 'Players/Leaderboard',
       path: 'leaderboard',
     },
     matches: {
-      text: 'Matches',
+      text: 'Match Log',
       path: 'matches',
     },
     signup: {
