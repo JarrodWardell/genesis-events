@@ -649,11 +649,17 @@ const TournamentSearchPage = () => {
                         </p>
                       )}
 
-                      {filters.lat && filters.lng && (
-                        <div className="bg-green-500 text-white rounded-md mx-auto p-2 mt-auto text-sm">
-                          {Math.floor(tournament.distance)} KM Away
-                        </div>
-                      )}
+                      {filters.lat &&
+                        filters.lng &&
+                        (tournament.lat && tournament.lng ? (
+                          <div className="bg-green-500 text-white rounded-md mx-auto p-2 mt-auto text-sm">
+                            {Math.floor(tournament.distance)} KM Away
+                          </div>
+                        ) : (
+                          <div className="bg-yellow-700 text-white rounded-md mx-auto p-2 mt-auto text-sm">
+                            No location
+                          </div>
+                        ))}
                     </div>
                   </div>
                 ))}

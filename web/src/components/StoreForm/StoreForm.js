@@ -6,6 +6,7 @@ import {
   TextField,
   CheckboxField,
   DatetimeLocalField,
+  NumberField,
   Submit,
 } from '@redwoodjs/forms'
 
@@ -101,10 +102,11 @@ const StoreForm = (props) => {
         >
           Lat
         </Label>
-        <TextField
+        <NumberField
           name="lat"
           defaultValue={props.store?.lat}
           className="rw-input"
+          step="0.00000001"
           errorClassName="rw-input rw-input-error"
           validation={{ required: true }}
           dataType="Float"
@@ -118,9 +120,10 @@ const StoreForm = (props) => {
         >
           Lng
         </Label>
-        <TextField
+        <NumberField
           name="lng"
           defaultValue={props.store?.lng}
+          step="0.00000001"
           className="rw-input"
           errorClassName="rw-input rw-input-error"
           validation={{ required: true }}

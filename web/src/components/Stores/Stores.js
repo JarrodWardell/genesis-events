@@ -58,6 +58,12 @@ const StoresList = ({ stores }) => {
 
   return (
     <div className="rw-segment rw-table-wrapper-responsive">
+      <div className="my-1 flex flex-col justify-around">
+        <div>{stores.length} Total Stores</div>
+        <div>
+          {stores.filter((store) => store.active).length} Total Active Stores
+        </div>
+      </div>
       <table className="rw-table">
         <thead>
           <tr>

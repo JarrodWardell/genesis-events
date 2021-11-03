@@ -266,16 +266,14 @@ export const searchTournaments = async ({ input }) => {
     }
     ${
       input.dateStart
-        ? Prisma.sql`AND "Tournament"."startDate" >= '${
-            new Date(input.dateStart).toISOString().split('T')[0]
-          }'`
+        ? Prisma.sql`AND "Tournament"."startDate" >= ${new Date(
+            input.dateStart
+          )}`
         : Prisma.sql``
     }
     ${
       input.dateEnd
-        ? Prisma.sql`AND "Tournament"."startDate" <= '${
-            new Date(input.dateEnd).toISOString().split('T')[0]
-          }'`
+        ? Prisma.sql`AND "Tournament"."startDate" <= ${new Date(input.dateEnd)}`
         : Prisma.sql``
     }
     ${
@@ -291,7 +289,7 @@ export const searchTournaments = async ({ input }) => {
     }
     ${
       input.lat && input.lng
-        ? Prisma.sql`ORDER BY acos(sin(${input.lat}) * sin("Tournament".lat) + cos(${input.lat}) * cos("Tournament".lat) * cos("Tournament".lng - (${input.lng}))) * ${earthsRadius} ASC`
+        ? Prisma.sql`ORDER BY distance ASC`
         : Prisma.sql`ORDER BY "Tournament"."startDate" ASC`
     }
     LIMIT ${input.take}
