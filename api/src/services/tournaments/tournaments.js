@@ -1,4 +1,5 @@
 import { Prisma } from '@prisma/client'
+import { UserInputError } from '@redwoodjs/graphql-server'
 import newPlayerRegisteredEO from 'src/emails/newPlayerRegisteredEO'
 import newPlayerRegistered from 'src/emails/newPlayerRegisteredEO'
 import newPlayerRegisteredPlayer from 'src/emails/newPlayerRegisteredPlayer'
@@ -242,6 +243,8 @@ export const searchTournaments = async ({ input }) => {
        + SIN(RADIANS("Tournament".lat))
        * SIN(RADIANS(${input.lat}))))) AS distance`
 
+  let today = new Date()
+
   let sqlQuery = Prisma.sql`
     SELECT "Tournament".id, "Tournament"."name", "Tournament"."desc", "tournamentUrl", "Tournament"."city", "Tournament"."maxPlayers", "storeId", "Tournament"."locationName", "Tournament".lat, "Tournament".lng, "dateStarted", "startDate", "dateEnded", "Tournament"."createdAt", "Tournament"."updatedAt", "Tournament"."street1", "Tournament"."street2",  "Tournament"."country", "Tournament"."state", "Tournament"."zip", "timerLeftInSeconds", "timerStatus", "Tournament".active,
     COUNT("PlayerTournamentScore"."tournamentId") AS "playerCount", COUNT(*) OVER() AS full_count,
@@ -279,7 +282,9 @@ export const searchTournaments = async ({ input }) => {
     ${
       input.finishedTournaments
         ? Prisma.sql`AND "Tournament"."dateEnded" IS NOT NULL`
-        : Prisma.sql`AND "Tournament"."dateEnded" IS NULL`
+        : Prisma.sql`AND "Tournament"."dateEnded" IS NULL AND "Tournament"."startDate" > ${new Date(
+            today.getDate() - 1
+          )}`
     }
     GROUP BY "Tournament".id
     ${
@@ -449,7 +454,7 @@ export const registerForTournament = async ({ id }) => {
   })
 
   if (!tournament.publicRegistration) {
-    throw new Error(
+    throw new UserInputError(
       'Registration can only be made by admins for this tournament. Please contact the organizer.'
     )
   }
@@ -514,6 +519,16 @@ export const addPlayer = async ({ id, input }) => {
     let newInput = { ...input }
     delete newInput.playerId
 
+    let previousPlayers = await db.playerTournamentScore.findFirst({
+      where: { playerId: playerId, tournamentId: id },
+    })
+
+    if (previousPlayers) {
+      throw new UserInputError(
+        'Player with that Player ID already registered for this tournament. Please ensure the user you are adding has not been in the tournament before.'
+      )
+    }
+
     await db.playerTournamentScore.create({
       data: {
         ...newInput,
@@ -532,6 +547,16 @@ export const addPlayer = async ({ id, input }) => {
   } else {
     let newInput = { ...input }
     delete newInput.playerId
+
+    let previousPlayers = await db.playerTournamentScore.findFirst({
+      where: { playerName: input.playerName, tournamentId: id },
+    })
+
+    if (previousPlayers) {
+      throw new UserInputError(
+        'A dummy user with that Player Name already registered for this tournament. Please add a unique name'
+      )
+    }
 
     await db.playerTournamentScore.create({
       data: {

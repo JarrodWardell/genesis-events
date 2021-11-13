@@ -58,6 +58,33 @@ const UsersList = ({ users }) => {
 
   return (
     <div className="rw-segment rw-table-wrapper-responsive">
+      <div className="my-1 flex flex-col justify-around text-center">
+        <div>{users.length} Total Users</div>
+        <div>
+          {
+            users.filter(
+              (user) => user.UserUserRole[0]?.userRole?.name === 'PLAYER'
+            ).length
+          }{' '}
+          Players
+        </div>
+        <div>
+          {
+            users.filter(
+              (user) => user.UserUserRole[0]?.userRole?.name === 'EO'
+            ).length
+          }{' '}
+          Event Organizers
+        </div>
+        <div>
+          {
+            users.filter(
+              (user) => user.UserUserRole[0]?.userRole?.name === 'ADMIN'
+            ).length
+          }{' '}
+          Admins
+        </div>
+      </div>
       <table className="rw-table">
         <thead>
           <tr>

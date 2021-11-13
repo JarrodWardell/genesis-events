@@ -30,7 +30,7 @@ export const schema = gql`
     Store: [Store]!
     tournamentsOwned: [Tournament]!
     Tournament: [Tournament]!
-    UserRole: [UserRole]!
+    UserUserRole: [UserUserRole]!
   }
 
   type UserRole {

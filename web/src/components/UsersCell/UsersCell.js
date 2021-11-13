@@ -7,7 +7,7 @@ export const beforeQuery = (props) => {
 }
 
 export const QUERY = gql`
-  query ($searchTerm: String) {
+  query users($searchTerm: String) {
     users(searchTerm: $searchTerm) {
       id
       firstname
@@ -31,6 +31,11 @@ export const QUERY = gql`
       email
       dob
       active
+      UserUserRole {
+        userRole {
+          name
+        }
+      }
     }
   }
 `

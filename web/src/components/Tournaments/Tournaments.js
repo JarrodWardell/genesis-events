@@ -30,7 +30,7 @@ const TournamentsList = ({ tournaments, orderBy, setOrderBy, searchTerm }) => {
 
   return (
     <div>
-      <div className="my-1 flex flex-col justify-around">
+      <div className="my-1 flex flex-col justify-around text-center">
         <div>{tournaments.length} Total Tournaments</div>
         <div>
           {tournaments.filter((tournament) => tournament.active).length} Total

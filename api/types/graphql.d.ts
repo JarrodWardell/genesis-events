@@ -1080,7 +1080,7 @@ export type User = {
   Contact: Array<Maybe<Contact>>;
   Store: Array<Maybe<Store>>;
   Tournament: Array<Maybe<Tournament>>;
-  UserRole: Array<Maybe<UserRole>>;
+  UserUserRole: Array<Maybe<UserUserRole>>;
   active: Scalars['Boolean'];
   adminComments?: Maybe<Scalars['String']>;
   city?: Maybe<Scalars['String']>;
@@ -1663,7 +1663,7 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
   Contact?: Resolver<Array<Maybe<ResolversTypes['Contact']>>, ParentType, ContextType>;
   Store?: Resolver<Array<Maybe<ResolversTypes['Store']>>, ParentType, ContextType>;
   Tournament?: Resolver<Array<Maybe<ResolversTypes['Tournament']>>, ParentType, ContextType>;
-  UserRole?: Resolver<Array<Maybe<ResolversTypes['UserRole']>>, ParentType, ContextType>;
+  UserUserRole?: Resolver<Array<Maybe<ResolversTypes['UserUserRole']>>, ParentType, ContextType>;
   active?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   adminComments?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   city?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
