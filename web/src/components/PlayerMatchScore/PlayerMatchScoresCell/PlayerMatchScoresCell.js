@@ -12,6 +12,7 @@ export const QUERY = gql`
       createdAt
       updatedAt
       wonMatch
+      playerName
       bye
       active
     }

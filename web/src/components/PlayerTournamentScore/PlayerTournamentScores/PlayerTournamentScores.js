@@ -98,7 +98,7 @@ const PlayerTournamentScoresList = ({ playerTournamentScores }) => {
                     {playerTournamentScore.player?.nickname}
                   </Link>
                 ) : (
-                  <span>playerTournamentScore.playerName</span>
+                  <span>{playerTournamentScore.playerName}</span>
                 )}
               </td>
               <td>

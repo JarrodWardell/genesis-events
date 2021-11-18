@@ -69,6 +69,7 @@ const PlayerMatchScoresList = ({ playerMatchScores }) => {
             <th>Id</th>
             <th>Score</th>
             <th>User id</th>
+            <th>PlayerName</th>
             <th>Match id</th>
             <th>Created at</th>
             <th>Updated at</th>
@@ -84,6 +85,7 @@ const PlayerMatchScoresList = ({ playerMatchScores }) => {
               <td>{truncate(playerMatchScore.id)}</td>
               <td>{truncate(playerMatchScore.score)}</td>
               <td>{truncate(playerMatchScore.userId)}</td>
+              <td>{truncate(playerMatchScore.playerName)}</td>
               <td>{truncate(playerMatchScore.matchId)}</td>
               <td>{timeTag(playerMatchScore.createdAt)}</td>
               <td>{timeTag(playerMatchScore.updatedAt)}</td>

@@ -415,6 +415,54 @@ describe('Matching Algorithm', () => {
       ).toBe(true)
     }
   })
+
+  it('Correctly ensures no rematches for 6 players when there is no draw', () => {
+    let players = [
+      returnPlayer({ name: 'player1', score: 1, wins: 1, losses: 0 }),
+      returnPlayer({ name: 'player2', score: 1, wins: 1, losses: 0 }),
+      returnPlayer({ name: 'player3', score: 1, wins: 1, losses: 0 }),
+      returnPlayer({ name: 'player4', score: 0, wins: 0, losses: 1 }),
+      returnPlayer({
+        name: 'player5',
+        score: 0,
+        wins: 0,
+        losses: 1,
+        draws: 0,
+      }),
+      returnPlayer({
+        name: 'player6',
+        score: 0,
+        wins: 0,
+        losses: 1,
+        draws: 0,
+      }),
+    ]
+
+    let matches = [
+      {
+        players: [players[0], players[3]],
+      },
+      {
+        players: [players[1], players[4]],
+      },
+      {
+        players: [players[2], players[5]],
+      },
+    ]
+
+    //In 100 scenarios, ensure there is never an end result of a player playing against the same player twice in a row
+    for (var i = 0; i < 100; i++) {
+      let composedMatches = composeMatchArrays({
+        players,
+        matches,
+        lastRoundMatches: matches,
+      })
+
+      expect(
+        checkNoRematch({ oldMatches: matches, newMatches: composedMatches })
+      ).toBe(true)
+    }
+  })
 })
 
 describe('Finding Opponents', () => {

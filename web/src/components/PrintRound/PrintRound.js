@@ -43,7 +43,7 @@ class PrintRound extends React.Component {
                         <td className="py-2 text-center font-bold">
                           {playerScore?.bye ? (
                             'BYE'
-                          ) : playerScore.score ? (
+                          ) : playerScore.score >= 0 ? (
                             <span>{playerScore.score}</span>
                           ) : (
                             <div className="ml-4 border-b border-black w-20 h-4" />
