@@ -189,16 +189,6 @@ const Tournament = ({ tournament }) => {
           Delete
         </a>
       </nav>
-      {tournament.owner && (
-        <div className="mt-4">
-          <header className="">
-            <h2 className="rw-heading rw-heading-secondary">
-              {tournament.name} Owner
-            </h2>
-          </header>
-          <UsersList users={[tournament.owner]} />
-        </div>
-      )}
       {tournament.store && (
         <div className="mt-4">
           <header className="">
