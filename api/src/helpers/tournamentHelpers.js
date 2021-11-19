@@ -144,7 +144,7 @@ export const composeMatchArrays = ({
     }
 
     let sortedPlayerList = [...playerList]
-    if (numberOfRuns > 1) {
+    if (numberOfRuns > 1 || matches.length === 0) {
       sortedPlayerList = randomizedArray([...playerList])
     }
 
