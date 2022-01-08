@@ -1,8 +1,9 @@
-import { Form, TextField, Submit, Label } from '@redwoodjs/forms'
+import { Form, TextField, Label } from '@redwoodjs/forms'
 import { useAuth } from '@redwoodjs/auth'
-import { Link, navigate, Redirect, routes } from '@redwoodjs/router'
+import { Link, Redirect, routes } from '@redwoodjs/router'
 import { logError } from 'src/helpers/errorLogger'
 import Button from 'src/components/Button/Button'
+import { sendPasswordResetEmail } from 'firebase/auth'
 
 const ForgotPasswordPage = () => {
   const [sentSendPassword, setSentSendPassword] = React.useState(false)
@@ -10,10 +11,10 @@ const ForgotPasswordPage = () => {
   const [loadingPasswordReset, setLoadingPasswordReset] = React.useState(false)
 
   const onForgotPassword = async (data) => {
-    var auth = client.auth()
+    var auth = client.firebaseAuth.getAuth()
     setLoadingPasswordReset(true)
-    await auth
-      .sendPasswordResetEmail(data.email)
+
+    sendPasswordResetEmail(auth, data.email)
       .then(() => {
         setSentSendPassword(true)
         setLoadingPasswordReset(false)

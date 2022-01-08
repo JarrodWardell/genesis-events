@@ -3,6 +3,7 @@ import { navigate, Redirect, routes, useParams } from '@redwoodjs/router'
 import { toast } from '@redwoodjs/web/dist/toast'
 import PasswordCheck from 'src/components/PasswordCheck/PasswordCheck'
 import { logError } from 'src/helpers/errorLogger'
+import { confirmPasswordReset } from 'firebase/auth'
 
 const ResetPasswordPage = () => {
   const [loadingPasswordReset, setLoadingPasswordReset] = React.useState(false)
@@ -22,11 +23,10 @@ const ResetPasswordPage = () => {
   }
 
   const onResetPassword = async (data) => {
-    var auth = client.auth()
+    var auth = client.firebaseAuth.getAuth()
     setLoadingPasswordReset(true)
 
-    await auth
-      .confirmPasswordReset(oobCode, data.password)
+    confirmPasswordReset(auth, oobCode, data.password)
       .then(() => {
         setLoadingPasswordReset(false)
         toast.success(
