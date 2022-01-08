@@ -41,21 +41,22 @@ export const generateMatches = async ({ roundNumber = 1, db, id }) => {
       .matches({ where: { active: true }, include: { players: true } })
   }
 
-  return composeMatchArrays({ players, matches, lastRoundMatches })
+  return composeMatchArrays({ players, matches, lastRoundMatches, roundNumber })
 }
 
 export const composeMatchArrays = ({
   players = [],
   matches = [],
   lastRoundMatches = [],
+  roundNumber = 1,
 }) => {
   let matchArray = []
   let lastPlayed = {}
   lastRoundMatches.forEach((match) => {
-    let player1 = match.players[0].userId || match.players[0].playerName
+    let player1 = findPlayer(match.players[0], players).id
 
     if (match.players.length > 1) {
-      let player2 = match.players[1].userId || match.players[1].playerName
+      let player2 = findPlayer(match.players[1], players).id
 
       lastPlayed[player2] = player1
       lastPlayed[player1] = player2
@@ -92,13 +93,13 @@ export const composeMatchArrays = ({
     if (matches.length > 0) {
       //Go through all previous matches, find which players played which and add to the player dictionary
       matches.forEach((match) => {
-        let player1 = match.players[0].userId || match.players[0].playerName
+        let player1 = findPlayer(match.players[0], players).id
         if (!(player1 in playersPlayed)) {
           playersPlayed[player1] = []
         }
 
         if (match.players.length > 1) {
-          let player2 = match.players[1].userId || match.players[1].playerName
+          let player2 = findPlayer(match.players[1], players).id
 
           if (!(player2 in playersPlayed)) {
             playersPlayed[player2] = []
@@ -175,7 +176,12 @@ export const composeMatchArrays = ({
         playersNotGivenMatches.splice(playersNotGivenMatches.indexOf(player), 1)
         let playersProhibited = [...playersGivenMatches]
 
-        if (playersNotGivenMatches.length > 2 && lastRoundMatches.length > 0) {
+        if (roundNumber > 1 && roundNumber < players.length) {
+          playersProhibited = [...playersProhibited, ...playersPlayed[player]]
+        } else if (
+          playersNotGivenMatches.length > 2 &&
+          lastRoundMatches.length > 0
+        ) {
           playersProhibited = [...playersProhibited, lastPlayed[player]]
         }
 
@@ -269,13 +275,32 @@ export const findOpponent = ({
       })
     }
 
-    if (playersPlayedAgainst.indexOf(chosenOpponent) !== -1) {
+    if (
+      playersPlayedAgainst.indexOf(chosenOpponent) !== -1 ||
+      (!chosenOpponent && playersNotGivenMatches.length > 0)
+    ) {
       rerun = true
     }
   }
 
   //Return ChosenOpponent
   return { opponent: chosenOpponent, rerun }
+}
+
+const findPlayer = (player, players) => {
+  //Given player with userId and playerName, find player in players array
+  let playerFound = players.find(
+    (playerObj) => player.userId && player.userId === playerObj.playerId
+  )
+
+  if (!playerFound) {
+    playerFound = players.find(
+      (playerObj) =>
+        !player.playerId && player.playerName === playerObj.playerName
+    )
+  }
+
+  return playerFound
 }
 
 const randomizedArray = (arr) =>
