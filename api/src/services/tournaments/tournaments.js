@@ -459,6 +459,16 @@ export const registerForTournament = async ({ id }) => {
     )
   }
 
+  let previousPlayers = await db.playerTournamentScore.findFirst({
+    where: { playerId: currentUser.user.id, tournamentId: id },
+  })
+
+  if (previousPlayers) {
+    throw new UserInputError(
+      'Player with that Player ID already registered for this tournament. Please ensure you have not already registered.'
+    )
+  }
+
   await db.playerTournamentScore.create({
     data: {
       player: {
