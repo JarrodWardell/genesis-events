@@ -149,7 +149,7 @@ const UserSettingsTab = () => {
             defaultValue={currentUser?.user?.firstname}
             disabled={!editSettings}
             validation={{
-              required: true,
+              minLength: 1,
             }}
           />
         </div>
@@ -165,7 +165,7 @@ const UserSettingsTab = () => {
             defaultValue={currentUser?.user?.lastname}
             disabled={!editSettings}
             validation={{
-              required: true,
+              minLength: 1,
             }}
           />
         </div>
@@ -178,9 +178,9 @@ const UserSettingsTab = () => {
             className="border-2 p-2 mt-2 w-full shadow-sm border-gray-200 rounded-md"
             errorClassName="border-2 p-2 mt-2 w-full shadow-sm border-gray-200 rounded-md border-red-500"
             defaultValue={currentUser?.user?.email}
-            disabled={true}
+            disabled
             validation={{
-              required: true,
+              minLength: 1,
               pattern: {
                 value: /[^@]+@[^\.]+\..+/,
               },
@@ -198,7 +198,7 @@ const UserSettingsTab = () => {
             defaultValue={currentUser?.user?.phone}
             disabled={!editSettings}
             validation={{
-              required: true,
+              minLength: 1,
             }}
           />
         </div>
@@ -215,7 +215,7 @@ const UserSettingsTab = () => {
                 defaultValue={currentUser?.user?.gender}
                 disabled={!editSettings}
                 validation={{
-                  required: true,
+                  minLength: 1,
                 }}
               />
             </div>
@@ -227,7 +227,7 @@ const UserSettingsTab = () => {
                 control={formMethods.control}
                 name="dob"
                 rules={{
-                  required: true,
+                  minLength: 1,
                 }}
                 render={({ field: { name, value, onChange, ref, onBlur } }) => (
                   <DatePicker
