@@ -46,6 +46,22 @@ export const playerLeaderboard = async ({
   }
 }
 
+export const tournamentPlayers = async ({ url, searchTerm = '' }) => {
+  const tournament = await db.tournament.findFirst({
+    where: { tournamentUrl: url },
+  })
+
+  const tournamentPlayers = await db.playerTournamentScore.findMany({
+    where: {
+      tournamentId: tournament.id,
+      active: true,
+      OR: [{ playerName: { contains: searchTerm } }],
+    },
+  })
+
+  return tournamentPlayers
+}
+
 export const playerTournamentScore = ({ id }) => {
   return db.playerTournamentScore.findUnique({
     where: { id },
