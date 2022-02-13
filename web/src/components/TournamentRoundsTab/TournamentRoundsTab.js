@@ -11,6 +11,7 @@ import ReactToPrint from 'react-to-print'
 import PrintRound from '../PrintRound/PrintRound'
 import { logError } from 'src/helpers/errorLogger'
 import { VIEW_TOURNAMENT_FIELDS } from 'src/fragments/tourrnamentFragments'
+import AddMatchForm from '../AddMatchForm/AddMatchForm'
 
 export const ADVANCE_ROUND = gql`
   ${VIEW_TOURNAMENT_FIELDS}
@@ -25,6 +26,15 @@ export const END_TOURNAMENT = gql`
   ${VIEW_TOURNAMENT_FIELDS}
   mutation endTournament($id: Int!) {
     endTournament: endTournament(id: $id) {
+      ...ViewTournamentFields
+    }
+  }
+`
+
+const CREATE_TOURNAMENT_MATCH = gql`
+  ${VIEW_TOURNAMENT_FIELDS}
+  mutation createTournamentMatch($input: CreateTournamentMatchInput!) {
+    createTournamentMatch(input: $input) {
       ...ViewTournamentFields
     }
   }
@@ -83,6 +93,23 @@ const TournamentRoundsTab = ({ tournament, roundNumber, setTournament }) => {
           variables: { url: tournament.tournamentUrl },
         },
       ],
+    }
+  )
+
+  const [createTournamentMatch, { loading: loadingCreateMatch }] = useMutation(
+    CREATE_TOURNAMENT_MATCH,
+    {
+      onCompleted: (data) => {
+        setTournament(data.createTournamentMatch)
+        toast.success(`Match added!`)
+      },
+      onError: (error) => {
+        logError({
+          error,
+          log: true,
+          showToast: true,
+        })
+      },
     }
   )
 
@@ -206,6 +233,21 @@ const TournamentRoundsTab = ({ tournament, roundNumber, setTournament }) => {
             <div className="py-4 col-span-11 text-center">Result</div>
           </div>
           {renderRound()}
+          <AddMatchForm
+            onSubmit={(data) => {
+              createTournamentMatch({
+                variables: {
+                  input: {
+                    tournamentId: tournament.id,
+                    roundId: grabRound().id,
+                    proposedMatch: data.filter((player) => !!player),
+                  },
+                },
+              })
+            }}
+            tournament={tournament}
+            loading={loadingCreateMatch}
+          />
         </div>
       </div>
 

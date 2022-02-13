@@ -35,6 +35,10 @@ export const schema = gql`
     ): PaginatedLeaderboard @skipAuth
     playerTournamentScores: [PlayerTournamentScore!]! @adminOnly
     playerTournamentScore(id: Int!): PlayerTournamentScore @adminOnly
+    tournamentPlayers(
+      url: String!
+      searchTerm: String
+    ): [PlayerTournamentScore!] @skipAuth
   }
 
   input CreatePlayerTournamentScoreInput {

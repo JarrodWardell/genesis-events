@@ -2,7 +2,8 @@ import { XIcon } from '@heroicons/react/solid'
 import { Form, NumberField } from '@redwoodjs/forms/dist'
 import { useForm } from '@redwoodjs/forms'
 import Button from '../Button/Button'
-import PlayerProfileItem from '../PlayerProfileItem/PlayerProfileItem'
+import MatchPlayerDropdown from '../MatchPlayerDropdown/MatchPlayerDropdown'
+import { toast } from '@redwoodjs/web/dist/toast'
 
 const EditMatchDetails = ({
   index,
@@ -13,8 +14,15 @@ const EditMatchDetails = ({
   tournament = {},
 }) => {
   const formMethods = useForm()
+  const [matchForm, setMatchForm] = React.useState({
+    players: [],
+  })
   const player1 = formMethods.watch('player1', '')
   const player2 = formMethods.watch('player2', '')
+
+  React.useState(() => {
+    setMatchForm({ ...match })
+  }, [match])
 
   const scoreSubmitted = (playerScore) => {
     if (playerScore === 0 || playerScore >= 1) {
@@ -24,9 +32,31 @@ const EditMatchDetails = ({
     return false
   }
 
+  const handleSubmit = async (data) => {
+    const [player1UserId, player2UserId] = matchForm.players.map(
+      (player) => player?.userId
+    )
+    console.log(matchForm)
+    const [player1PlayerName, player2PlayerName] = matchForm.players.map(
+      (player) => player.playerName
+    )
+
+    if (!player1PlayerName && !player2PlayerName) {
+      toast.error('Matches must contain at least one player.')
+    } else {
+      onSubmit({
+        ...data,
+        player1UserId,
+        player2UserId,
+        player1PlayerName,
+        player2PlayerName,
+      })
+    }
+  }
+
   return (
     <Form
-      onSubmit={onSubmit}
+      onSubmit={handleSubmit}
       formMethods={formMethods}
       className="grid grid-cols-12"
     >
@@ -34,34 +64,54 @@ const EditMatchDetails = ({
         {index + 1}.
       </div>
       <div className="col-span-3 flex justify-center items-center">
-        <PlayerProfileItem
-          player={match?.players[0]?.user || {}}
-          playerName={match?.players[0]?.playerName}
+        <MatchPlayerDropdown
+          onSelectPlayer={(player) => {
+            setMatchForm({
+              ...matchForm,
+              players: [
+                player
+                  ? {
+                      ...matchForm.players[0],
+                      userId: player.player?.id,
+                      playerName: player.playerName,
+                      id: matchForm.players[0].id,
+                      matchId: matchForm.players[0].matchId,
+                    }
+                  : {},
+                {
+                  ...matchForm.players[1],
+                },
+              ],
+            })
+          }}
+          tournament={tournament}
+          selectedPlayer={matchForm?.players[0]}
         />
       </div>
       <div className="col-span-1 flex justify-center items-center">
-        {!match?.players[0]?.bye && scoreSubmitted(match?.players[0]?.score) && (
-          <div>
-            <NumberField
-              className="border border-gray-500 p-2 mt-2 w-14"
-              errorClassName="border p-2 mt-2 w-full border-red-500"
-              defaultValue={match?.players[0]?.score}
-              validation={{ required: true, min: 0 }}
-              name="player1"
-              min={0}
-            />
-          </div>
-        )}
-      </div>
-      <div className="col-span-2 flex justify-around items-center"></div>
-      {match?.players.length > 1 ? (
-        <>
-          <div className="col-span-1 flex justify-center items-center">
-            {scoreSubmitted(match?.players[1]?.score) && (
+        {(!matchForm?.players[0]?.bye || !matchForm?.players[1]?.playerName) &&
+          scoreSubmitted(matchForm?.players[0]?.score) && (
+            <div>
               <NumberField
                 className="border border-gray-500 p-2 mt-2 w-14"
                 errorClassName="border p-2 mt-2 w-full border-red-500"
-                defaultValue={match?.players[1]?.score}
+                defaultValue={matchForm?.players[0]?.score}
+                validation={{ required: true, min: 0 }}
+                name="player1"
+                min={0}
+              />
+            </div>
+          )}
+      </div>
+      <div className="col-span-2 flex justify-around items-center"></div>
+      {matchForm?.players.length > 1 || !matchForm?.players[1]?.playerName ? (
+        <>
+          <div className="col-span-1 flex justify-center items-center">
+            {scoreSubmitted(matchForm?.players[1]?.score) && (
+              <NumberField
+                className="border border-gray-500 p-2 mt-2 w-14"
+                errorClassName="border p-2 mt-2 w-full border-red-500"
+                defaultValue={matchForm?.players[1]?.score}
                 validation={{ required: true, min: 0 }}
                 name="player2"
                 min={0}
@@ -69,9 +119,28 @@ const EditMatchDetails = ({
             )}
           </div>
           <div className="col-span-3 flex justify-center items-center">
-            <PlayerProfileItem
-              player={match?.players[1]?.user || {}}
-              playerName={match?.players[1]?.playerName}
+            <MatchPlayerDropdown
+              onSelectPlayer={(player) => {
+                setMatchForm({
+                  ...matchForm,
+                  players: [
+                    {
+                      ...matchForm.players[0],
+                    },
+                    player
+                      ? {
+                          ...matchForm.players[1],
+                          userId: player.player?.id,
+                          playerName: player.playerName,
+                          id: matchForm.players[1].id,
+                          matchId: matchForm.players[1].matchId,
+                        }
+                      : {},
+                  ],
+                })
+              }}
+              tournament={tournament}
+              selectedPlayer={matchForm?.players[1]}
             />
           </div>
         </>
@@ -95,8 +164,8 @@ const EditMatchDetails = ({
         >
           <XIcon className="h-6 w-6 text-white" />
         </Button>
-        {player1 !== match?.players[0]?.score ||
-          player2 !== match?.players[1]?.score}
+        {player1 !== matchForm?.players[0]?.score ||
+          player2 !== matchForm?.players[1]?.score}
         <Button
           type="submit"
           loading={loading}
