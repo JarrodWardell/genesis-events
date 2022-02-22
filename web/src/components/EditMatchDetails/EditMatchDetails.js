@@ -33,24 +33,61 @@ const EditMatchDetails = ({
   }
 
   const handleSubmit = async (data) => {
-    const [player1UserId, player2UserId] = matchForm.players.map(
+    let [player1UserId, player2UserId] = matchForm.players.map(
       (player) => player?.userId
     )
-    console.log(matchForm)
-    const [player1PlayerName, player2PlayerName] = matchForm.players.map(
+    let [player1PlayerName, player2PlayerName] = matchForm.players.map(
       (player) => player.playerName
     )
 
+    const oldPlayer1Name = match.players[0]?.playerName || null
+    const oldPlayer2Name = match.players[1]?.playerName || null
+
     if (!player1PlayerName && !player2PlayerName) {
       toast.error('Matches must contain at least one player.')
+    } else if (player1PlayerName === player2PlayerName) {
+      toast.error('Matches cannot contain the same player twice.')
     } else {
-      onSubmit({
-        ...data,
-        player1UserId,
-        player2UserId,
-        player1PlayerName,
-        player2PlayerName,
-      })
+      if (!player1PlayerName && player2PlayerName) {
+        player1PlayerName = player2PlayerName
+        player2PlayerName = null
+        player2UserId = player1UserId
+        player1UserId = null
+      }
+
+      const oldMatchString = `${oldPlayer1Name}${
+        match.players[0].score ? `(Score: ${match.players[0].score})` : ''
+      } ${
+        oldPlayer2Name
+          ? `vs ${oldPlayer2Name}${
+              match.players[1].score ? `(Score: ${match.players[1].score})` : ''
+            }`
+          : 'given a bye'
+      }`
+
+      const newMatchString = `${player1PlayerName}${
+        data.player1 ? `(Score: ${data.player1})` : ''
+      } ${
+        player2PlayerName
+          ? `vs ${player2PlayerName}${
+              data.player2 ? `(Score: ${data.player2})` : ''
+            }`
+          : 'given a bye'
+      }`
+
+      if (
+        window.confirm(
+          `Are you sure you want to update this match from \n${oldMatchString} \nto\n${newMatchString}? \nThe Leader Board will be updated accordingly.`
+        )
+      ) {
+        onSubmit({
+          ...data,
+          player1UserId,
+          player2UserId,
+          player1PlayerName,
+          player2PlayerName,
+        })
+      }
     }
   }
 
@@ -129,11 +166,11 @@ const EditMatchDetails = ({
                     },
                     player
                       ? {
-                          ...matchForm.players[1],
+                          ...(matchForm.players[1] || {}),
                           userId: player.player?.id,
                           playerName: player.playerName,
-                          id: matchForm.players[1].id,
-                          matchId: matchForm.players[1].matchId,
+                          id: matchForm.players[1]?.id || null,
+                          matchId: matchForm.players[1]?.matchId || null,
                         }
                       : {},
                   ],

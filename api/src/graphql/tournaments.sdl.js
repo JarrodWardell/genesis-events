@@ -265,7 +265,8 @@ export const schema = gql`
     updatedUserId: String
     playerName: String
     updatedPlayerName: String
-    playerMatchScoreId: Int!
+    playerMatchScoreId: Int
+    previousBye: Boolean
     score: Int
     result: MatchResult
   }

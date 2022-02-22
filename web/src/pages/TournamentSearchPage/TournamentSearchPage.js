@@ -162,6 +162,11 @@ const TournamentSearchPage = () => {
           if (brokeParam[0] === 'openSpotsOnly') val = val === 'true'
 
           if (brokeParam[0] === 'finishedTournaments') val = val === 'true'
+
+          if (brokeParam[0] === 'dateStart' || brokeParam[0] === 'dateEnded') {
+            val = format(new Date(val), 'yyyy-MM-dd')
+          }
+
           query[brokeParam[0]] = val
         }
       })
@@ -214,14 +219,35 @@ const TournamentSearchPage = () => {
 
   const searchTourneys = () => {
     setTake(takeAmount)
+
     searchTournaments({
-      variables: { input: { ...newFilters, take: takeAmount, skip: 0 } },
+      variables: {
+        input: {
+          ...newFilters,
+          dateStart: newFilters.dateStart
+            ? format(new Date(newFilters.dateStart), 'yyyy-MM-dd')
+            : null,
+          dateEnd: newFilters.dateEnd
+            ? format(new Date(newFilters.dateEnd), 'yyyy-MM-dd')
+            : null,
+          take: takeAmount,
+          skip: 0,
+        },
+      },
     })
     setFilters({
       ...newFilters,
     })
     showMobileMenu(false)
-    stringifyParams({ ...newFilters })
+    stringifyParams({
+      ...newFilters,
+      dateStart: newFilters.dateStart
+        ? format(new Date(newFilters.dateStart), 'yyyy-MM-dd')
+        : null,
+      dateEnd: newFilters.dateEnd
+        ? format(new Date(newFilters.dateEnd), 'yyyy-MM-dd')
+        : null,
+    })
   }
 
   const convertToKM = (km) => {
@@ -340,12 +366,12 @@ const TournamentSearchPage = () => {
                   </div>
 
                   <DatePicker
-                    onChange={(val) =>
+                    onChange={(val) => {
                       addFilter(
                         'dateStart',
-                        new Date(val).toISOString().split('T')[0]
+                        format(new Date(val), 'yyyy/MM/dd')
                       )
-                    }
+                    }}
                     selected={
                       newFilters.dateStart
                         ? new Date(newFilters.dateStart)
@@ -371,10 +397,7 @@ const TournamentSearchPage = () => {
 
                   <DatePicker
                     onChange={(val) =>
-                      addFilter(
-                        'dateEnd',
-                        new Date(val).toISOString().split('T')[0]
-                      )
+                      addFilter('dateEnd', format(new Date(val), 'yyyy/MM/dd'))
                     }
                     selected={
                       newFilters.dateEnd ? new Date(newFilters.dateEnd) : null
@@ -674,6 +697,12 @@ const TournamentSearchPage = () => {
                       variables: {
                         input: {
                           ...filters,
+                          dateStart: filters.dateStart
+                            ? format(new Date(filters.dateStart), 'yyyy-MM-dd')
+                            : null,
+                          dateEnd: filters.dateEnd
+                            ? format(new Date(filters.dateEnd), 'yyyy-MM-dd')
+                            : null,
                           take: take + takeAmount,
                           skip: 0,
                         },

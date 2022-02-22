@@ -137,13 +137,14 @@ const MatchDetails = ({
         {
           userId: match?.players[0]?.user?.id,
           updatedUserId: data.player1UserId,
+          previousBye: match?.players[0]?.bye,
           playerName: match?.players[0]?.playerName,
           updatedPlayerName: data.player1PlayerName,
           playerMatchScoreId: match?.players[0]?.id,
           score: data.player1,
           result: returnResult(data.player1, data.player2),
         },
-        data.player2
+        data.player2PlayerName
           ? {
               userId: match?.players[1]?.user?.id,
               updatedUserId: data.player2UserId,

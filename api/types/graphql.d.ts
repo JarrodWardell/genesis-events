@@ -192,7 +192,7 @@ export type CreateTournamentInput = {
 };
 
 export type CreateTournamentMatchInput = {
-  proposedMatch: Array<Scalars['String']>;
+  proposedMatch: Array<Scalars['Int']>;
   roundId: Scalars['Int'];
   tournamentId: Scalars['Int'];
 };
@@ -267,8 +267,9 @@ export type MatchResult =
   | 'WIN';
 
 export type MatchScore = {
-  playerMatchScoreId: Scalars['Int'];
+  playerMatchScoreId?: Maybe<Scalars['Int']>;
   playerName?: Maybe<Scalars['String']>;
+  previousBye?: Maybe<Scalars['Boolean']>;
   result?: Maybe<MatchResult>;
   score?: Maybe<Scalars['Int']>;
   updatedPlayerName?: Maybe<Scalars['String']>;
@@ -290,7 +291,7 @@ export type Mutation = {
   createRound: Round;
   createStore: Store;
   createTournament: Tournament;
-  createTournamentMatch: Match;
+  createTournamentMatch: Tournament;
   createUser: User;
   createUserPicture: UserPicture;
   createUserUserRole: UserUserRole;
@@ -1460,7 +1461,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createRound?: Resolver<ResolversTypes['Round'], ParentType, ContextType, RequireFields<MutationCreateRoundArgs, 'input'>>;
   createStore?: Resolver<ResolversTypes['Store'], ParentType, ContextType, RequireFields<MutationCreateStoreArgs, 'input'>>;
   createTournament?: Resolver<ResolversTypes['Tournament'], ParentType, ContextType, RequireFields<MutationCreateTournamentArgs, 'input'>>;
-  createTournamentMatch?: Resolver<ResolversTypes['Match'], ParentType, ContextType, RequireFields<MutationCreateTournamentMatchArgs, 'input'>>;
+  createTournamentMatch?: Resolver<ResolversTypes['Tournament'], ParentType, ContextType, RequireFields<MutationCreateTournamentMatchArgs, 'input'>>;
   createUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationCreateUserArgs, 'input'>>;
   createUserPicture?: Resolver<ResolversTypes['UserPicture'], ParentType, ContextType, RequireFields<MutationCreateUserPictureArgs, 'input'>>;
   createUserUserRole?: Resolver<ResolversTypes['UserUserRole'], ParentType, ContextType, RequireFields<MutationCreateUserUserRoleArgs, 'input'>>;
