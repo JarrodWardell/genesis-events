@@ -33,6 +33,7 @@ const MatchPlayerDropdown = ({
   const { loading, data: { tournamentPlayers } = [] } = useQuery(
     TOURNAMENT_PLAYERS,
     {
+      fetchPolicy: 'network-only',
       variables: {
         url: tournament.tournamentUrl,
       },

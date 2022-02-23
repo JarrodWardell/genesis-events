@@ -7,7 +7,6 @@ import toast from 'react-hot-toast'
 import { VIEW_TOURNAMENT_FIELDS } from 'src/fragments/tourrnamentFragments'
 import { logError } from 'src/helpers/errorLogger'
 import { checkTournamentPermissions } from 'src/helpers/tournamentHelper'
-import { TOURNAMENT_BY_URL } from 'src/pages/ViewTournamentPage/ViewTournamentPage'
 import Button from '../Button/Button'
 import EditMatchDetails from '../EditMatchDetails/EditMatchDetails'
 import PlayerProfileItem from '../PlayerProfileItem/PlayerProfileItem'
@@ -162,7 +161,7 @@ const MatchDetails = ({
   }
 
   const returnResult = (currPlayer, otherPlayer) => {
-    if (currPlayer && otherPlayer) {
+    if (currPlayer >= 0 && otherPlayer >= 0) {
       if (currPlayer > otherPlayer) {
         return 'WIN'
       } else if (currPlayer === otherPlayer) {
@@ -176,10 +175,7 @@ const MatchDetails = ({
   const returnIcons = () => {
     const icons = []
 
-    if (
-      currentMatch?.players[0]?.score === 0 ||
-      currentMatch?.players[0]?.score >= 1
-    ) {
+    if (currentMatch?.players[0]?.score) {
       const result = returnResult(
         currentMatch?.players[0]?.score,
         currentMatch?.players[1]?.score
