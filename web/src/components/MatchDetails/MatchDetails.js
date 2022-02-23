@@ -1,4 +1,4 @@
-import { PencilIcon } from '@heroicons/react/solid'
+import { PencilIcon, TrashIcon } from '@heroicons/react/solid'
 import { useAuth } from '@redwoodjs/auth'
 import { Form, NumberField } from '@redwoodjs/forms/dist'
 import { useMutation } from '@redwoodjs/web'
@@ -7,7 +7,6 @@ import toast from 'react-hot-toast'
 import { VIEW_TOURNAMENT_FIELDS } from 'src/fragments/tourrnamentFragments'
 import { logError } from 'src/helpers/errorLogger'
 import { checkTournamentPermissions } from 'src/helpers/tournamentHelper'
-import { TOURNAMENT_BY_URL } from 'src/pages/ViewTournamentPage/ViewTournamentPage'
 import Button from '../Button/Button'
 import EditMatchDetails from '../EditMatchDetails/EditMatchDetails'
 import PlayerProfileItem from '../PlayerProfileItem/PlayerProfileItem'
@@ -25,6 +24,15 @@ const UPDATE_MATCH_DETAILS = gql`
   ${VIEW_TOURNAMENT_FIELDS}
   mutation updateMatchScore($input: TournamentMatchScoreInput!) {
     updateMatchScore(input: $input) {
+      ...ViewTournamentFields
+    }
+  }
+`
+
+const DELETE_MATCH = gql`
+  ${VIEW_TOURNAMENT_FIELDS}
+  mutation deleteTournamentMatch($id: Int!) {
+    deleteTournamentMatch(id: $id) {
       ...ViewTournamentFields
     }
   }
@@ -64,8 +72,25 @@ const MatchDetails = ({
     {
       onCompleted: (data) => {
         setTournament(data.updateMatchScore)
-        toast.success(`Successfully Updated Score`)
+        toast.success(`Successfully Updated Match`)
         setEdit(false)
+      },
+      onError: (error) => {
+        logError({
+          error,
+          log: true,
+          showToast: true,
+        })
+      },
+    }
+  )
+
+  const [deleteTournamentMatch, { loading: deleteMatchLoading }] = useMutation(
+    DELETE_MATCH,
+    {
+      onCompleted: (data) => {
+        setTournament(data.deleteTournamentMatch)
+        toast.success('Successfully Deleted Match')
       },
       onError: (error) => {
         logError({
@@ -88,13 +113,13 @@ const MatchDetails = ({
         {
           userId: match?.players[0]?.user?.id,
           playerName: match?.players[0]?.playerName,
-          playerMatchScore: match?.players[0]?.id,
+          playerMatchScoreId: match?.players[0]?.id,
           score: data.player1,
           result: returnResult(data.player1, data.player2),
         },
         {
           userId: match?.players[1]?.user?.id,
-          playerMatchScore: match?.players[1]?.id,
+          playerMatchScoreId: match?.players[1]?.id,
           playerName: match?.players[1]?.playerName,
           score: data.player2,
           result: returnResult(data.player2, data.player1),
@@ -105,23 +130,30 @@ const MatchDetails = ({
   }
 
   const onSubmitEdit = (data) => {
-    let input = {
+    const input = {
       matchId: match?.id,
       matches: [
         {
           userId: match?.players[0]?.user?.id,
+          updatedUserId: data.player1UserId,
+          previousBye: match?.players[0]?.bye,
           playerName: match?.players[0]?.playerName,
-          playerMatchScore: match?.players[0]?.id,
+          updatedPlayerName: data.player1PlayerName,
+          playerMatchScoreId: match?.players[0]?.id,
           score: data.player1,
           result: returnResult(data.player1, data.player2),
         },
-        {
-          userId: match?.players[1]?.user?.id,
-          playerMatchScore: match?.players[1]?.id,
-          playerName: match?.players[1]?.playerName,
-          score: data.player2,
-          result: returnResult(data.player2, data.player1),
-        },
+        data.player2PlayerName
+          ? {
+              userId: match?.players[1]?.user?.id,
+              updatedUserId: data.player2UserId,
+              playerName: match?.players[1]?.playerName,
+              updatedPlayerName: data.player2PlayerName,
+              playerMatchScoreId: match?.players[1]?.id,
+              score: data.player2,
+              result: returnResult(data.player2, data.player1),
+            }
+          : null,
       ],
     }
 
@@ -129,23 +161,22 @@ const MatchDetails = ({
   }
 
   const returnResult = (currPlayer, otherPlayer) => {
-    if (currPlayer > otherPlayer) {
-      return 'WIN'
-    } else if (currPlayer === otherPlayer) {
-      return 'TIED'
-    } else {
-      return 'LOSS'
-    }
+    if (currPlayer >= 0 && otherPlayer >= 0) {
+      if (currPlayer > otherPlayer) {
+        return 'WIN'
+      } else if (currPlayer === otherPlayer) {
+        return 'TIED'
+      } else {
+        return 'LOSS'
+      }
+    } else return null
   }
 
   const returnIcons = () => {
-    let icons = []
+    const icons = []
 
-    if (
-      currentMatch?.players[0]?.score === 0 ||
-      currentMatch?.players[0]?.score >= 1
-    ) {
-      let result = returnResult(
+    if (currentMatch?.players[0]?.score) {
+      const result = returnResult(
         currentMatch?.players[0]?.score,
         currentMatch?.players[1]?.score
       )
@@ -357,8 +388,7 @@ const MatchDetails = ({
           )}
 
           <div className="col-span-1 flex justify-around items-center">
-            {scoreSubmitted(currentMatch?.players[0]?.score) &&
-              !tournament.dateEnded &&
+            {!tournament.dateEnded &&
               checkTournamentPermissions({
                 hasRole,
                 currentUser,
@@ -408,7 +438,27 @@ const MatchDetails = ({
                 </svg>
               </Button>
             ) : (
-              <div />
+              <Button
+                loading={deleteMatchLoading}
+                className="rounded-full"
+                color={'red'}
+                my="0"
+                py="2"
+                px="2"
+                full={false}
+                colorWeight={400}
+                onClick={() => {
+                  if (
+                    window.confirm(
+                      'Are you sure you would like to delete this match?'
+                    )
+                  ) {
+                    deleteTournamentMatch({ variables: { id: match.id } })
+                  }
+                }}
+              >
+                <TrashIcon className="h-6 w-6" />
+              </Button>
             )}
           </div>
         </Form>

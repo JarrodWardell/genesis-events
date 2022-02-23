@@ -262,10 +262,13 @@ export const schema = gql`
 
   input MatchScore {
     userId: String
+    updatedUserId: String
     playerName: String
-    playerMatchScore: Int!
-    score: Int!
-    result: MatchResult!
+    updatedPlayerName: String
+    playerMatchScoreId: Int
+    previousBye: Boolean
+    score: Int
+    result: MatchResult
   }
 
   enum MatchResult {
@@ -316,6 +319,12 @@ export const schema = gql`
     score: Float
   }
 
+  input CreateTournamentMatchInput {
+    tournamentId: Int!
+    roundId: Int!
+    proposedMatch: [Int!]!
+  }
+
   type Mutation {
     createTournament(input: CreateTournamentInput!): Tournament! @requireAuth
     updateTournament(id: Int!, input: UpdateTournamentInput!): Tournament!
@@ -325,6 +334,9 @@ export const schema = gql`
     registerForTournament(id: Int!): String! @requireAuth
     startTournament(id: Int!): Tournament! @requireAuth
     updateTimer(input: TimerInput!): Tournament! @requireAuth
+    deleteTournamentMatch(id: Int!): Tournament! @requireAuth
+    createTournamentMatch(input: CreateTournamentMatchInput!): Tournament!
+      @requireAuth
     addMatchScore(input: TournamentMatchScoreInput!): Tournament! @requireAuth
     updateMatchScore(input: TournamentMatchScoreInput!): Tournament!
       @requireAuth

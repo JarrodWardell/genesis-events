@@ -191,6 +191,12 @@ export type CreateTournamentInput = {
   zip?: Maybe<Scalars['String']>;
 };
 
+export type CreateTournamentMatchInput = {
+  proposedMatch: Array<Scalars['Int']>;
+  roundId: Scalars['Int'];
+  tournamentId: Scalars['Int'];
+};
+
 export type CreateUserInput = {
   active?: Maybe<Scalars['Boolean']>;
   adminComments?: Maybe<Scalars['String']>;
@@ -261,10 +267,13 @@ export type MatchResult =
   | 'WIN';
 
 export type MatchScore = {
-  playerMatchScore: Scalars['Int'];
+  playerMatchScoreId?: Maybe<Scalars['Int']>;
   playerName?: Maybe<Scalars['String']>;
-  result: MatchResult;
-  score: Scalars['Int'];
+  previousBye?: Maybe<Scalars['Boolean']>;
+  result?: Maybe<MatchResult>;
+  score?: Maybe<Scalars['Int']>;
+  updatedPlayerName?: Maybe<Scalars['String']>;
+  updatedUserId?: Maybe<Scalars['String']>;
   userId?: Maybe<Scalars['String']>;
 };
 
@@ -282,6 +291,7 @@ export type Mutation = {
   createRound: Round;
   createStore: Store;
   createTournament: Tournament;
+  createTournamentMatch: Tournament;
   createUser: User;
   createUserPicture: UserPicture;
   createUserUserRole: UserUserRole;
@@ -293,6 +303,7 @@ export type Mutation = {
   deleteRound: Round;
   deleteStore: Store;
   deleteTournament: Tournament;
+  deleteTournamentMatch: Tournament;
   deleteUser: User;
   deleteUserPicture: UserPicture;
   deleteUserUserRole: UserUserRole;
@@ -381,6 +392,11 @@ export type MutationCreateTournamentArgs = {
 };
 
 
+export type MutationCreateTournamentMatchArgs = {
+  input: CreateTournamentMatchInput;
+};
+
+
 export type MutationCreateUserArgs = {
   input: CreateUserInput;
   storeInput?: Maybe<CreateUserStoreInput>;
@@ -433,6 +449,11 @@ export type MutationDeleteStoreArgs = {
 
 
 export type MutationDeleteTournamentArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type MutationDeleteTournamentMatchArgs = {
   id: Scalars['Int'];
 };
 
@@ -665,6 +686,7 @@ export type Query = {
   stores: Array<Store>;
   tournament?: Maybe<Tournament>;
   tournamentByUrl?: Maybe<Tournament>;
+  tournamentPlayers?: Maybe<Array<PlayerTournamentScore>>;
   tournaments: Array<Tournament>;
   upcomingTournaments: Array<Tournament>;
   user?: Maybe<User>;
@@ -761,6 +783,12 @@ export type QueryTournamentArgs = {
 
 export type QueryTournamentByUrlArgs = {
   url?: Maybe<Scalars['String']>;
+};
+
+
+export type QueryTournamentPlayersArgs = {
+  searchTerm?: Maybe<Scalars['String']>;
+  url: Scalars['String'];
 };
 
 
@@ -1225,6 +1253,7 @@ export type ResolversTypes = {
   CreateRoundInput: CreateRoundInput;
   CreateStoreInput: CreateStoreInput;
   CreateTournamentInput: CreateTournamentInput;
+  CreateTournamentMatchInput: CreateTournamentMatchInput;
   CreateUserInput: CreateUserInput;
   CreateUserPictureInput: CreateUserPictureInput;
   CreateUserStoreInput: CreateUserStoreInput;
@@ -1289,6 +1318,7 @@ export type ResolversParentTypes = {
   CreateRoundInput: CreateRoundInput;
   CreateStoreInput: CreateStoreInput;
   CreateTournamentInput: CreateTournamentInput;
+  CreateTournamentMatchInput: CreateTournamentMatchInput;
   CreateUserInput: CreateUserInput;
   CreateUserPictureInput: CreateUserPictureInput;
   CreateUserStoreInput: CreateUserStoreInput;
@@ -1431,6 +1461,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createRound?: Resolver<ResolversTypes['Round'], ParentType, ContextType, RequireFields<MutationCreateRoundArgs, 'input'>>;
   createStore?: Resolver<ResolversTypes['Store'], ParentType, ContextType, RequireFields<MutationCreateStoreArgs, 'input'>>;
   createTournament?: Resolver<ResolversTypes['Tournament'], ParentType, ContextType, RequireFields<MutationCreateTournamentArgs, 'input'>>;
+  createTournamentMatch?: Resolver<ResolversTypes['Tournament'], ParentType, ContextType, RequireFields<MutationCreateTournamentMatchArgs, 'input'>>;
   createUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationCreateUserArgs, 'input'>>;
   createUserPicture?: Resolver<ResolversTypes['UserPicture'], ParentType, ContextType, RequireFields<MutationCreateUserPictureArgs, 'input'>>;
   createUserUserRole?: Resolver<ResolversTypes['UserUserRole'], ParentType, ContextType, RequireFields<MutationCreateUserUserRoleArgs, 'input'>>;
@@ -1442,6 +1473,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   deleteRound?: Resolver<ResolversTypes['Round'], ParentType, ContextType, RequireFields<MutationDeleteRoundArgs, 'id'>>;
   deleteStore?: Resolver<ResolversTypes['Store'], ParentType, ContextType, RequireFields<MutationDeleteStoreArgs, 'id'>>;
   deleteTournament?: Resolver<ResolversTypes['Tournament'], ParentType, ContextType, RequireFields<MutationDeleteTournamentArgs, 'id'>>;
+  deleteTournamentMatch?: Resolver<ResolversTypes['Tournament'], ParentType, ContextType, RequireFields<MutationDeleteTournamentMatchArgs, 'id'>>;
   deleteUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationDeleteUserArgs, 'id'>>;
   deleteUserPicture?: Resolver<ResolversTypes['UserPicture'], ParentType, ContextType, RequireFields<MutationDeleteUserPictureArgs, 'id'>>;
   deleteUserUserRole?: Resolver<ResolversTypes['UserUserRole'], ParentType, ContextType, RequireFields<MutationDeleteUserUserRoleArgs, 'id'>>;
@@ -1557,6 +1589,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   stores?: Resolver<Array<ResolversTypes['Store']>, ParentType, ContextType, RequireFields<QueryStoresArgs, never>>;
   tournament?: Resolver<Maybe<ResolversTypes['Tournament']>, ParentType, ContextType, RequireFields<QueryTournamentArgs, 'id'>>;
   tournamentByUrl?: Resolver<Maybe<ResolversTypes['Tournament']>, ParentType, ContextType, RequireFields<QueryTournamentByUrlArgs, never>>;
+  tournamentPlayers?: Resolver<Maybe<Array<ResolversTypes['PlayerTournamentScore']>>, ParentType, ContextType, RequireFields<QueryTournamentPlayersArgs, 'url'>>;
   tournaments?: Resolver<Array<ResolversTypes['Tournament']>, ParentType, ContextType, RequireFields<QueryTournamentsArgs, never>>;
   upcomingTournaments?: Resolver<Array<ResolversTypes['Tournament']>, ParentType, ContextType, RequireFields<QueryUpcomingTournamentsArgs, never>>;
   user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryUserArgs, 'id'>>;

@@ -8,10 +8,7 @@ import LoadingIcon from 'src/components/LoadingIcon/LoadingIcon'
 
 export const HOMEPAGE_QUERY = gql`
   ${CORE_TOURNAMENT_FIELDS}
-  query MyTournamentsQuery($input: SearchTournamentInput) {
-    myTournaments {
-      ...CoreTournamentFields
-    }
+  query HomeTournamentsQuery($input: SearchTournamentInput) {
     currentTournaments(input: $input) {
       ...CoreTournamentFields
     }
@@ -24,6 +21,15 @@ export const HOMEPAGE_QUERY = gql`
   }
 `
 
+export const MY_TOURNAMENTS_QUERY = gql`
+  ${CORE_TOURNAMENT_FIELDS}
+  query MyTournamentsQuery {
+    myTournaments {
+      ...CoreTournamentFields
+    }
+  }
+`
+
 const HomePage = () => {
   const { currentUser } = useAuth()
   const [country, setCountry] = React.useState('')
@@ -31,10 +37,9 @@ const HomePage = () => {
     loading,
     error,
     data: {
-      upcomingTournaments,
-      myTournaments,
-      finishedTournaments,
-      currentTournaments,
+      currentTournaments = [],
+      finishedTournaments = [],
+      upcomingTournaments = [],
     } = {},
   } = useQuery(HOMEPAGE_QUERY, {
     variables: {
@@ -43,6 +48,15 @@ const HomePage = () => {
       },
     },
   })
+
+  const { loading: loadingMyTournaments, data: { myTournaments = [] } = {} } =
+    useQuery(MY_TOURNAMENTS_QUERY, {
+      variables: {
+        input: {
+          country,
+        },
+      },
+    })
 
   React.useEffect(() => {
     getUserGeneralLocation()
