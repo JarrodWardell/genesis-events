@@ -866,8 +866,8 @@ export const updateMatchScore = async ({ input }) => {
 
   try {
     if (
-      match.players[0]?.wonMatch ||
-      match.players[1]?.wonMatch ||
+      match.players[0]?.score >= 0 ||
+      match.players[1]?.score >= 0 ||
       match.players[0]?.bye
     ) {
       await rollBackScores({ match })
@@ -1210,6 +1210,10 @@ const rollBackScores = async ({ match }) => {
       ...player2TourneyWhere,
     },
   })
+
+  console.log(scores[player1])
+  console.log(player1)
+  console.log(player2)
 
   // Matches are byes
   if (
