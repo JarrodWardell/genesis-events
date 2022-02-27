@@ -870,7 +870,6 @@ export const updateMatchScore = async ({ input }) => {
       match.players[1]?.score > 0 ||
       match.players[0]?.bye
     ) {
-      console.log(match.players)
       await rollBackScores({ match })
     }
     const matches = [...input.matches].filter((match) => !!match)
