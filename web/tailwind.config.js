@@ -1,15 +1,18 @@
+const colors = require('tailwindcss/colors')
+
 module.exports = {
-  darkMode: false, // or 'media' or 'class'
+  content: ['src/**/*.{js,jsx,ts,tsx}'],
   theme: {
     extend: {
       fontFamily: {
         inter: ['"Inter"', ' sans-serif'],
       },
-    },
-  },
-  variants: {
-    extend: {
-      opacity: ['disabled'],
+      colors: {
+        green: colors.emerald,
+        yellow: colors.amber,
+        purple: colors.violet,
+        gray: colors.slate,
+      }
     },
   },
   plugins: [],

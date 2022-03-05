@@ -15,11 +15,12 @@
   "dependencies": {
     "@headlessui/react": "^1.1.1",
     "@heroicons/react": "^1.0.4",
-    "@redwoodjs/auth": "^0.38.0",
-    "@redwoodjs/core": "^0.38.0",
-    "@redwoodjs/forms": "^0.38.0",
-    "@redwoodjs/router": "^0.38.0",
-    "@redwoodjs/web": "^0.38.0",
+    "@react-google-maps/api": "^2.7.0",
+    "@redwoodjs/auth": "^0.48.0",
+    "@redwoodjs/core": "^0.48.0",
+    "@redwoodjs/forms": "^0.48.0",
+    "@redwoodjs/router": "^0.48.0",
+    "@redwoodjs/web": "^0.48.0",
     "@sentry/react": "^6.10.0",
     "@sentry/tracing": "^6.10.0",
     "country-list": "^2.2.0",
@@ -28,6 +29,7 @@
     "draft-js-export-html": "^1.4.1",
     "draft-js-import-html": "^1.4.1",
     "firebase": "^9.0.2",
+    "google-maps-react": "^2.0.6",
     "postcss": "^8.3.5",
     "prop-types": "^15.7.2",
     "react": "^17.0.2",
@@ -39,12 +41,11 @@
     "react-select": "^4.3.0",
     "react-to-print": "^2.12.6",
     "react-tooltip": "^4.2.21",
-    "react-truncate-html": "^0.1.7",
-    "tailwindcss": "^2.2.4"
+    "react-truncate-html": "^0.1.7"
   },
   "devDependencies": {
     "autoprefixer": "9.8.6",
     "postcss-loader": "4.0.2",
-    "tailwindcss": "npm:@tailwindcss/postcss7-compat"
+    "tailwindcss": "^3.0.23"
   }
 }

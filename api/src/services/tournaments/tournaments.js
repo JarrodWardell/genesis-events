@@ -1,7 +1,6 @@
 import { Prisma } from '@prisma/client'
 import { UserInputError } from '@redwoodjs/graphql-server'
 import newPlayerRegisteredEO from 'src/emails/newPlayerRegisteredEO'
-import newPlayerRegistered from 'src/emails/newPlayerRegisteredEO'
 import newPlayerRegisteredPlayer from 'src/emails/newPlayerRegisteredPlayer'
 import tournamentCancelledEO from 'src/emails/tournamentCancelledEO'
 import tournamentCancelledPlayer from 'src/emails/tournamentCancelledPlayer'

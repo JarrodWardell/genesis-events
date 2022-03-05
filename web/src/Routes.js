@@ -9,12 +9,14 @@ import MainLayout from './layouts/MainLayout/MainLayout'
 const Routes = () => {
   return (
     <Router>
+      <Route path="/view-store" page={ViewStorePage} name="viewStore" />
       <Route path="/" page={HomePage} name="home" />
       <Set wrap={[MainLayout]}>
         <Route path="/login" page={LoginPage} name="login" />
         <Route path="/signup/{type:String}" page={SignupPage} name="signup" />
         <Route path="/signup" page={SignupPage} name="signup" />
         <Route path="/user-contact" page={UserContactPage} name="userContact" />
+        <Route path="/store-locator" page={StoreLocatorPage} name="storeLocator" />
         <Route path="/forgot-password" page={ForgotPasswordPage} name="forgotPassword" />
         <Route path="/reset-password" page={ResetPasswordPage} name="resetPassword" />
         <Route path="/tournament/{url}" page={ViewTournamentPage} name="viewTournament" />

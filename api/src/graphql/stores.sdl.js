@@ -22,8 +22,21 @@ export const schema = gql`
     approvedOn: DateTime
   }
 
+  input SearchStoresInput {
+    take: Int
+    skip: Int
+    lat: Float
+    lng: Float
+  }
+
+  type PaginatedStores {
+    more: Boolean
+    totalCount: Int
+    stores: [Store!]!
+  }
   type Query {
     stores(searchTerm: String): [Store!]! @adminOnly
+    storeLocator(input: SearchStoresInput!): PaginatedStores! @skipAuth
     activeStores(searchTerm: String): [Store!]! @skipAuth
     store(id: String!): Store @adminOnly
   }
