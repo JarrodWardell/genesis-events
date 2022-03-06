@@ -57,6 +57,7 @@ export const storeLocator = async ({ input }) => {
        ${distanceQuery}
        FROM "Store"
        WHERE "Store".active = true
+       AND "Store".approved = true
        GROUP BY "Store".id
        ${
          input.lat && input.lng
@@ -100,6 +101,12 @@ export const activeStores = ({ searchTerm = '' }) => {
 export const store = ({ id }) => {
   return db.store.findUnique({
     where: { id },
+  })
+}
+
+export const activeStore = ({ id }) => {
+  return db.store.findFirst({
+    where: { id, active: true, approved: true },
   })
 }
 

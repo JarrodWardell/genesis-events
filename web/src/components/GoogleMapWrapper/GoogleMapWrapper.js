@@ -1,28 +1,37 @@
-import React from 'react'
-import { GoogleMap, LoadScript } from '@react-google-maps/api'
+import React, { useEffect, useRef } from 'react';
 
-const MapContainer = ({
-  stores = [],
-  center = {
-    lat: 43.6487,
-    lng: -79.38544,
-  },
-}) => {
-  const mapStyles = {
-    height: '100vh',
-    width: '100%',
+const GMap = ({ center, stores = [] }) => {
+  const googleMapRef = useRef(null);
+  let googleMap = null;
+
+  useEffect(() => {
+    if (window.google) {
+      googleMap = initGoogleMap();
+      stores.map(({ lat, lng }) => {
+        createMarker(lat, lng);
+      })
+    }
+  }, [window.google, center, stores]);
+
+
+  // initialize the google map
+  const initGoogleMap = () => {
+    return new window.google.maps.Map(googleMapRef.current, {
+      center,
+      zoom: 13
+    });
   }
 
-  return (
-    <LoadScript googleMapsApiKey={process.env.GOOGLE_API_KEY}>
-      <GoogleMap
-        mapContainerStyle={mapStyles}
-        zoom={13}
-        defaultCenter={center}
-        center={center}
-      />
-    </LoadScript>
-  )
+  // create marker on google map
+  const createMarker = (lat, lng) => new window.google.maps.Marker({
+    position: { lat, lng },
+    map: googleMap
+  });
+
+  return <div
+    ref={googleMapRef}
+    className='w-full h-screen max-h-screen'
+  />
 }
 
-export default MapContainer
+export default GMap;

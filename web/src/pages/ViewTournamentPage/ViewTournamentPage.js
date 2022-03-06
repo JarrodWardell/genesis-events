@@ -52,6 +52,7 @@ const ViewTournamentPage = ({ url, tab, tabOptions }) => {
   const { currentUser, hasRole } = useAuth()
   const [expandedDesc, setExpandedDesc] = React.useState(false)
   const [currTournament, setCurrTournament] = React.useState({})
+  const [initialLoading, setInitialLoading] = React.useState(true)
 
   if (!tab || tab === '' || !(tab in TABS)) {
     return <Redirect to={`/tournament/${url}/${TABS.rounds.path}`} />
@@ -70,6 +71,7 @@ const ViewTournamentPage = ({ url, tab, tabOptions }) => {
     pollInterval: 10000,
     onCompleted: (data) => {
       setCurrTournament(data?.tournamentByUrl)
+      setInitialLoading(false)
     },
   })
 
@@ -126,7 +128,7 @@ const ViewTournamentPage = ({ url, tab, tabOptions }) => {
     }
   }
 
-  if (loading) {
+  if (loading && initialLoading) {
     return (
       <div className="w-full h-96 flex justify-center items-center">
         <LoadingIcon size={24} />

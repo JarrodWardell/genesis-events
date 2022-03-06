@@ -3,6 +3,7 @@ export const schema = gql`
     id: String!
     name: String!
     tournaments: [Tournament]!
+    distance: Float
     owner: User!
     ownerId: String!
     email: String!
@@ -39,6 +40,7 @@ export const schema = gql`
     storeLocator(input: SearchStoresInput!): PaginatedStores! @skipAuth
     activeStores(searchTerm: String): [Store!]! @skipAuth
     store(id: String!): Store @adminOnly
+    activeStore(id: String!): Store! @skipAuth
   }
 
   input CreateStoreInput {

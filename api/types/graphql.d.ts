@@ -669,6 +669,7 @@ export type Provider = {
 
 export type Query = {
   __typename?: 'Query';
+  activeStore: Store;
   activeStores: Array<Store>;
   banner?: Maybe<Banner>;
   banners: Array<Banner>;
@@ -705,6 +706,11 @@ export type Query = {
   userUserRole?: Maybe<UserUserRole>;
   userUserRoles: Array<UserUserRole>;
   users: Array<User>;
+};
+
+
+export type QueryactiveStoreArgs = {
+  id: Scalars['String'];
 };
 
 
@@ -896,6 +902,7 @@ export type Store = {
   approverId?: Maybe<Scalars['String']>;
   city: Scalars['String'];
   country: Scalars['String'];
+  distance?: Maybe<Scalars['Float']>;
   distributor: Scalars['String'];
   email: Scalars['String'];
   id: Scalars['String'];
@@ -1602,6 +1609,7 @@ export type ProviderResolvers<ContextType = any, ParentType extends ResolversPar
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
+  activeStore?: Resolver<ResolversTypes['Store'], ParentType, ContextType, RequireFields<QueryactiveStoreArgs, 'id'>>;
   activeStores?: Resolver<Array<ResolversTypes['Store']>, ParentType, ContextType, Partial<QueryactiveStoresArgs>>;
   banner?: Resolver<Maybe<ResolversTypes['Banner']>, ParentType, ContextType, RequireFields<QuerybannerArgs, 'id'>>;
   banners?: Resolver<Array<ResolversTypes['Banner']>, ParentType, ContextType>;
@@ -1668,6 +1676,7 @@ export type StoreResolvers<ContextType = any, ParentType extends ResolversParent
   approverId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   city?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   country?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  distance?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   distributor?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;

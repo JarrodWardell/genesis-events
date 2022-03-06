@@ -1,5 +1,4 @@
 import { Form, useForm } from '@redwoodjs/forms'
-import { Link, routes } from '@redwoodjs/router'
 import { useLazyQuery } from '@apollo/client'
 import GooglePlacesAutocomplete from 'react-google-places-autocomplete'
 import Button from 'src/components/Button/Button'
@@ -19,6 +18,10 @@ export const SEARCH_STORES = gql`
         name
         lat
         lng
+        tournaments {
+          startDate
+        }
+        distance
         street1
         street2
         city
@@ -57,7 +60,13 @@ const StoreLocatorPage = () => {
   }, [])
 
   const onSubmit = (data) => {
-    console.log(data)
+    searchStores({
+      variables: {
+        input: {
+
+        },
+      },
+    })
   }
 
   const getUserGeneralLocation = () => {
@@ -74,14 +83,11 @@ const StoreLocatorPage = () => {
   }
 
   const onSelectAddress = async (data) => {
-    var addr = await getAddress(data.label)
-    setStreet1(addr.formatted_address)
-    formMethods.setValue('zip', addr.postal_code)
-    formMethods.setValue('country', addr.country)
-    formMethods.setValue('city', addr.locality)
-    formMethods.setValue('state', addr.administrative_area_level_1)
-    formMethods.setValue('lat', addr.lat)
-    formMethods.setValue('lng', addr.lng)
+    var { formatted_address, lat, lng  } = await getAddress(data.label)
+    setStreet1(formatted_address)
+    setStartingLocation({ lat, lng })
+    searchStores({ variables: { input: { lat, lng } } })
+
   }
 
   return (
@@ -94,7 +100,7 @@ const StoreLocatorPage = () => {
         <Form
           onSubmit={onSubmit}
           formMethods={formMethods}
-          className="flex items-center -mt-8"
+          className="flex items-center mb-4"
         >
           <GooglePlacesAutocomplete
             apiKey={process.env.GOOGLE_API_KEY}
@@ -121,15 +127,13 @@ const StoreLocatorPage = () => {
                 }),
               },
               className: 'border-gray-300 mr-2 w-full',
-              onchange: onSelectAddress,
+              onChange: onSelectAddress,
+              onSelect: onSelectAddress,
             }}
           />
-          <Button className="uppercase" type="submit" full={false} px={6}>
-            Search
-          </Button>
         </Form>
-        <div className="w-full flex flex-row">
-          <div className="w-2/5 flex flex-col">
+        <div className="w-full flex flex-row ">
+          <div className="w-2/5 flex flex-col h-auto overflow-y-auto max-h-1/2 border-b-2 border-gray-200">
             {storeList.length > 0 ? (
               storeList.map((store) => (
                 <StoreLocatorItem store={store} />
