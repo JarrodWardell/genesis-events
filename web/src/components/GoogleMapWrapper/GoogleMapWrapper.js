@@ -1,15 +1,16 @@
 import React, { useEffect, useRef } from 'react';
 
-const GMap = ({ center, stores = [] }) => {
-  const googleMapRef = useRef(null);
-  let googleMap = null;
+const GMap = ({ center, stores = [], height = '80vh', onMapLoad = () => {} }) => {
+  const [googleMap, setGoogleMap] = React.useState(null);
+  let googleMapRef = useRef(null)
 
   useEffect(() => {
     if (window.google) {
-      googleMap = initGoogleMap();
+      setGoogleMap(initGoogleMap())
       stores.map(({ lat, lng }) => {
         createMarker(lat, lng);
       })
+      onMapLoad(googleMapRef.current);
     }
   }, [window.google, center, stores]);
 
@@ -28,10 +29,15 @@ const GMap = ({ center, stores = [] }) => {
     map: googleMap
   });
 
-  return <div
-    ref={googleMapRef}
-    className='w-full h-screen max-h-screen'
-  />
+  return (
+    <div
+      ref={googleMapRef}
+      className='w-full'
+      style={{
+        height
+      }}
+    />
+  )
 }
 
 export default GMap;

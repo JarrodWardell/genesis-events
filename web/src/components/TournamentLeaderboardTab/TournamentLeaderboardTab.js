@@ -109,7 +109,8 @@ const TournamentLeaderboardTab = ({ tournament, setTournament }) => {
                           color="red"
                           disabled={loadingRemovePlayer}
                           full={false}
-                          className="rounded-full w-8 h-8 justify-center items-center"
+                          rounded
+                          className="w-8 h-8 justify-center items-center"
                           onClick={() => {
                             if (
                               confirm(

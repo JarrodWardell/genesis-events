@@ -2,6 +2,7 @@ import classNames from 'classnames';
 
 const Button = ({
   type = 'button',
+  rounded = false,
   onClick,
   children,
   disabled = false,
@@ -9,22 +10,21 @@ const Button = ({
   full = true,
   className = '',
   color = 'green',
-  my = '8',
-  py = 2,
-  px = 4,
+  my = 'my-8',
+  py = 'py-2',
+  px = 'px-4',
   colorWeight = 700,
 }) => {
+
   const buttonClasses = classNames(
-    'flex', 'justify-center', 'border', 'border-transparent', 'rounded-md', 'shadow-sm', 'text-sm', 'font-medium', 'text-white', 'focus:outline-none', 'focus:ring-2', 'focus:ring-offset-2',
-    `my-${my}`,
-    `py-${py}`,
-    `px-${px}`,
-    `bg-${color}-${colorWeight}`,
-    disabled ? 'bg-opacity-50 cursor-not-allowed' : 'hover:bg-${color}-${colorWeight + 200}',
+    'flex', 'justify-center', 'border', 'border-transparent', 'shadow-sm', 'text-sm', 'font-medium', 'text-white', 'focus:outline-none', 'focus:ring-2', 'focus:ring-offset-2',
+    `${my}`,
+    `${py}`,
+    `${px}`,
+    rounded ? 'rounded-full' : 'rounded-md',
+    `bg-red-500`,
+    disabled ? 'bg-opacity-50 cursor-not-allowed' : `hover:bg-${color}-${colorWeight + 200}`,
     full ? 'w-full' : '',
-    `focus:ring-${color}-${
-      colorWeight - 200
-    }`,
     `${className}`
   )
 
