@@ -177,7 +177,7 @@ const StoreLocatorPage = () => {
                     mapRef={mapRef}
                     key={store.id}
                     isGoogleInitialized={isGoogleInitialized}
-                    showDistance={called}
+                    showDistance={currentSearch !== ''}
                   />
                 ))
               ) : hasBeenCalled ? (

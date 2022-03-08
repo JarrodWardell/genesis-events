@@ -79,7 +79,8 @@ const StoreLocatorItem = ({
           {store.street1} {store.street2}
         </p>
         <p className="">
-          {store.city}, {store.state} {store.zip}
+          {store.city} {store.city && store.state && ','} {store.state}{' '}
+          {store.zip}
         </p>
       </div>
       <div className="flex">

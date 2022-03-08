@@ -44,6 +44,7 @@ const FIND_ACTIVE_STORE_BY_ID = gql`
 
 const ViewStorePage = ({ storeId = '' }) => {
   const [googleStoreDetails, setGoogleStoreDetails] = React.useState({})
+  const [formattedHours, setFormattedHours] = React.useState({})
   const [isGoogleInitialized, setIsGoogleInitialized] = React.useState(false)
   const newRef = React.useRef(null)
 
