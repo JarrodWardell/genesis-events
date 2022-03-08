@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import classNames from 'classnames'
 
 const Button = ({
   type = 'button',
@@ -10,20 +10,31 @@ const Button = ({
   full = true,
   className = '',
   color = 'green',
-  my = 'my-8',
-  py = 'py-2',
-  px = 'px-4',
+  my = 8,
+  py = 2,
+  px = 4,
   colorWeight = 700,
 }) => {
-
   const buttonClasses = classNames(
-    'flex', 'justify-center', 'border', 'border-transparent', 'shadow-sm', 'text-sm', 'font-medium', 'text-white', 'focus:outline-none', 'focus:ring-2', 'focus:ring-offset-2',
-    `${my}`,
-    `${py}`,
-    `${px}`,
+    'flex',
+    'justify-center',
+    'border',
+    'border-transparent',
+    'shadow-sm',
+    'text-sm',
+    'font-medium',
+    'text-white',
+    'focus:outline-none',
+    'focus:ring-2',
+    'focus:ring-offset-2',
+    `my-${my}`,
+    `py-${py}`,
+    `px-${px}`,
     rounded ? 'rounded-full' : 'rounded-md',
-    `bg-red-500`,
-    disabled ? 'bg-opacity-50 cursor-not-allowed' : `hover:bg-${color}-${colorWeight + 200}`,
+    `bg-${color}-${colorWeight}`,
+    disabled
+      ? 'bg-opacity-50 cursor-not-allowed'
+      : `hover:bg-${color}-${colorWeight + 200}`,
     full ? 'w-full' : '',
     `${className}`
   )

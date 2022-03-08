@@ -869,6 +869,8 @@ export type Round = {
 };
 
 export type SearchStoresInput = {
+  distance?: InputMaybe<Scalars['Int']>;
+  includeOnline?: InputMaybe<Scalars['Boolean']>;
   lat?: InputMaybe<Scalars['Float']>;
   lng?: InputMaybe<Scalars['Float']>;
   skip?: InputMaybe<Scalars['Int']>;
@@ -900,23 +902,24 @@ export type Store = {
   approvedBy?: Maybe<User>;
   approvedOn?: Maybe<Scalars['DateTime']>;
   approverId?: Maybe<Scalars['String']>;
-  city: Scalars['String'];
-  country: Scalars['String'];
+  city?: Maybe<Scalars['String']>;
+  country?: Maybe<Scalars['String']>;
   distance?: Maybe<Scalars['Float']>;
-  distributor: Scalars['String'];
-  email: Scalars['String'];
+  distributor?: Maybe<Scalars['String']>;
+  email?: Maybe<Scalars['String']>;
   id: Scalars['String'];
   lat?: Maybe<Scalars['Float']>;
   lng?: Maybe<Scalars['Float']>;
   name: Scalars['String'];
-  owner: User;
-  ownerId: Scalars['String'];
-  phone: Scalars['String'];
-  state: Scalars['String'];
-  street1: Scalars['String'];
+  owner?: Maybe<User>;
+  ownerId?: Maybe<Scalars['String']>;
+  phone?: Maybe<Scalars['String']>;
+  state?: Maybe<Scalars['String']>;
+  street1?: Maybe<Scalars['String']>;
   street2?: Maybe<Scalars['String']>;
   tournaments: Array<Maybe<Tournament>>;
-  zip: Scalars['String'];
+  website?: Maybe<Scalars['String']>;
+  zip?: Maybe<Scalars['String']>;
 };
 
 export type TimerInput = {
@@ -1674,23 +1677,24 @@ export type StoreResolvers<ContextType = any, ParentType extends ResolversParent
   approvedBy?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   approvedOn?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
   approverId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  city?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  country?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  city?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  country?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   distance?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
-  distributor?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  distributor?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  email?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   lat?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   lng?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  owner?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
-  ownerId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  phone?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  state?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  street1?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  owner?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
+  ownerId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  phone?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  state?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  street1?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   street2?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   tournaments?: Resolver<Array<Maybe<ResolversTypes['Tournament']>>, ParentType, ContextType>;
-  zip?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  website?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  zip?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 

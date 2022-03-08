@@ -57,6 +57,11 @@ export const storeLocator = async ({ input }) => {
        ${distanceQuery}
        FROM "Store"
        WHERE "Store".active = true
+       ${
+         input.includeOnline
+           ? Prisma.sql``
+           : Prisma.sql`AND "Store".lat IS NOT NULL`
+       }
        AND "Store".approved = true
        GROUP BY "Store".id
        ${

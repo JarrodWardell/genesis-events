@@ -4,19 +4,20 @@ export const schema = gql`
     name: String!
     tournaments: [Tournament]!
     distance: Float
-    owner: User!
-    ownerId: String!
-    email: String!
-    phone: String!
+    website: String
+    owner: User
+    ownerId: String
+    email: String
+    phone: String
     lat: Float
     lng: Float
-    street1: String!
+    street1: String
     street2: String
-    city: String!
-    country: String!
-    state: String!
-    zip: String!
-    distributor: String!
+    city: String
+    country: String
+    state: String
+    zip: String
+    distributor: String
     approved: Boolean
     approvedBy: User
     approverId: String
@@ -28,6 +29,8 @@ export const schema = gql`
     skip: Int
     lat: Float
     lng: Float
+    includeOnline: Boolean
+    distance: Int
   }
 
   type PaginatedStores {

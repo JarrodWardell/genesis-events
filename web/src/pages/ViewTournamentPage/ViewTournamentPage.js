@@ -229,7 +229,20 @@ const ViewTournamentPage = ({ url, tab, tabOptions }) => {
                 <div className="w-6 h-6 flex font-bold">
                   <HomeIcon />
                 </div>{' '}
-                <span className="ml-1">{locationName}</span>
+                <span className="ml-1">
+                  {tournament.store?.id ? (
+                    <Link
+                      className="text-blue-500 hover:text-blue-400"
+                      to={routes.viewStore({
+                        storeId: tournament.store.id,
+                      })}
+                    >
+                      {tournament.store.name}
+                    </Link>
+                  ) : (
+                    <>{locationName}</>
+                  )}
+                </span>
               </div>
               {tournament.street1 && (
                 <div className="flex items-center">

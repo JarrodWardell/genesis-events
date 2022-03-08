@@ -1,43 +1,50 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react'
 
-const GMap = ({ center, stores = [], height = '80vh', onMapLoad = () => {} }) => {
-  const [googleMap, setGoogleMap] = React.useState(null);
+const GMap = ({
+  center,
+  stores = [],
+  height = '80vh',
+  onMapLoad = () => {},
+}) => {
+  let googleMap = null
   let googleMapRef = useRef(null)
 
   useEffect(() => {
     if (window.google) {
-      setGoogleMap(initGoogleMap())
-      stores.map(({ lat, lng }) => {
-        createMarker(lat, lng);
+      googleMap = initGoogleMap()
+      stores.forEach(({ lat, lng }) => {
+        if (lat && lng) {
+          createMarker(lat, lng)
+        }
       })
-      onMapLoad(googleMapRef.current);
+      onMapLoad(googleMapRef.current)
     }
-  }, [window.google, center, stores]);
-
+  }, [window.google, center, stores])
 
   // initialize the google map
   const initGoogleMap = () => {
     return new window.google.maps.Map(googleMapRef.current, {
       center,
-      zoom: 13
-    });
+      zoom: 13,
+    })
   }
 
   // create marker on google map
-  const createMarker = (lat, lng) => new window.google.maps.Marker({
-    position: { lat, lng },
-    map: googleMap
-  });
+  const createMarker = (lat, lng) =>
+    new window.google.maps.Marker({
+      position: { lat, lng },
+      map: googleMap,
+    })
 
   return (
     <div
       ref={googleMapRef}
-      className='w-full'
+      className="w-full"
       style={{
-        height
+        height,
       }}
     />
   )
 }
 
-export default GMap;
+export default GMap
