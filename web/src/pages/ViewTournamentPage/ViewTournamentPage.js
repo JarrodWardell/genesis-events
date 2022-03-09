@@ -52,6 +52,7 @@ const ViewTournamentPage = ({ url, tab, tabOptions }) => {
   const { currentUser, hasRole } = useAuth()
   const [expandedDesc, setExpandedDesc] = React.useState(false)
   const [currTournament, setCurrTournament] = React.useState({})
+  const [initialLoading, setInitialLoading] = React.useState(true)
 
   if (!tab || tab === '' || !(tab in TABS)) {
     return <Redirect to={`/tournament/${url}/${TABS.rounds.path}`} />
@@ -70,6 +71,7 @@ const ViewTournamentPage = ({ url, tab, tabOptions }) => {
     pollInterval: 10000,
     onCompleted: (data) => {
       setCurrTournament(data?.tournamentByUrl)
+      setInitialLoading(false)
     },
   })
 
@@ -126,7 +128,7 @@ const ViewTournamentPage = ({ url, tab, tabOptions }) => {
     }
   }
 
-  if (loading) {
+  if (loading && initialLoading) {
     return (
       <div className="w-full h-96 flex justify-center items-center">
         <LoadingIcon size={24} />
@@ -227,7 +229,20 @@ const ViewTournamentPage = ({ url, tab, tabOptions }) => {
                 <div className="w-6 h-6 flex font-bold">
                   <HomeIcon />
                 </div>{' '}
-                <span className="ml-1">{locationName}</span>
+                <span className="ml-1">
+                  {tournament.store?.id ? (
+                    <Link
+                      className="text-blue-500 hover:text-blue-400"
+                      to={routes.viewStore({
+                        storeId: tournament.store.id,
+                      })}
+                    >
+                      {tournament.store.name}
+                    </Link>
+                  ) : (
+                    <>{locationName}</>
+                  )}
+                </span>
               </div>
               {tournament.street1 && (
                 <div className="flex items-center">

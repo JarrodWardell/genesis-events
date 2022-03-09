@@ -56,24 +56,25 @@ model User {
 model Store {
   id          String       @id @default(uuid())
   name        String
-  ownerId     String
-  email       String
-  phone       String
+  ownerId     String?
+  email       String?
+  website     String?
+  phone       String?
   lat         Float?
   lng         Float?
   street1     String
   street2     String?
-  city        String
-  country     String
-  state       String
-  zip         String
-  distributor String
+  city        String?
+  country     String?
+  state       String?
+  zip         String?
+  distributor String?
   approved    Boolean?
   approvedOn  DateTime?
   active      Boolean      @default(true)
   approverId  String?
   approvedBy  User?        @relation("StoreApprover", fields: [approverId], references: [id])
-  owner       User         @relation(fields: [ownerId], references: [id])
+  owner       User?        @relation(fields: [ownerId], references: [id])
   tournaments Tournament[]
 }
 
