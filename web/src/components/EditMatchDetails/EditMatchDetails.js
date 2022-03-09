@@ -192,7 +192,7 @@ const EditMatchDetails = ({
         <Button
           loading={loading}
           onClick={onCancel}
-          className="rounded-full"
+          rounded
           my="0"
           py="2"
           px="2"
@@ -206,7 +206,7 @@ const EditMatchDetails = ({
         <Button
           type="submit"
           loading={loading}
-          className="rounded-full"
+          rounded
           my="0"
           py="2"
           px="2"

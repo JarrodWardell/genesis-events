@@ -153,7 +153,8 @@ const AddTournamentPlayer = ({
               color="red"
               disabled={loadingAddPlayer}
               full={false}
-              className="rounded-full w-8 h-8 justify-center items-center"
+              rounded
+              className="w-8 h-8 justify-center items-center"
               px={1}
               py={1}
               my={0}
@@ -174,7 +175,8 @@ const AddTournamentPlayer = ({
               px={1}
               py={1}
               my={0}
-              className="rounded-full w-8 h-8 justify-center items-center"
+              rounded
+              className="w-8 h-8 justify-center items-center"
               onClick={() =>
                 addPlayer({
                   variables: {
