@@ -71,7 +71,7 @@ const TournamentNotStarted = ({
     <div className="w-full h-full flex items-center">
       <div className="w-0 sm:w-1/4 h-1 bg-black hidden sm:flex" />
       {startConfirmation ? (
-        <div className="w-full bg-white rounded-lg mx-4 my-12 py-8 shadow-md p-8 flex flex-col items-center">
+        <div className="w-full sm:w-1/2 bg-white rounded-lg mx-4 my-12 py-8 shadow-md p-8 flex flex-col items-center">
           <h1 className="text-black text-2xl text-center">{tournament.name}</h1>
           <p className="text-gray-500 text-sm my-8">
             Are you sure you want to start this tournament?
@@ -102,7 +102,7 @@ const TournamentNotStarted = ({
           </div>
         </div>
       ) : (
-        <div className="w-full sm:w-11/12 bg-green-700 rounded-lg mx-auto my-12 py-8">
+        <div className="w-11/12 sm:w-full sm:w-1/2 bg-green-700 rounded-lg mx-auto sm:w-4 my-12 py-8">
           <h1 className="text-white sm:text-2xl uppercase text-center text-xl">
             Tournament Starting In
           </h1>

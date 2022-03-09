@@ -1,6 +1,6 @@
 import Store from 'src/components/Store'
 
-export const FIND_STORE_BY_ID = gql`
+export const QUERY = gql`
   query FIND_STORE_BY_ID($id: String!) {
     store: store(id: $id) {
       id

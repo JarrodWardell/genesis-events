@@ -25,15 +25,3 @@ export const getAddress = async (address) => {
 
   return addressObj
 }
-
-// Given a period
-export const getHoursObject = (hours) => {
-  const hoursObj = {}
-
-  hours.weekday_text.forEach((day) => {
-    const [dayOfWeek, hours] = day.split(': ')
-    hoursObj[dayOfWeek] = hours
-  })
-
-  return hoursObj
-}
