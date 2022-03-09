@@ -25,6 +25,7 @@ export const schema = gql`
   }
 
   input SearchStoresInput {
+    searchTerm: String
     take: Int
     skip: Int
     lat: Float

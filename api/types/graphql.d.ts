@@ -873,6 +873,7 @@ export type SearchStoresInput = {
   includeOnline?: InputMaybe<Scalars['Boolean']>;
   lat?: InputMaybe<Scalars['Float']>;
   lng?: InputMaybe<Scalars['Float']>;
+  searchTerm?: InputMaybe<Scalars['String']>;
   skip?: InputMaybe<Scalars['Int']>;
   take?: InputMaybe<Scalars['Int']>;
 };

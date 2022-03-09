@@ -1,4 +1,12 @@
-import { Form, useForm } from '@redwoodjs/forms'
+import {
+  Form,
+  FormError,
+  TextAreaField,
+  TextField,
+  useForm,
+  Label,
+  FieldError,
+} from '@redwoodjs/forms'
 import { useLazyQuery } from '@apollo/client'
 import GoogleMapWrapper from 'src/components/GoogleMapWrapper/GoogleMapWrapper'
 import { useEffect, useRef } from 'react'
@@ -7,6 +15,10 @@ import StoreLocatorItem from 'src/components/StoreLocatorItem/StoreLocatorItem'
 import GoogleMapAutocompleteInput from 'src/components/GoogleMapAutocompleteInput/GoogleMapAutocompleteInput'
 import LoadingIcon from 'src/components/LoadingIcon/LoadingIcon'
 import Button from 'src/components/Button/Button'
+import { CREATE_CONTACT_MUTATION } from '../UserContactPage/UserContactPage'
+import { useMutation } from '@redwoodjs/web'
+import { toast } from '@redwoodjs/web/dist/toast'
+import { useAuth } from '@redwoodjs/auth'
 
 export const SEARCH_STORES = gql`
   query storeLocator($input: SearchStoresInput!) {
@@ -41,13 +53,17 @@ const StoreLocatorPage = () => {
     lng: 0,
   })
   const [maxDistance, setMaxDistance] = React.useState(3000)
-  const takeAmount = 12
+  const takeAmount = 8
   const [take, setTake] = React.useState(takeAmount)
   const [storeList, setStoreList] = React.useState([])
   const [currentSearch, setCurrentSearch] = React.useState('')
+  const [searchTerm, setSearchTerm] = React.useState('')
+  const [didSearchLocation, setDidSearchLocation] = React.useState(false)
   const [hasBeenCalled, setHasBeenCalled] = React.useState(false)
   const [fetchingMore, setFetchingMore] = React.useState(false)
   const formMethods = useForm()
+  const contactUsFormMethods = useForm()
+  const { currentUser } = useAuth()
 
   const [searchStores, { called, loading, data }] = useLazyQuery(
     SEARCH_STORES,
@@ -70,6 +86,27 @@ const StoreLocatorPage = () => {
     }
   )
 
+  const [createContact, { loading: loadingContact, error }] = useMutation(
+    CREATE_CONTACT_MUTATION,
+    {
+      onCompleted: () => {
+        toast.success('Your form has been submitted!')
+        formMethods.reset()
+      },
+      onError: (error) => {
+        logError({
+          error,
+          log: true,
+          showToast: true,
+        })
+      },
+    }
+  )
+
+  const onSave = (input) => {
+    createContact({ variables: { input } })
+  }
+
   useEffect(() => {
     getUserGeneralLocation()
   }, [])
@@ -80,6 +117,7 @@ const StoreLocatorPage = () => {
     setStartingLocation({ lat: submitData.lat, lng: submitData.lng })
     setFetchingMore(false)
     setCurrentSearch(submitData.input)
+    setDidSearchLocation(true)
 
     searchStores({
       variables: {
@@ -89,6 +127,26 @@ const StoreLocatorPage = () => {
           skip: 0,
           take: takeAmount,
           includeOnline: false,
+          distance: maxDistance,
+        },
+      },
+    })
+  }
+
+  const onSubmitQuery = () => {
+    setHasBeenCalled(false)
+    setTake(takeAmount)
+    setFetchingMore(false)
+    setCurrentSearch(searchTerm)
+    setDidSearchLocation(false)
+
+    searchStores({
+      variables: {
+        input: {
+          searchTerm,
+          skip: 0,
+          take: takeAmount,
+          includeOnline: true,
           distance: maxDistance,
         },
       },
@@ -145,31 +203,61 @@ const StoreLocatorPage = () => {
         </h2>
         <p className="text-sm mb-1">Enter Address or Postal Code</p>
         <Form
-          onSubmit={onSubmit}
+          onSubmit={onSubmitQuery}
           formMethods={formMethods}
           className="flex items-center mb-4"
         >
-          <GoogleMapAutocompleteInput onSelectAddress={onSubmit} />
+          <GoogleMapAutocompleteInput
+            onSelectAddress={onSubmit}
+            onChangeInput={(text) => setSearchTerm(text)}
+          />
+          <div className="ml-2">
+            <Button
+              full={false}
+              type="submit"
+              onClick={onSubmitQuery}
+              loading={loading}
+            >
+              Search
+            </Button>
+          </div>
         </Form>
         <div className="w-full flex flex-row ">
           <div className="w-2/5 flex flex-col h-auto">
             <div className="flex flex-col h-auto mb-6">
               <h4 className="text-gray-700 font-bold mb-1">Search Results</h4>
-              {hasBeenCalled && (
-                <p>
-                  Showing {storeList.length} of {data?.storeLocator.totalCount}{' '}
-                  Locations Near{' '}
-                  {currentSearch ? (
-                    <span className="text-red-400 ml-1">{currentSearch}</span>
-                  ) : (
-                    <span className="text-red-400 ml-1">
-                      Your Approximate Location
-                    </span>
-                  )}
-                </p>
-              )}
+              {hasBeenCalled &&
+                (storeList.length > 0 ? (
+                  <p>
+                    Showing {storeList.length} of{' '}
+                    {data?.storeLocator.totalCount}{' '}
+                    {didSearchLocation ? (
+                      <span>locations near </span>
+                    ) : (
+                      <span>stores that match</span>
+                    )}
+                    {currentSearch ? (
+                      <span className="text-red-400 ml-1">{currentSearch}</span>
+                    ) : (
+                      <span className="text-red-400 ml-1">
+                        your approximate location
+                      </span>
+                    )}
+                  </p>
+                ) : (
+                  <p>
+                    <span className="text-red-400 mr-1">No results found.</span>{' '}
+                    Drop us a line with the store details to be included in our
+                    database!{' '}
+                  </p>
+                ))}
             </div>
-            <div className="flex-flex-col max-h-1/2 overflow-y-auto border-t-2 border-gray-400">
+            <div
+              className={
+                'flex-flex-col max-h-1/2 overflow-y-auto' +
+                (storeList.length > 0 ? ' border-t-2 border-gray-400' : '')
+              }
+            >
               {storeList && storeList.length > 0 ? (
                 storeList.map((store) => (
                   <StoreLocatorItem
@@ -177,13 +265,85 @@ const StoreLocatorPage = () => {
                     mapRef={mapRef}
                     key={store.id}
                     isGoogleInitialized={isGoogleInitialized}
-                    showDistance={currentSearch !== ''}
+                    showDistance={didSearchLocation}
                   />
                 ))
               ) : hasBeenCalled ? (
-                <div className="flex flex-col items-center justify-center">
-                  No stores found
-                </div>
+                <Form
+                  onSubmit={onSave}
+                  error={error}
+                  formMethods={contactUsFormMethods}
+                  className="flex flex-col"
+                >
+                  <FormError
+                    wrapperClassName="rw-form-error-wrapper"
+                    titleClassName="rw-form-error-title"
+                    listClassName="rw-form-error-list"
+                  />
+
+                  <Label
+                    name="text-gray-700 mt-2"
+                    className="text-gray-700"
+                    errorClassName="rw-label rw-label-error"
+                  >
+                    Name
+                  </Label>
+                  <TextField
+                    name="name"
+                    defaultValue={currentUser?.user?.name}
+                    className="rw-input"
+                    errorClassName="rw-input rw-input-error"
+                    validation={{ required: true }}
+                  />
+                  <FieldError name="name" className="rw-field-error" />
+
+                  <Label
+                    name="email"
+                    className="text-gray-700 mt-2"
+                    errorClassName="text-gray-700 rw-label-error"
+                  >
+                    Email Address
+                  </Label>
+                  <TextField
+                    name="email"
+                    defaultValue={currentUser?.user?.email}
+                    className="rw-input"
+                    errorClassName="rw-input rw-input-error"
+                    validation={{ required: true }}
+                  />
+                  <FieldError name="email" className="rw-field-error" />
+                  <Label
+                    name="text"
+                    className="text-gray-700 mt-2"
+                    errorClassName="text-gray-700 rw-label-error"
+                  >
+                    Message
+                  </Label>
+                  <TextAreaField
+                    name="text"
+                    className="rw-input"
+                    rows={6}
+                    errorClassName="rw-input rw-input-error"
+                    validation={{ required: true }}
+                    defaultValue={
+                      didSearchLocation
+                        ? `I'm looking for a store near ${currentSearch}\n\nStore Name: \nStore Address: ${currentSearch}`
+                        : `I'm looking for a store with the name: ${searchTerm}\n\nStoreName: ${searchTerm} \nStore Address: ${currentSearch}`
+                    }
+                  />
+                  <FieldError name="text" className="rw-field-error" />
+
+                  <div className="rw-button-group">
+                    <Button
+                      type="submit"
+                      loading={loading}
+                      full={false}
+                      className="w-1/2"
+                    >
+                      <p className="text-center">Send</p>
+                    </Button>
+                  </div>
+                </Form>
               ) : (
                 <div className="flex flex-col items-center justify-center">
                   <LoadingIcon size={12} />
@@ -196,7 +356,7 @@ const StoreLocatorPage = () => {
               )}
             </div>
           </div>
-          <div className="px-4 w-3/5">
+          <div className="pl-8 w-3/5">
             <GoogleMapWrapper
               mapRef={mapRef}
               onMapLoad={() => setIsGoogleInitialized(true)}

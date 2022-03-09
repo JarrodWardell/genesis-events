@@ -233,8 +233,6 @@ export const finishedTournaments = ({ input = {}, take = 6 }) => {
 }
 
 export const searchTournaments = async ({ input }) => {
-  let earthsRadius = 6371
-
   let distanceQuery = Prisma.sql`111.111 *
   DEGREES(ACOS(LEAST(1.0, COS(RADIANS("Tournament".lat))
        * COS(RADIANS(${input.lat}))

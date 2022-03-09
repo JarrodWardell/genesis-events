@@ -7,6 +7,7 @@ import {
 import { Link, routes } from '@redwoodjs/router'
 import { format } from 'date-fns'
 import { useEffect } from 'react'
+import { getHoursObject } from 'src/helpers/formatAddress'
 
 const StoreLocatorItem = ({
   store,
@@ -15,6 +16,7 @@ const StoreLocatorItem = ({
 }) => {
   const [googleStoreDetails, setGoogleStoreDetails] = React.useState({})
   const newRef = React.useRef(null)
+  const [todayHours, setTodayHours] = React.useState(null)
 
   useEffect(() => {
     const loadData = async () => {
@@ -43,6 +45,13 @@ const StoreLocatorItem = ({
               },
               (place, status) => {
                 setGoogleStoreDetails({ ...place })
+                if (place && place.opening_hours) {
+                  const hoursObj = getHoursObject(place.opening_hours)
+                  const today = format(new Date(), 'EEEE')
+                  if (hoursObj[today]) {
+                    setTodayHours(hoursObj[today])
+                  }
+                }
               }
             )
           }
@@ -83,11 +92,14 @@ const StoreLocatorItem = ({
           {store.zip}
         </p>
       </div>
-      <div className="flex">
-        <ClockIcon className="w-4 h-4 mr-2" />
-        <p className="font-bold">Store Hours:</p>{' '}
-        <p className="ml-1"> 8 - 9pm</p>
-      </div>
+      {todayHours && (
+        <div className="flex">
+          <ClockIcon className="w-4 h-4 mr-2" />
+          <p className="font-bold">Store Hours:</p>{' '}
+          <p className="ml-1"> {todayHours}</p>
+        </div>
+      )}
+
       {tournamentsAfterToday.length > 0 && (
         <div className="flex mt-4">
           <SpeakerphoneIcon className="w-4 h-4 mr-2" />

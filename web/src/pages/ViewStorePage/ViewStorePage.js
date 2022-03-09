@@ -10,9 +10,11 @@ import {
   UserIcon,
 } from '@heroicons/react/solid'
 import { useEffect } from 'react'
-import { Link, routes } from '@redwoodjs/router'
+import { Link, navigate, routes } from '@redwoodjs/router'
 import { format } from 'date-fns'
 import { CalendarIcon } from '@heroicons/react/outline'
+import { getHoursObject } from 'src/helpers/formatAddress'
+import Button from 'src/components/Button/Button'
 
 const FIND_ACTIVE_STORE_BY_ID = gql`
   query activeStore($id: String!) {
@@ -48,6 +50,16 @@ const ViewStorePage = ({ storeId = '' }) => {
   const [isGoogleInitialized, setIsGoogleInitialized] = React.useState(false)
   const newRef = React.useRef(null)
 
+  const today = format(new Date(), 'EEEE')
+
+  const {
+    data: storeData,
+    loading,
+    error,
+  } = useQuery(FIND_ACTIVE_STORE_BY_ID, {
+    variables: { id: storeId },
+  })
+
   useEffect(() => {
     const loadData = async () => {
       const service = await new window.google.maps.places.PlacesService(
@@ -75,24 +87,20 @@ const ViewStorePage = ({ storeId = '' }) => {
             },
             (place, status) => {
               setGoogleStoreDetails({ ...place })
+              if (place.opening_hours) {
+                const hoursObj = getHoursObject(place.opening_hours)
+                setFormattedHours(hoursObj)
+              }
             }
           )
         }
       )
     }
 
-    if (isGoogleInitialized && newRef.current && window.google) {
+    if (isGoogleInitialized && newRef.current && window.google && storeData) {
       loadData()
     }
-  }, [isGoogleInitialized, newRef, window.google])
-
-  const {
-    data: storeData,
-    loading,
-    error,
-  } = useQuery(FIND_ACTIVE_STORE_BY_ID, {
-    variables: { id: storeId },
-  })
+  }, [isGoogleInitialized, newRef, window.google, storeData])
 
   if (loading) {
     return <LoadingIcon size={'44px'} />
@@ -128,40 +136,58 @@ const ViewStorePage = ({ storeId = '' }) => {
                   {storeData?.activeStore?.street2}
                 </p>
                 <p className="">
-                  {storeData?.activeStore?.city},{' '}
+                  {storeData?.activeStore?.city}
+                  {storeData?.activeStore?.city &&
+                    storeData?.activeStore?.state &&
+                    ','}{' '}
                   {storeData?.activeStore?.state} {storeData?.activeStore?.zip}
                 </p>
               </div>
               {googleStoreDetails?.opening_hours?.weekday_text?.length > 0 && (
-                <div className="flex flex-col mb-4 w-1/2">
+                <div className="flex flex-col mb-4 w-full">
                   <div className="flex">
                     <ClockIcon className="w-4 h-4 mr-2" />
                     <p className="font-bold ml-2">Store Hours:</p>
                   </div>
-                  {googleStoreDetails?.opening_hours?.weekday_text?.map(
-                    (weekday_text, index) => {
-                      const period_breakdown = weekday_text.split(':')
-                      return (
-                        <div key={index} className="flex">
-                          <p className="">{period_breakdown[0]}</p>
-                          <p className="ml-auto">
-                            {period_breakdown.slice(1).join(':')}
-                          </p>
-                        </div>
-                      )
-                    }
-                  )}
+                  {Object.keys(formattedHours).map((day, index) => (
+                    <div key={index} className="flex pr-4">
+                      <p className={day === today ? 'text-red-500' : ''}>
+                        {day}
+                      </p>
+                      <p
+                        className={
+                          day === today ? 'text-red-500 ml-auto' : 'ml-auto'
+                        }
+                      >
+                        {formattedHours[day]}
+                      </p>
+                    </div>
+                  ))}
                 </div>
               )}
               <div className="flex w-full items-center mb-4">
                 <PhoneIcon className="w-4 h-4 mr-2" />
-                <p className="font-bold ">Phone Number: </p>{' '}
-                <p>{googleStoreDetails.formatted_phone_number}</p>
+                <p className="font-bold mr-1">Phone Number: </p>{' '}
+                <a
+                  href={`tel:${googleStoreDetails.formatted_phone_number}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-blue-500 hover:text-blue-700"
+                >
+                  {googleStoreDetails.formatted_phone_number}
+                </a>
               </div>
               <div className="flex w-full items-center">
                 <DesktopComputerIcon className="w-4 h-4 mr-2" />
-                <p className="font-bold ">Website: </p>{' '}
-                <p>{googleStoreDetails.website}</p>
+                <p className="font-bold mr-1">Website: </p>{' '}
+                <a
+                  href={googleStoreDetails.website}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-blue-500 hover:text-blue-700"
+                >
+                  {googleStoreDetails.website}
+                </a>
               </div>
             </div>
             <div className="w-3/5">
@@ -200,44 +226,64 @@ const ViewStorePage = ({ storeId = '' }) => {
               )}
             </div>
           </div>
-          <div className="flex flex-col">
-            <div className="flex w-full items-center mb-4">
-              <SpeakerphoneIcon className="w-4 h-4 mr-2" />
-              <p className="font-bold ">Upcoming Tournaments: </p>
-            </div>
-            <div className="grid grid-cols-4 gap-1">
-              {tournamentsAfterToday?.slice(0, 4).map((tournament, index) => {
-                return (
-                  <Link
-                    to={routes.viewTournament({
-                      url: tournament.tournamentUrl,
-                      tab: 'rounds',
-                      tabOptions: 1,
-                    })}
-                    key={`tournament-${tournament.id}`}
-                    className="bg-gray-300 flex flex-col p-4 hover:bg-gray-500 cursor-pointer"
+          {tournamentsAfterToday.length > 0 && (
+            <div className="flex flex-col">
+              <div className="flex w-full items-center mb-4">
+                <SpeakerphoneIcon className="w-4 h-4 mr-2" />
+                <p className="font-bold ">Upcoming Tournaments: </p>
+              </div>
+              <div className="grid grid-cols-4 gap-2">
+                {tournamentsAfterToday?.slice(0, 4).map((tournament, index) => {
+                  return (
+                    <Link
+                      to={routes.viewTournament({
+                        url: tournament.tournamentUrl,
+                        tab: 'rounds',
+                        tabOptions: 1,
+                      })}
+                      key={`tournament-${tournament.id}`}
+                      className="bg-gray-300 flex flex-col p-4 hover:bg-gray-400 cursor-pointer"
+                    >
+                      <p className="text-gray-700 mb-3 font-bold text-center">
+                        {tournament.name}
+                      </p>
+                      <div className="flex mb-3">
+                        <CalendarIcon className="w-4 h-4 mr-2" />
+                        <p className="text-gray-700">
+                          {format(new Date(tournament.startDate), 'PP')}
+                        </p>
+                      </div>
+                      <div className="flex mb-3">
+                        <UserIcon className="w-4 h-4 mr-2" />
+                        <p className="text-gray-700">
+                          {tournament.maxPlayers - tournament.players.length}{' '}
+                          Spots Available
+                        </p>
+                      </div>
+                    </Link>
+                  )
+                })}
+              </div>
+              {tournamentsAfterToday.length > 4 && (
+                <div className="ml-auto">
+                  <Button
+                    onClick={() =>
+                      navigate(
+                        `/search?dateStart=${format(
+                          new Date(),
+                          'yyyy-MM-dd'
+                        )}&type=ALL&store=${storeData?.activeStore?.name
+                          ?.split(' ')
+                          .join('%20')}`
+                      )
+                    }
                   >
-                    <p className="text-gray-700 mb-3 font-bold text-center">
-                      {tournament.name}
-                    </p>
-                    <div className="flex mb-3">
-                      <CalendarIcon className="w-4 h-4 mr-2" />
-                      <p className="text-gray-700">
-                        {format(new Date(tournament.startDate), 'PP')}
-                      </p>
-                    </div>
-                    <div className="flex mb-3">
-                      <UserIcon className="w-4 h-4 mr-2" />
-                      <p className="text-gray-700">
-                        {tournament.maxPlayers - tournament.players.length}{' '}
-                        Spots Available
-                      </p>
-                    </div>
-                  </Link>
-                )
-              })}
+                    SEE MORE
+                  </Button>
+                </div>
+              )}
             </div>
-          </div>
+          )}
         </div>
       </div>
     </>

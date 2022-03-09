@@ -1,13 +1,11 @@
 import React from 'react'
-import PlacesAutocomplete, {
-  geocodeByAddress,
-  getLatLng,
-} from 'react-places-autocomplete'
+import PlacesAutocomplete from 'react-places-autocomplete'
 import { getAddress } from 'src/helpers/formatAddress'
 
 const GoogleMapAutocompleteInput = ({
   onSelectAddress = () => {},
-  placeholderText = 'Search Places...',
+  onChangeInput = () => {},
+  placeholderText = 'Enter Address or Postal Code',
 }) => {
   const [address, setAddress] = React.useState('')
 
@@ -20,14 +18,17 @@ const GoogleMapAutocompleteInput = ({
   return (
     <PlacesAutocomplete
       value={address}
-      onChange={(e) => setAddress(e)}
+      onChange={(e) => {
+        setAddress(e)
+        onChangeInput(e)
+      }}
       onSelect={(e) => onSelect(e)}
     >
       {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => (
         <div className="relative flex w-full">
           <input
             {...getInputProps({
-              placeholder: 'Enter Address or Postal Code',
+              placeholder: placeholderText,
               className:
                 'w-full shadow-sm border-gray-300 border rounded-md p-2',
             })}
