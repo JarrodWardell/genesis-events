@@ -63,7 +63,6 @@ export const VIEW_TOURNAMENT_FIELDS = gql`
     }
     ownerId
     store {
-      id
       name
       email
     }

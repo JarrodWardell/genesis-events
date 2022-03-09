@@ -3,48 +3,29 @@ export const schema = gql`
     id: String!
     name: String!
     tournaments: [Tournament]!
-    distance: Float
-    website: String
-    owner: User
-    ownerId: String
-    email: String
-    phone: String
+    owner: User!
+    ownerId: String!
+    email: String!
+    phone: String!
     lat: Float
     lng: Float
-    street1: String
+    street1: String!
     street2: String
-    city: String
-    country: String
-    state: String
-    zip: String
-    distributor: String
+    city: String!
+    country: String!
+    state: String!
+    zip: String!
+    distributor: String!
     approved: Boolean
     approvedBy: User
     approverId: String
     approvedOn: DateTime
   }
 
-  input SearchStoresInput {
-    searchTerm: String
-    take: Int
-    skip: Int
-    lat: Float
-    lng: Float
-    includeOnline: Boolean
-    distance: Int
-  }
-
-  type PaginatedStores {
-    more: Boolean
-    totalCount: Int
-    stores: [Store!]!
-  }
   type Query {
     stores(searchTerm: String): [Store!]! @adminOnly
-    storeLocator(input: SearchStoresInput!): PaginatedStores! @skipAuth
     activeStores(searchTerm: String): [Store!]! @skipAuth
     store(id: String!): Store @adminOnly
-    activeStore(id: String!): Store! @skipAuth
   }
 
   input CreateStoreInput {

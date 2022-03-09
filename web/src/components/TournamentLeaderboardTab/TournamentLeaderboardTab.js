@@ -7,7 +7,6 @@ import PlayerProfileItem from '../PlayerProfileItem/PlayerProfileItem'
 import Button from '../Button/Button'
 import { logError } from 'src/helpers/errorLogger'
 import AddTournamentPlayer from '../AddTournamentPlayer/AddTournamentPlayer'
-import { XIcon } from '@heroicons/react/solid'
 
 export const REMOVE_PLAYER = gql`
   mutation removePlayer($id: Int!) {
@@ -110,10 +109,7 @@ const TournamentLeaderboardTab = ({ tournament, setTournament }) => {
                           color="red"
                           disabled={loadingRemovePlayer}
                           full={false}
-                          rounded
-                          my="0"
-                          py="2"
-                          px="2"
+                          className="rounded-full w-8 h-8 justify-center items-center"
                           onClick={() => {
                             if (
                               confirm(
@@ -132,7 +128,7 @@ const TournamentLeaderboardTab = ({ tournament, setTournament }) => {
                             }
                           }}
                         >
-                          <XIcon className="h-6 w-6 text-white" />
+                          X
                         </Button>
                       )}
                     </div>

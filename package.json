@@ -8,7 +8,7 @@
     ]
   },
   "devDependencies": {
-    "@redwoodjs/core": "^0.48.0",
+    "@redwoodjs/core": "^0.38.0",
     "netlify-plugin-inline-functions-env": "^1.0.9"
   },
   "eslintConfig": {
@@ -16,7 +16,7 @@
     "root": true
   },
   "engines": {
-    "node": ">=14.17 <=16.x",
+    "node": ">=14.x <=16.x",
     "yarn": ">=1.15"
   },
   "resolutions": {
