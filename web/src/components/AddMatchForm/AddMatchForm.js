@@ -94,7 +94,7 @@ const AddMatchForm = ({
             <Button
               loading={loading}
               onClick={resetForm}
-              className="rounded-full"
+              rounded
               my="0"
               py="2"
               px="2"
@@ -109,7 +109,7 @@ const AddMatchForm = ({
             <Button
               type="submit"
               loading={loading}
-              className="rounded-full"
+              rounded
               my="0"
               py="2"
               px="2"
