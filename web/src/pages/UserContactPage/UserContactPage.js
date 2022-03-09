@@ -14,7 +14,7 @@ import { useForm } from '@redwoodjs/forms'
 import Button from 'src/components/Button/Button'
 import { logError } from 'src/helpers/errorLogger'
 
-const CREATE_CONTACT_MUTATION = gql`
+export const CREATE_CONTACT_MUTATION = gql`
   mutation CreateContactMutation($input: CreateContactInput!) {
     createContact(input: $input) {
       id

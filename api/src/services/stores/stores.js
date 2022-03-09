@@ -1,6 +1,7 @@
 import storeApprovedEO from 'src/emails/storeApprovedEO'
 import { sendEmail } from 'src/helpers/sendEmail'
 import { db } from 'src/lib/db'
+import { Prisma } from '@prisma/client'
 
 export const stores = ({ searchTerm = '' }) => {
   return db.store.findMany({
@@ -41,6 +42,58 @@ export const stores = ({ searchTerm = '' }) => {
   })
 }
 
+// Given a latitude and longitude, return the stores with the distance
+export const storeLocator = async ({ input }) => {
+  const distanceQuery =
+    input.lat && input.lng
+      ? Prisma.sql`111.111 *
+  DEGREES(ACOS(LEAST(1.0, COS(RADIANS("Store".lat))
+       * COS(RADIANS(${input.lat}))
+       * COS(RADIANS("Store".lng - ${input.lng}))
+       + SIN(RADIANS("Store".lat))
+       * SIN(RADIANS(${input.lat}))))) AS distance`
+      : ''
+
+  const sqlQuery = Prisma.sql`
+       SELECT *,
+       COUNT(*) OVER() AS full_count,${distanceQuery}
+       FROM "Store"
+       WHERE "Store".active = true
+       ${
+         input.includeOnline
+           ? Prisma.sql``
+           : Prisma.sql`AND "Store".lat IS NOT NULL`
+       }
+       ${
+         input.searchTerm
+           ? Prisma.sql`AND LOWER("Store".name) LIKE LOWER(${input.searchTerm}) OR LOWER("Store".email) LIKE LOWER(${input.searchTerm}) OR LOWER("Store".street1) LIKE LOWER(${input.searchTerm}) OR LOWER("Store".country) LIKE LOWER(${input.searchTerm})`
+           : Prisma.sql``
+       }
+       AND "Store".approved = true
+       GROUP BY "Store".id
+       ${
+         input.lat && input.lng
+           ? Prisma.sql`ORDER BY distance ASC`
+           : Prisma.sql`ORDER BY "Store"."name" ASC`
+       }
+       LIMIT ${input.take}
+       OFFSET ${input.skip};
+     `
+
+  try {
+    const stores = await db.$queryRaw(sqlQuery)
+
+    return {
+      more: stores[0]?.full_count > input.take,
+      totalCount: stores[0]?.full_count,
+      stores,
+    }
+  } catch (error) {
+    console.log(error)
+    Sentry.captureException(error)
+  }
+}
+
 export const activeStores = ({ searchTerm = '' }) => {
   return db.store.findMany({
     where: {
@@ -60,6 +113,12 @@ export const activeStores = ({ searchTerm = '' }) => {
 export const store = ({ id }) => {
   return db.store.findUnique({
     where: { id },
+  })
+}
+
+export const activeStore = ({ id }) => {
+  return db.store.findFirst({
+    where: { id, active: true, approved: true },
   })
 }
 
