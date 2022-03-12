@@ -46,14 +46,20 @@ export const SEARCH_STORES = gql`
   }
 `
 const StoreLocatorPage = () => {
+  const formMethods = useForm()
+  const contactUsFormMethods = useForm()
+  const { currentUser } = useAuth()
   const mapRef = useRef(null)
-  const [isGoogleInitialized, setIsGoogleInitialized] = React.useState(false)
+
+  const takeAmount = 8
+
   const [startingLocation, setStartingLocation] = React.useState({
     lat: 0,
     lng: 0,
   })
+  const [isGoogleInitialized, setIsGoogleInitialized] = React.useState(false)
+  const [prevDistance, setPrevDistance] = React.useState(0)
   const [maxDistance, setMaxDistance] = React.useState(3000)
-  const takeAmount = 8
   const [take, setTake] = React.useState(takeAmount)
   const [storeList, setStoreList] = React.useState([])
   const [currentSearch, setCurrentSearch] = React.useState('')
@@ -61,19 +67,26 @@ const StoreLocatorPage = () => {
   const [didSearchLocation, setDidSearchLocation] = React.useState(false)
   const [hasBeenCalled, setHasBeenCalled] = React.useState(false)
   const [fetchingMore, setFetchingMore] = React.useState(false)
-  const formMethods = useForm()
-  const contactUsFormMethods = useForm()
-  const { currentUser } = useAuth()
 
   const [searchStores, { called, loading, data }] = useLazyQuery(
     SEARCH_STORES,
     {
       onCompleted: (res) => {
         setHasBeenCalled(true)
+        setPrevDistance(maxDistance)
         if (fetchingMore) {
           setStoreList((prev) => [...prev, ...res.storeLocator.stores])
         } else {
           setStoreList(res.storeLocator.stores)
+          if (!didSearchLocation) {
+            // Find first store with a location
+            const firstStore = res.storeLocator.stores.find(
+              (store) => store.lat && store.lng
+            )
+
+            !!firstStore &&
+              setStartingLocation({ lat: firstStore.lat, lng: firstStore.lng })
+          }
         }
       },
       onError: (error) => {
@@ -117,6 +130,7 @@ const StoreLocatorPage = () => {
     setStartingLocation({ lat: submitData.lat, lng: submitData.lng })
     setFetchingMore(false)
     setCurrentSearch(submitData.input)
+    setSearchTerm(submitData.input)
     setDidSearchLocation(true)
 
     searchStores({
@@ -201,28 +215,50 @@ const StoreLocatorPage = () => {
         <h2 className="sm:mt-8 mb-6 text-left text-xl text-gray-900">
           Find a store
         </h2>
-        <p className="text-sm mb-1">Enter Address or Postal Code</p>
+        <div className="flex flex-wrap items-center">
+          <p className="text-sm mb-1">Enter Address or Postal Code</p>
+          <div className="flex ml-auto items-center">
+            <p>Distance:</p>
+            <select
+              name="distance"
+              onChange={(e) => setMaxDistance(parseInt(e.target.value))}
+              className="ml-1 rw-input"
+              defaultValue={maxDistance}
+            >
+              {[25, 50, 100, 250, 500, 1000, 2000, 3000].map((val) => (
+                <option value={val} key={val}>
+                  {val} KM
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
         <Form
           onSubmit={onSubmitQuery}
           formMethods={formMethods}
-          className="flex items-center mb-4"
+          className="flex items-center mb-4 mt-1"
         >
           <GoogleMapAutocompleteInput
             onSelectAddress={onSubmit}
             onChangeInput={(text) => setSearchTerm(text)}
+            latLngBias={startingLocation}
           />
-          <div className="ml-2">
+          <div className="ml-2 h-auto">
             <Button
               full={false}
+              disabled={
+                currentSearch === searchTerm && maxDistance === prevDistance
+              }
               type="submit"
               onClick={onSubmitQuery}
               loading={loading}
+              my={0}
             >
               Search
             </Button>
           </div>
         </Form>
-        <div className="w-full flex flex-row ">
+        <div className="w-full flex flex-col-reverse md:flex-row">
           <div className="w-2/5 flex flex-col h-auto">
             <div className="flex flex-col h-auto mb-6">
               <h4 className="text-gray-700 font-bold mb-1">Search Results</h4>
@@ -254,7 +290,7 @@ const StoreLocatorPage = () => {
             </div>
             <div
               className={
-                'flex-flex-col max-h-1/2 overflow-y-auto' +
+                'flex-flex-col max-h-70 overflow-y-auto' +
                 (storeList.length > 0 ? ' border-t-2 border-gray-400' : '')
               }
             >
