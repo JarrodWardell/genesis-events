@@ -259,7 +259,7 @@ const StoreLocatorPage = () => {
           </div>
         </Form>
         <div className="w-full flex flex-col-reverse md:flex-row">
-          <div className="w-2/5 flex flex-col h-auto">
+          <div className="w-full mt-2 md:mt-0 md:w-2/5 flex flex-col h-auto">
             <div className="flex flex-col h-auto mb-6">
               <h4 className="text-gray-700 font-bold mb-1">Search Results</h4>
               {hasBeenCalled &&
@@ -392,7 +392,7 @@ const StoreLocatorPage = () => {
               )}
             </div>
           </div>
-          <div className="pl-8 w-3/5">
+          <div className="w-full overflow-hidden max-h-52 md:pl-8 md:w-3/5">
             <GoogleMapWrapper
               mapRef={mapRef}
               onMapLoad={() => setIsGoogleInitialized(true)}

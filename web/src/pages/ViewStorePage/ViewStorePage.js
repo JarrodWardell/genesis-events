@@ -124,8 +124,8 @@ const ViewStorePage = ({ storeId = '' }) => {
           <h2 className="sm:mt-8 mb-6 text-left text-xl text-gray-900">
             {storeData?.activeStore?.name}
           </h2>
-          <div className="flex">
-            <div className="w-2/5">
+          <div className="flex flex-col-reverse md:flex-row">
+            <div className="w-full mt-2 md:mt-0 md:w-2/5">
               <div className="flex w-full items-center">
                 <LocationMarkerIcon className="w-4 h-4 mr-2" />
                 <p className="font-bold ">{storeData?.activeStore?.name}</p>
@@ -165,32 +165,37 @@ const ViewStorePage = ({ storeId = '' }) => {
                   ))}
                 </div>
               )}
-              <div className="flex w-full items-center mb-4">
-                <PhoneIcon className="w-4 h-4 mr-2" />
-                <p className="font-bold mr-1">Phone Number: </p>{' '}
-                <a
-                  href={`tel:${googleStoreDetails.formatted_phone_number}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-blue-500 hover:text-blue-700"
-                >
-                  {googleStoreDetails.formatted_phone_number}
-                </a>
-              </div>
-              <div className="flex w-full items-center">
-                <DesktopComputerIcon className="w-4 h-4 mr-2" />
-                <p className="font-bold mr-1">Website: </p>{' '}
-                <a
-                  href={googleStoreDetails.website}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-blue-500 hover:text-blue-700"
-                >
-                  {googleStoreDetails.website}
-                </a>
-              </div>
+              {googleStoreDetails.formatted_phone_number && (
+                <div className="flex w-full items-center mb-4">
+                  <PhoneIcon className="w-4 h-4 mr-2" />
+                  <p className="font-bold mr-1">Phone Number: </p>{' '}
+                  <a
+                    href={`tel:${googleStoreDetails.formatted_phone_number}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-blue-500 hover:text-blue-700"
+                  >
+                    {googleStoreDetails.formatted_phone_number}
+                  </a>
+                </div>
+              )}
+
+              {googleStoreDetails.website && (
+                <div className="flex w-full items-center">
+                  <DesktopComputerIcon className="w-4 h-4 mr-2" />
+                  <p className="font-bold mr-1">Website: </p>{' '}
+                  <a
+                    href={googleStoreDetails.website}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-blue-500 hover:text-blue-700"
+                  >
+                    {googleStoreDetails.website}
+                  </a>
+                </div>
+              )}
             </div>
-            <div className="w-3/5">
+            <div className="w-full  md:w-3/5">
               <div id="map"></div>
               {storeData?.activeStore.lat && storeData?.activeStore.lng ? (
                 <>
@@ -226,7 +231,7 @@ const ViewStorePage = ({ storeId = '' }) => {
               )}
             </div>
           </div>
-          {tournamentsAfterToday.length > 0 && (
+          {tournamentsAfterToday?.length > 0 && (
             <div className="flex flex-col">
               <div className="flex w-full items-center mb-4">
                 <SpeakerphoneIcon className="w-4 h-4 mr-2" />
