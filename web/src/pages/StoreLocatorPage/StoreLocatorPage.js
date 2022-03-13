@@ -253,6 +253,7 @@ const StoreLocatorPage = () => {
               onClick={onSubmitQuery}
               loading={loading}
               my={0}
+              px={6}
             >
               Search
             </Button>
@@ -392,7 +393,7 @@ const StoreLocatorPage = () => {
               )}
             </div>
           </div>
-          <div className="w-full overflow-hidden max-h-52 md:pl-8 md:w-3/5">
+          <div className="w-full overflow-hidden max-h-52 md:max-h-max md:pl-8 md:w-3/5">
             <GoogleMapWrapper
               mapRef={mapRef}
               onMapLoad={() => setIsGoogleInitialized(true)}

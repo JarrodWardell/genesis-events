@@ -59,7 +59,6 @@ const StoreForm = (props) => {
           defaultValue={props.store?.ownerId}
           className="rw-input"
           errorClassName="rw-input rw-input-error"
-          validation={{ required: true }}
         />
         <FieldError name="ownerId" className="rw-field-error" />
 
@@ -75,7 +74,6 @@ const StoreForm = (props) => {
           defaultValue={props.store?.email}
           className="rw-input"
           errorClassName="rw-input rw-input-error"
-          validation={{ required: true }}
         />
         <FieldError name="email" className="rw-field-error" />
 
@@ -91,7 +89,6 @@ const StoreForm = (props) => {
           defaultValue={props.store?.phone}
           className="rw-input"
           errorClassName="rw-input rw-input-error"
-          validation={{ required: true }}
         />
         <FieldError name="phone" className="rw-field-error" />
 
@@ -108,7 +105,6 @@ const StoreForm = (props) => {
           className="rw-input"
           step="0.00000001"
           errorClassName="rw-input rw-input-error"
-          validation={{ required: true }}
           dataType="Float"
         />
         <FieldError name="lat" className="rw-field-error" />
@@ -126,7 +122,6 @@ const StoreForm = (props) => {
           step="0.00000001"
           className="rw-input"
           errorClassName="rw-input rw-input-error"
-          validation={{ required: true }}
           dataType="Float"
         />
         <FieldError name="lng" className="rw-field-error" />
@@ -143,7 +138,6 @@ const StoreForm = (props) => {
           defaultValue={props.store?.street1}
           className="rw-input"
           errorClassName="rw-input rw-input-error"
-          validation={{ required: true }}
         />
         <FieldError name="street1" className="rw-field-error" />
 
@@ -174,7 +168,6 @@ const StoreForm = (props) => {
           defaultValue={props.store?.city}
           className="rw-input"
           errorClassName="rw-input rw-input-error"
-          validation={{ required: true }}
         />
         <FieldError name="city" className="rw-field-error" />
 
@@ -190,7 +183,6 @@ const StoreForm = (props) => {
           defaultValue={props.store?.country}
           className="rw-input"
           errorClassName="rw-input rw-input-error"
-          validation={{ required: true }}
         />
         <FieldError name="country" className="rw-field-error" />
 
@@ -206,7 +198,6 @@ const StoreForm = (props) => {
           defaultValue={props.store?.state}
           className="rw-input"
           errorClassName="rw-input rw-input-error"
-          validation={{ required: true }}
         />
         <FieldError name="state" className="rw-field-error" />
 
@@ -222,7 +213,6 @@ const StoreForm = (props) => {
           defaultValue={props.store?.zip}
           className="rw-input"
           errorClassName="rw-input rw-input-error"
-          validation={{ required: true }}
         />
         <FieldError name="zip" className="rw-field-error" />
 
@@ -238,7 +228,6 @@ const StoreForm = (props) => {
           defaultValue={props.store?.distributor}
           className="rw-input"
           errorClassName="rw-input rw-input-error"
-          validation={{ required: true }}
         />
         <FieldError name="distributor" className="rw-field-error" />
 

@@ -141,7 +141,10 @@ export const updateStore = async ({ id, input }) => {
     include: { owner: true },
   })
 
-  let owner = await db.user.findUnique({ where: { id: store.ownerId } })
+  let owner
+  if (store.ownerId) {
+    owner = await db.user.findUnique({ where: { id: store.ownerId } })
+  }
 
   if (!store.approved && input.approved) {
     let newInput = { ...input }
@@ -159,14 +162,29 @@ export const updateStore = async ({ id, input }) => {
       where: { id },
     })
 
+    if (input.ownerId && input.ownerId !== store.ownerId) {
+      owner = await db.user.findUnique({ where: { id: input.ownerId } })
+      await db.store.update({
+        data: {
+          owner: {
+            connect: {
+              id: input.ownerId,
+            },
+          },
+        },
+      })
+    }
+
     let html = `${storeApprovedEO({ store }).html}`
 
-    sendEmail({
-      to: owner.email,
-      subject: `GEO: Your Store, ${store.name}, has been Approved!`,
-      html,
-      text: `Your Store Has Been Approved!`,
-    })
+    if (owner) {
+      sendEmail({
+        to: owner.email,
+        subject: `GEO: Your Store, ${store.name}, has been Approved!`,
+        html,
+        text: `Your Store Has Been Approved!`,
+      })
+    }
 
     return store
   }
