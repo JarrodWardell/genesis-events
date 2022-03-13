@@ -12,9 +12,9 @@ const GMap = ({
   useEffect(() => {
     if (window.google) {
       googleMap = initGoogleMap()
-      stores.forEach(({ lat, lng }) => {
-        if (lat && lng) {
-          createMarker(lat, lng)
+      stores.forEach((store) => {
+        if (store.lat && store.lng) {
+          createMarker(store)
         }
       })
       onMapLoad(googleMapRef.current)
@@ -29,12 +29,30 @@ const GMap = ({
     })
   }
 
+  function attachInfo(marker, infoContainer) {
+    const infowindow = new window.google.maps.InfoWindow({
+      content: infoContainer,
+    })
+
+    marker.addListener('click', () => {
+      infowindow.open(marker.get('map'), marker)
+    })
+  }
+
   // create marker on google map
-  const createMarker = (lat, lng) =>
-    new window.google.maps.Marker({
-      position: { lat, lng },
+  const createMarker = (store) => {
+    const marker = new window.google.maps.Marker({
+      position: { lat: store.lat, lng: store.lng },
       map: googleMap,
     })
+
+    const container = `<div style={{display: 'flex', flexDirection: 'column'}}>
+      <h3>${store.name}</h3>
+      <p>${store.street1}</p>
+    </div>`
+
+    attachInfo(marker, container)
+  }
 
   return (
     <div

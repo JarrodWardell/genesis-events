@@ -172,7 +172,9 @@ const Header = () => {
                         </Link>
                       )}
                       <Link
-                        to={routes.settings()}
+                        to={routes.settings({
+                          tab: 'user',
+                        })}
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
                         role="menuitem"
                         tabIndex="-1"
@@ -257,6 +259,13 @@ const Header = () => {
                   activeClassName="bg-indigo-50 border-indigo-500 text-indigo-700 block pl-3 pr-4 py-2 border-l-4 text-base font-medium sm:pl-5 sm:pr-6"
                 >
                   Contact Us
+                </button>
+                <button
+                  onClick={() => navigateMobile(routes.storeLocator())}
+                  className="border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700 block pl-3 pr-4 py-2 border-l-4 text-base font-medium sm:pl-5 sm:pr-6"
+                  activeClassName="bg-indigo-50 border-indigo-500 text-indigo-700 block pl-3 pr-4 py-2 border-l-4 text-base font-medium sm:pl-5 sm:pr-6"
+                >
+                  Store Locator
                 </button>
                 {!isAuthenticated && (
                   <>

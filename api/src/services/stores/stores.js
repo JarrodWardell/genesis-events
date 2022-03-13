@@ -59,6 +59,7 @@ export const storeLocator = async ({ input }) => {
        COUNT(*) OVER() AS full_count,${distanceQuery}
        FROM "Store"
        WHERE "Store".active = true
+       AND "Store".approved = true
        ${
          input.includeOnline
            ? Prisma.sql``
@@ -69,23 +70,28 @@ export const storeLocator = async ({ input }) => {
            ? Prisma.sql`AND LOWER("Store".name) LIKE LOWER(${input.searchTerm}) OR LOWER("Store".email) LIKE LOWER(${input.searchTerm}) OR LOWER("Store".street1) LIKE LOWER(${input.searchTerm}) OR LOWER("Store".country) LIKE LOWER(${input.searchTerm})`
            : Prisma.sql``
        }
-       AND "Store".approved = true
        GROUP BY "Store".id
        ${
          input.lat && input.lng
            ? Prisma.sql`ORDER BY distance ASC`
            : Prisma.sql`ORDER BY "Store"."name" ASC`
-       }
-       LIMIT ${input.take}
-       OFFSET ${input.skip};
+       };
      `
 
   try {
-    const stores = await db.$queryRaw(sqlQuery)
+    let stores = await db.$queryRaw(sqlQuery)
+
+    if (input.lat && input.lng && input.distance) {
+      stores = stores.filter((store) => store.distance < input.distance)
+    }
+
+    const totalCount = stores.length
+    const totalTake = input.take + input.skip
+    stores = stores.slice(input.skip, totalTake)
 
     return {
-      more: stores[0]?.full_count > input.take,
-      totalCount: stores[0]?.full_count,
+      more: totalCount > totalTake,
+      totalCount: totalCount,
       stores,
     }
   } catch (error) {
@@ -135,7 +141,10 @@ export const updateStore = async ({ id, input }) => {
     include: { owner: true },
   })
 
-  let owner = await db.user.findUnique({ where: { id: store.ownerId } })
+  let owner
+  if (store.ownerId) {
+    owner = await db.user.findUnique({ where: { id: store.ownerId } })
+  }
 
   if (!store.approved && input.approved) {
     let newInput = { ...input }
@@ -153,14 +162,29 @@ export const updateStore = async ({ id, input }) => {
       where: { id },
     })
 
+    if (input.ownerId && input.ownerId !== store.ownerId) {
+      owner = await db.user.findUnique({ where: { id: input.ownerId } })
+      await db.store.update({
+        data: {
+          owner: {
+            connect: {
+              id: input.ownerId,
+            },
+          },
+        },
+      })
+    }
+
     let html = `${storeApprovedEO({ store }).html}`
 
-    sendEmail({
-      to: owner.email,
-      subject: `GEO: Your Store, ${store.name}, has been Approved!`,
-      html,
-      text: `Your Store Has Been Approved!`,
-    })
+    if (owner) {
+      sendEmail({
+        to: owner.email,
+        subject: `GEO: Your Store, ${store.name}, has been Approved!`,
+        html,
+        text: `Your Store Has Been Approved!`,
+      })
+    }
 
     return store
   }
