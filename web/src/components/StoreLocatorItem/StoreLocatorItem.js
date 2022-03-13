@@ -65,7 +65,10 @@ const StoreLocatorItem = ({
   }, [isGoogleInitialized, newRef, window.google])
 
   const tournamentsAfterToday = store.tournaments
-    .filter((tournament) => new Date(tournament.startDate) > new Date())
+    .filter(
+      (tournament) =>
+        new Date(tournament.startDate) > new Date() && tournament.active
+    )
     .sort((a, b) => new Date(a.startDate) - new Date(b.startDate))
 
   return (
