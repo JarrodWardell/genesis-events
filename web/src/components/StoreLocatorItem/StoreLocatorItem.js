@@ -92,13 +92,13 @@ const StoreLocatorItem = ({
           {store.zip}
         </p>
       </div>
-      {todayHours && (
+      {/*todayHours && (
         <div className="flex">
           <ClockIcon className="w-4 h-4 mr-2" />
           <p className="font-bold">Store Hours:</p>{' '}
           <p className="ml-1"> {todayHours}</p>
         </div>
-      )}
+      )*/}
 
       {tournamentsAfterToday.length > 0 && (
         <div className="flex mt-4">
@@ -111,7 +111,7 @@ const StoreLocatorItem = ({
           </p>
         </div>
       )}
-      {googleStoreDetails.website && (
+      {/*googleStoreDetails.website && (
         <div className="flex mt-4">
           <DesktopComputerIcon className="w-4 h-4 mr-2" />
           <p className="font-bold">Website: </p>{' '}
@@ -120,7 +120,7 @@ const StoreLocatorItem = ({
             {googleStoreDetails.website}
           </a>
         </div>
-      )}
+      )*/}
     </Link>
   )
 }

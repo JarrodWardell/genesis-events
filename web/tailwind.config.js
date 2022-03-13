@@ -21,7 +21,7 @@ module.exports = {
       pattern: /(mr|mt|ml|mb|m|my|mx)-(1|2|3|4)/,
     },
     {
-      pattern: /(px|py|p|pr|pl|pt|pb)-(2|4|8)/,
+      pattern: /(px|py|p|pr|pl|pt|pb)-(2|4|6|8)/,
     },
   ],
 }

@@ -59,6 +59,7 @@ model Store {
   ownerId     String?
   email       String?
   website     String?
+  placeId     String?
   phone       String?
   lat         Float?
   lng         Float?
