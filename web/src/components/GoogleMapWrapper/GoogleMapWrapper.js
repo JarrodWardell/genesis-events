@@ -46,9 +46,12 @@ const GMap = ({
       map: googleMap,
     })
 
-    const container = `<div style={{display: 'flex', flexDirection: 'column'}}>
+    const container = `<div style="display:flex;flex-direction:column">
       <h3>${store.name}</h3>
       <p>${store.street1}</p>
+      <div style="display:flex;flex-direction:row">
+        <a style="color:blue;margin-top:5px;margin-left:auto" href="/store/${store.id}">View Store Page Here</a>
+      </div>
     </div>`
 
     attachInfo(marker, container)

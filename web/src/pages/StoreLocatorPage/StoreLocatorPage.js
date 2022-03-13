@@ -260,7 +260,7 @@ const StoreLocatorPage = () => {
           </div>
         </Form>
         <div className="w-full flex flex-col-reverse md:flex-row">
-          <div className="w-full mt-2 md:mt-0 md:w-2/5 flex flex-col h-auto">
+          <div className="w-full mt-2 md:mt-0 md:w-2/5 flex flex-col">
             <div className="flex flex-col h-auto mb-6">
               <h4 className="text-gray-700 font-bold mb-1">Search Results</h4>
               {hasBeenCalled &&
@@ -291,7 +291,7 @@ const StoreLocatorPage = () => {
             </div>
             <div
               className={
-                'flex-flex-col max-h-70 overflow-y-auto' +
+                'flex-flex-col max-h-[60vh] overflow-y-auto' +
                 (storeList.length > 0 ? ' border-t-2 border-gray-400' : '')
               }
             >
@@ -386,12 +386,12 @@ const StoreLocatorPage = () => {
                   <LoadingIcon size={12} />
                 </div>
               )}
-              {data?.storeLocator?.more && (
-                <Button onClick={loadMore} px={4} py={4} disabled={loading}>
-                  Load More
-                </Button>
-              )}
             </div>
+            {data?.storeLocator?.more && (
+              <Button onClick={loadMore} px={4} py={4} disabled={loading}>
+                Load More
+              </Button>
+            )}
           </div>
           <div className="w-full overflow-hidden max-h-52 md:max-h-max md:pl-8 md:w-3/5">
             <GoogleMapWrapper

@@ -213,14 +213,7 @@ const ViewStorePage = ({ storeId = '' }) => {
                         : { lat: 0, lng: 0 }
                     }
                     stores={
-                      storeData?.activeStore
-                        ? [
-                            {
-                              lat: storeData?.activeStore?.lat,
-                              lng: storeData?.activeStore?.lng,
-                            },
-                          ]
-                        : []
+                      storeData?.activeStore ? [storeData?.activeStore] : []
                     }
                   />
                 </>
@@ -233,11 +226,11 @@ const ViewStorePage = ({ storeId = '' }) => {
           </div>
           {tournamentsAfterToday?.length > 0 && (
             <div className="flex flex-col">
-              <div className="flex w-full items-center mb-4">
+              <div className="flex w-full items-center mb-4 mt-4 md:mt-1">
                 <SpeakerphoneIcon className="w-4 h-4 mr-2" />
-                <p className="font-bold ">Upcoming Tournaments: </p>
+                <p className="font-bold">Upcoming Tournaments: </p>
               </div>
-              <div className="grid grid-cols-4 gap-2">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-2">
                 {tournamentsAfterToday?.slice(0, 4).map((tournament, index) => {
                   return (
                     <Link
