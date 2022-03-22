@@ -60,6 +60,7 @@ export const storeLocator = async ({ input }) => {
        FROM "Store"
        WHERE "Store".active = true
        AND "Store".approved = true
+       AND "Store".hidden = false
        ${
          input.includeOnline
            ? Prisma.sql``
@@ -67,7 +68,7 @@ export const storeLocator = async ({ input }) => {
        }
        ${
          input.searchTerm
-           ? Prisma.sql`AND LOWER("Store".name) LIKE LOWER(${input.searchTerm}) OR LOWER("Store".email) LIKE LOWER(${input.searchTerm}) OR LOWER("Store".street1) LIKE LOWER(${input.searchTerm}) OR LOWER("Store".country) LIKE LOWER(${input.searchTerm})`
+           ? Prisma.sql`AND LOWER("Store".name) ILIKE LOWER(${input.searchTerm}) OR LOWER("Store".email) LIKE LOWER(${input.searchTerm}) OR LOWER("Store".street1) LIKE LOWER(${input.searchTerm}) OR LOWER("Store".country) LIKE LOWER(${input.searchTerm})`
            : Prisma.sql``
        }
        GROUP BY "Store".id

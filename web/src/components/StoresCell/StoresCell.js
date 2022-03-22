@@ -22,7 +22,9 @@ export const QUERY = gql`
       country
       state
       zip
+      placeId
       distributor
+      hidden
       approved
       approvedOn
       approvedBy {
