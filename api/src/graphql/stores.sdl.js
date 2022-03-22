@@ -17,7 +17,9 @@ export const schema = gql`
     country: String
     state: String
     zip: String
+    placeId: String
     distributor: String
+    hidden: Boolean
     approved: Boolean
     approvedBy: User
     approverId: String
@@ -60,6 +62,8 @@ export const schema = gql`
     country: String!
     state: String!
     zip: String!
+    placeId: String
+    hidden: Boolean
     distributor: String!
     approved: Boolean
     approvedOn: DateTime
@@ -79,6 +83,8 @@ export const schema = gql`
     state: String
     zip: String
     distributor: String
+    placeId: String
+    hidden: Boolean
     approved: Boolean
     approvedOn: DateTime
   }

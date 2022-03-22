@@ -81,7 +81,9 @@ const StoresList = ({ stores }) => {
             <th>Country</th>
             <th>State</th>
             <th>Zip</th>
+            <th>PlaceId</th>
             <th>Distributor</th>
+            <th>Hidden</th>
             <th>Approved</th>
             <th>Approved on</th>
             <th>Approved By</th>
@@ -111,7 +113,9 @@ const StoresList = ({ stores }) => {
               <td>{truncate(store.country)}</td>
               <td>{truncate(store.state)}</td>
               <td>{truncate(store.zip)}</td>
+              <td>{truncate(store.placeId)}</td>
               <td>{truncate(store.distributor)}</td>
+              <td>{checkboxInputTag(store.hidden)}</td>
               <td>{checkboxInputTag(store.approved)}</td>
               <td>{timeTag(store.approvedOn)}</td>
               <td>
