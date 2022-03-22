@@ -17,6 +17,8 @@ export const FIND_STORE_BY_ID = gql`
       state
       zip
       distributor
+      placeId
+      hidden
       approved
       approvedOn
       owner {

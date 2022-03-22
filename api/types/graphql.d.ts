@@ -152,11 +152,13 @@ export type CreateStoreInput = {
   country: Scalars['String'];
   distributor: Scalars['String'];
   email: Scalars['String'];
+  hidden?: InputMaybe<Scalars['Boolean']>;
   lat?: InputMaybe<Scalars['Float']>;
   lng?: InputMaybe<Scalars['Float']>;
   name: Scalars['String'];
   ownerId: Scalars['String'];
   phone: Scalars['String'];
+  placeId?: InputMaybe<Scalars['String']>;
   state: Scalars['String'];
   street1: Scalars['String'];
   street2?: InputMaybe<Scalars['String']>;
@@ -908,6 +910,7 @@ export type Store = {
   distance?: Maybe<Scalars['Float']>;
   distributor?: Maybe<Scalars['String']>;
   email?: Maybe<Scalars['String']>;
+  hidden?: Maybe<Scalars['Boolean']>;
   id: Scalars['String'];
   lat?: Maybe<Scalars['Float']>;
   lng?: Maybe<Scalars['Float']>;
@@ -915,6 +918,7 @@ export type Store = {
   owner?: Maybe<User>;
   ownerId?: Maybe<Scalars['String']>;
   phone?: Maybe<Scalars['String']>;
+  placeId?: Maybe<Scalars['String']>;
   state?: Maybe<Scalars['String']>;
   street1?: Maybe<Scalars['String']>;
   street2?: Maybe<Scalars['String']>;
@@ -1059,11 +1063,13 @@ export type UpdateStoreInput = {
   country?: InputMaybe<Scalars['String']>;
   distributor?: InputMaybe<Scalars['String']>;
   email?: InputMaybe<Scalars['String']>;
+  hidden?: InputMaybe<Scalars['Boolean']>;
   lat?: InputMaybe<Scalars['Float']>;
   lng?: InputMaybe<Scalars['Float']>;
   name?: InputMaybe<Scalars['String']>;
   ownerId?: InputMaybe<Scalars['String']>;
   phone?: InputMaybe<Scalars['String']>;
+  placeId?: InputMaybe<Scalars['String']>;
   state?: InputMaybe<Scalars['String']>;
   street1?: InputMaybe<Scalars['String']>;
   street2?: InputMaybe<Scalars['String']>;
@@ -1683,6 +1689,7 @@ export type StoreResolvers<ContextType = any, ParentType extends ResolversParent
   distance?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   distributor?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   email?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  hidden?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   lat?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   lng?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -1690,6 +1697,7 @@ export type StoreResolvers<ContextType = any, ParentType extends ResolversParent
   owner?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   ownerId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   phone?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  placeId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   state?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   street1?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   street2?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;

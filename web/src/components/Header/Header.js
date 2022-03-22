@@ -127,7 +127,7 @@ const Header = () => {
                 </div>
               )}
 
-              <div className="hidden md:ml-4 md:flex-shrink-0 md:flex md:items-center">
+              <div className="md:ml-4 md:flex-shrink-0 flex md:items-center">
                 <div className="ml-3 relative">
                   <div>
                     <button

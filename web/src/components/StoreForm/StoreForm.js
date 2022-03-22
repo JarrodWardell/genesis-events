@@ -217,6 +217,21 @@ const StoreForm = (props) => {
         <FieldError name="zip" className="rw-field-error" />
 
         <Label
+          name="placeId"
+          className="rw-label"
+          errorClassName="rw-label rw-label-error"
+        >
+          Place ID (Google)
+        </Label>
+        <TextField
+          name="placeId"
+          defaultValue={props.store?.placeId}
+          className="rw-input"
+          errorClassName="rw-input rw-input-error"
+        />
+        <FieldError name="placeId" className="rw-field-error" />
+
+        <Label
           name="distributor"
           className="rw-label"
           errorClassName="rw-label rw-label-error"
@@ -230,6 +245,21 @@ const StoreForm = (props) => {
           errorClassName="rw-input rw-input-error"
         />
         <FieldError name="distributor" className="rw-field-error" />
+
+        <Label
+          name="hidden"
+          className="rw-label"
+          errorClassName="rw-label rw-label-error"
+        >
+          Hidden
+        </Label>
+        <CheckboxField
+          name="hidden"
+          defaultChecked={props.store?.hidden || false}
+          className="rw-input"
+          errorClassName="rw-input rw-input-error"
+        />
+        <FieldError name="hidden" className="rw-field-error" />
 
         <Label
           name="approved"

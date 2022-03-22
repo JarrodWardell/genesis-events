@@ -69,8 +69,10 @@ model Store {
   state       String?
   zip         String?
   distributor String?
+  placeId     String?
   approved    Boolean?
   approvedOn  DateTime?
+  hidden      Boolean      @default(false)
   active      Boolean      @default(true)
   approverId  String?
   approvedBy  User?        @relation("StoreApprover", fields: [approverId], references: [id])
