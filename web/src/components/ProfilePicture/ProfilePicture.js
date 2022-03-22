@@ -2,7 +2,7 @@ const ProfilePicture = ({ pic, size = 20 }) => {
   if (pic?.url) {
     return (
       <div
-        className={`rounded-full bg-no-repeat bg-center bg-cover h-${size} w-${size} max-h-${size}`}
+        className={`rounded-full bg-no-repeat bg-center bg-cover h-20 w-20 max-h-20 h-${size} w-${size} max-h-${size}`}
         style={{
           backgroundImage: `url(${pic.url})`,
         }}
