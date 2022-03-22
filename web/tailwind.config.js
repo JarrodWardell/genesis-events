@@ -23,5 +23,8 @@ module.exports = {
     {
       pattern: /(px|py|p|pr|pl|pt|pb)-(2|4|6|8)/,
     },
+    {
+      pattern: /(h|w)-(12|16|20)/,
+    },
   ],
 }
