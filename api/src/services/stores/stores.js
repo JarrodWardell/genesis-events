@@ -2,6 +2,7 @@ import storeApprovedEO from 'src/emails/storeApprovedEO'
 import { sendEmail } from 'src/helpers/sendEmail'
 import { db } from 'src/lib/db'
 import { Prisma } from '@prisma/client'
+import * as Sentry from '@sentry/node'
 
 export const stores = ({ searchTerm = '' }) => {
   return db.store.findMany({
