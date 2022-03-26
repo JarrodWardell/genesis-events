@@ -24,7 +24,7 @@ const tournamentEditedPlayer = ({
             new Date(prevTournament.startDate),
             'PP'
           )} located at ${prevTournament.locationName}, ${
-        prevTournament.street1
+        prevTournament.street1 || ''
       } at ${format(new Date(prevTournament.startDate), 'p')} has been changed.
         </mj-text>
         <mj-text mj-class="body">

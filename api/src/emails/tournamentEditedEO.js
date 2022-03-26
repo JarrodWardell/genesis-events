@@ -25,7 +25,7 @@ const tournamentEditedEO = ({
             new Date(prevTournament.startDate),
             'PP'
           )} located at ${prevTournament.locationName}, ${
-        prevTournament.street1
+        prevTournament.street1 || ''
       } at ${format(
         new Date(prevTournament.startDate),
         'p'
