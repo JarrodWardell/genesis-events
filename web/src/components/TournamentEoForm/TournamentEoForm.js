@@ -83,6 +83,8 @@ const TournamentEOForm = ({ tournament }) => {
       tournament?.type ? tournament?.type : TOURNAMENT_TYPES[0]
     )
     formMethods.setValue('locationName', tournament?.locationName)
+    formMethods.setValue('tournamentName', tournament?.name)
+    formMethods.setValue('maxPlayers', tournament?.maxPlayers)
     formMethods.setValue('storeId', tournament?.storeId)
     formMethods.setValue('country', tournament?.country)
     formMethods.setValue('zip', tournament?.zip)

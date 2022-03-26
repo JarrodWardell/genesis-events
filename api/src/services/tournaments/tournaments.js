@@ -14,6 +14,7 @@ import {
 import { db } from 'src/lib/db'
 import * as Sentry from '@sentry/node'
 import { isEqual } from 'date-fns'
+import tournamentCreatedEO from 'src/emails/tournamentCreatedEO'
 
 export const tournament = ({ id }) => {
   return db.tournament.findUnique({
@@ -335,8 +336,8 @@ export const tournamentByUrl = ({ url }) => {
 export const createTournament = async ({ input }) => {
   var newInput = { ...input }
   delete newInput.storeId
-  let tournamentUrl = await generateTournamentUrl(input.name, db)
-  let currentUser = context.currentUser
+  const tournamentUrl = await generateTournamentUrl(input.name, db)
+  const currentUser = context.currentUser
   var storeId = input.storeId
 
   if (storeId) {
@@ -344,7 +345,7 @@ export const createTournament = async ({ input }) => {
   }
 
   try {
-    return db.tournament.create({
+    const tournament = await db.tournament.create({
       data: {
         ...newInput,
         tournamentUrl,
@@ -353,7 +354,31 @@ export const createTournament = async ({ input }) => {
         },
       },
     })
+
+    let html = `${tournamentCreatedEO({ tournament, owner: currentUser }).html}`
+
+    await sendEmail({
+      to: currentUser.email,
+      subject: `GEO: Tournament ${tournament.name} has been created`,
+      html,
+      text: `Tournament ${tournament.name} has been created`,
+    })
+
+    html = `${
+      tournamentCreatedEO({ tournament, owner: currentUser, adminEmail: true })
+        .html
+    }`
+
+    await sendEmail({
+      to: process.env.ADMIN_EMAILS,
+      subject: `GEO: Tournament ${tournament.name} has been created`,
+      html,
+      text: `Tournament ${tournament.name} has been created`,
+    })
+
+    return tournament
   } catch (error) {
+    console.log('Tournament create error', error)
     Sentry.captureException(error)
   }
 }
@@ -439,6 +464,7 @@ export const updateTournament = async ({ id, input }) => {
 
     return tournament
   } catch (error) {
+    console.log(error)
     Sentry.captureException(error)
   }
 }

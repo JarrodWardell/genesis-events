@@ -86,7 +86,7 @@ const StoreSettingsTab = () => {
 
   React.useEffect(() => {
     let currentStore = currentUser.stores[0]
-    setStreet1(currentStore.street1)
+    setStreet1(currentStore?.street1 || '')
   }, [])
 
   return (
