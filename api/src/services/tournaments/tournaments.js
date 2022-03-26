@@ -252,17 +252,17 @@ export const searchTournaments = async ({ input }) => {
     LEFT JOIN "Store" ON "Tournament"."storeId"="Store".id
     WHERE "Tournament".active = true ${
       input.name
-        ? Prisma.sql`AND LOWER("Tournament".name) LIKE LOWER(${input.name})`
+        ? Prisma.sql`AND "Tournament".name ILIKE ${'%' + input.name + '%'}`
         : Prisma.sql``
     }
     ${
       input.type && input.type !== 'ALL'
-        ? Prisma.sql`AND LOWER("Tournament".type) LIKE LOWER(${input.type})`
+        ? Prisma.sql`AND "Tournament".type ILIKE ${'%' + input.type + '%'}`
         : Prisma.sql``
     }
     ${
       input.store
-        ? Prisma.sql`AND LOWER("Store".name) LIKE LOWER(${input.store})`
+        ? Prisma.sql`AND "Store".name ILIKE ${'%' + input.store + '%'}`
         : Prisma.sql``
     }
     ${

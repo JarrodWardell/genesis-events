@@ -69,7 +69,11 @@ export const storeLocator = async ({ input }) => {
        }
        ${
          input.searchTerm
-           ? Prisma.sql`AND LOWER("Store".name) ILIKE LOWER(${input.searchTerm}) OR LOWER("Store".email) LIKE LOWER(${input.searchTerm}) OR LOWER("Store".street1) LIKE LOWER(${input.searchTerm}) OR LOWER("Store".country) LIKE LOWER(${input.searchTerm})`
+           ? Prisma.sql`AND "Store".name ILIKE ${
+               '%' + input.searchTerm + '%'
+             } OR "Store".street1 ILIKE ${
+               '%' + input.searchTerm + '%'
+             } OR "Store".country ILIKE ${'%' + input.searchTerm + '%'}`
            : Prisma.sql``
        }
        GROUP BY "Store".id
