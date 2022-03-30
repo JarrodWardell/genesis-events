@@ -19,6 +19,7 @@ import { CREATE_CONTACT_MUTATION } from '../UserContactPage/UserContactPage'
 import { useMutation } from '@redwoodjs/web'
 import { toast } from '@redwoodjs/web/dist/toast'
 import { useAuth } from '@redwoodjs/auth'
+import axios from 'axios'
 
 export const SEARCH_STORES = gql`
   query storeLocator($input: SearchStoresInput!) {
@@ -121,7 +122,11 @@ const StoreLocatorPage = () => {
   }
 
   useEffect(() => {
-    getUserGeneralLocation()
+    if (navigator.geolocation) {
+      getUserSpecificLocation()
+    } else {
+      getUserGeneralLocation()
+    }
   }, [])
 
   const onSubmit = (submitData) => {
@@ -186,6 +191,13 @@ const StoreLocatorPage = () => {
   }
 
   const getUserGeneralLocation = () => {
+    fetch('https://api.ipify.org/?format=json', { method: 'GET' })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log('IP: ', data.ip)
+      })
+      .catch((err) => console.log(err))
+
     fetch('https://ip.nf/me.json', { method: 'GET' })
       .then((res) => res.json())
       .then((data) => {
@@ -207,6 +219,41 @@ const StoreLocatorPage = () => {
         })
       })
       .catch((err) => console.log(err))
+  }
+
+  const getUserSpecificLocation = (includeOnline = false) => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const lat = position.coords.latitude
+          const lng = position.coords.longitude
+
+          setStartingLocation({ lat, lng })
+          setCurrentSearch('Your Location')
+          setSearchTerm('Your Location')
+          setDidSearchLocation(true)
+          setHasBeenCalled(false)
+          setTake(takeAmount)
+          searchStores({
+            variables: {
+              input: {
+                lat,
+                lng,
+                take: takeAmount,
+                skip: 0,
+                includeOnline,
+                distance: maxDistance,
+              },
+            },
+          })
+        },
+        () => {
+          toast.error('There was an error in getting your coordinates')
+        }
+      )
+    } else {
+      toast.error('Your browser does not support geolocation')
+    }
   }
 
   return (
@@ -256,6 +303,28 @@ const StoreLocatorPage = () => {
               px={6}
             >
               Search
+            </Button>
+          </div>
+          <div className="ml-2 h-auto">
+            <Button
+              full={false}
+              onClick={getUserSpecificLocation}
+              loading={loading}
+              my={0}
+              px={2}
+            >
+              <svg
+                width="18"
+                height="19"
+                viewBox="0 0 23 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M7.90625 12C7.90625 10.0145 9.51445 8.40625 11.5 8.40625C13.4855 8.40625 15.0938 10.0145 15.0938 12C15.0938 13.9855 13.4855 15.5938 11.5 15.5938C9.51445 15.5938 7.90625 13.9855 7.90625 12ZM11.5 0.5C12.2951 0.5 12.9375 1.14373 12.9375 1.9375V3.49404C16.5492 4.10004 19.4018 6.95078 20.0037 10.5625H21.5625C22.3576 10.5625 23 11.2049 23 12C23 12.7951 22.3576 13.4375 21.5625 13.4375H20.0037C19.4018 17.0492 16.5492 19.9018 12.9375 20.5037V22.0625C12.9375 22.8576 12.2951 23.5 11.5 23.5C10.7049 23.5 10.0625 22.8576 10.0625 22.0625V20.5037C6.45078 19.9018 3.60004 17.0492 2.99404 13.4375H1.4375C0.64373 13.4375 0 12.7951 0 12C0 11.2049 0.64373 10.5625 1.4375 10.5625H2.99404C3.60004 6.95078 6.45078 4.10004 10.0625 3.49404V1.9375C10.0625 1.14373 10.7049 0.5 11.5 0.5ZM5.75 12C5.75 15.176 8.32402 17.75 11.5 17.75C14.676 17.75 17.25 15.176 17.25 12C17.25 8.82402 14.676 6.25 11.5 6.25C8.32402 6.25 5.75 8.82402 5.75 12Z"
+                  fill="white"
+                />
+              </svg>
             </Button>
           </div>
         </Form>

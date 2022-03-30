@@ -9,11 +9,14 @@ import Button from 'src/components/Button/Button'
 
 const LoginPage = () => {
   const [error, setError] = React.useState(null)
+  const [isLoading, setIsLoading] = React.useState(false)
   const { logIn, loading, currentUser, logOut, client } = useAuth()
   const { redirectTo } = useParams()
 
   const onSubmit = async (data) => {
+    setIsLoading(true)
     await logIn({ ...data }).catch((error) => {
+      setIsLoading(false)
       logError({
         error,
         showToast: true,
@@ -24,8 +27,10 @@ const LoginPage = () => {
   }
 
   const onProviderClick = async (provider) => {
+    setIsLoading(true)
     await logIn(provider)
       .then(async (res) => {
+        setIsLoading(false)
         if (res.additionalUserInfo.isNewUser) {
           await client
             .auth()
@@ -43,6 +48,7 @@ const LoginPage = () => {
         }
       })
       .catch((error) => {
+        setIsLoading(false)
         logError({
           error,
           showToast: true,
@@ -99,7 +105,7 @@ const LoginPage = () => {
                   Forgot your password?
                 </Link>
               </div>
-              <Button type="submit" loading={loading} className="mt-0 mb-0">
+              <Button type="submit" loading={isLoading} className="mt-0 mb-0">
                 Sign in
               </Button>
             </Form>

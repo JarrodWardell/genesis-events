@@ -86,8 +86,8 @@ const TournamentMatchesTab = ({ tournament }) => {
   return (
     <div className="flex flex-col text-sm text-gray-900 max-w-3xl overflow-x-auto sm:w-full sm:max-w-none">
       <div className="text-gray-500 text-xs bg-gray-200 col-span-12 grid grid-cols-12 px-2">
-        <div className="py-4 col-span-1 text-center">Match #</div>
-        <div className="py-4 col-span-11 text-center">Result</div>
+        <div className="py-4 col-span-1 text-center uppercase">Match #</div>
+        <div className="py-4 col-span-11 text-center uppercase">Result</div>
       </div>
       {tournament.round?.length > 0 ? (
         tournament?.round

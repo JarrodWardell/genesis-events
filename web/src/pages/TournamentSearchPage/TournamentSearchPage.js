@@ -84,7 +84,7 @@ const TournamentSearchPage = () => {
     city: null,
     name: null,
     location: null,
-    dateStart: null,
+    dateStart: format(new Date(), 'yyyy-MM-dd'),
     dateEnd: null,
     type: 'ALL',
     store: null,

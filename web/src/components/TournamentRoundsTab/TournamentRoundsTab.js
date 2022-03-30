@@ -229,8 +229,8 @@ const TournamentRoundsTab = ({ tournament, roundNumber, setTournament }) => {
       <div className="w-full overflow-x-auto">
         <div className="grid grid-cols-12 gap-y-4 my-4 w-max sm:w-full">
           <div className="text-gray-500 text-xs bg-gray-200 col-span-12 grid grid-cols-12 px-2">
-            <div className="py-4 col-span-1 text-center">Table #</div>
-            <div className="py-4 col-span-11 text-center">Result</div>
+            <div className="py-4 col-span-1 text-center uppercase">Table #</div>
+            <div className="py-4 col-span-11 text-center uppercase">Result</div>
           </div>
           {renderRound()}
           <AddMatchForm

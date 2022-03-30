@@ -388,77 +388,80 @@ const MatchDetails = ({
           )}
 
           <div className="col-span-1 flex justify-around items-center">
-            {!tournament.dateEnded &&
-              checkTournamentPermissions({
-                hasRole,
-                currentUser,
-                tournament,
-              }) && (
-                <Button
-                  onClick={() => setEdit(true)}
-                  loading={addMatchScoreLoading}
-                  rounded
-                  color={'blue'}
-                  my="0"
-                  py="2"
-                  px="2"
-                  full={false}
-                  colorWeight={400}
-                >
-                  <PencilIcon className="h-6 w-6" />
-                </Button>
-              )}
-            {!addedScore &&
-            player1 >= 0 &&
-            player2 >= 0 &&
-            !scoreSubmitted(currentMatch?.players[0]?.score) ? (
-              <Button
-                type="submit"
-                loading={addMatchScoreLoading}
-                rounded
-                my="0"
-                py="2"
-                px="2"
-                full={false}
-                colorWeight={400}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M5 13l4 4L19 7"
-                  />
-                </svg>
-              </Button>
-            ) : (
-              <Button
-                loading={deleteMatchLoading}
-                rounded
-                color={'red'}
-                my="0"
-                py="2"
-                px="2"
-                full={false}
-                colorWeight={400}
-                onClick={() => {
-                  if (
-                    window.confirm(
-                      'Are you sure you would like to delete this match?'
-                    )
-                  ) {
-                    deleteTournamentMatch({ variables: { id: match.id } })
-                  }
-                }}
-              >
-                <TrashIcon className="h-6 w-6" />
-              </Button>
+            {checkTournamentPermissions({
+              hasRole,
+              currentUser,
+              tournament,
+            }) && (
+              <>
+                {!tournament.dateEnded && (
+                  <Button
+                    onClick={() => setEdit(true)}
+                    loading={addMatchScoreLoading}
+                    rounded
+                    color={'blue'}
+                    my="0"
+                    py="2"
+                    px="2"
+                    full={false}
+                    colorWeight={400}
+                  >
+                    <PencilIcon className="h-6 w-6" />
+                  </Button>
+                )}
+                {!addedScore &&
+                player1 >= 0 &&
+                player2 >= 0 &&
+                !scoreSubmitted(currentMatch?.players[0]?.score) ? (
+                  <Button
+                    type="submit"
+                    loading={addMatchScoreLoading}
+                    rounded
+                    my="0"
+                    py="2"
+                    px="2"
+                    full={false}
+                    colorWeight={400}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-6 w-6"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                  </Button>
+                ) : (
+                  <Button
+                    loading={deleteMatchLoading}
+                    rounded
+                    color={'red'}
+                    my="0"
+                    py="2"
+                    px="2"
+                    full={false}
+                    colorWeight={400}
+                    onClick={() => {
+                      if (
+                        window.confirm(
+                          'Are you sure you would like to delete this match?'
+                        )
+                      ) {
+                        deleteTournamentMatch({ variables: { id: match.id } })
+                      }
+                    }}
+                  >
+                    <TrashIcon className="h-6 w-6" />
+                  </Button>
+                )}
+              </>
             )}
           </div>
         </Form>
