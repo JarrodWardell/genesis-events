@@ -1,4 +1,4 @@
-import { navigate, useLocation } from '@redwoodjs/router'
+import { Link, navigate, routes, useLocation } from '@redwoodjs/router'
 import { useLazyQuery } from '@apollo/client'
 import GooglePlacesAutocomplete from 'react-google-places-autocomplete'
 import Select from 'react-select'
@@ -18,6 +18,7 @@ import Button from 'src/components/Button/Button'
 import { logError } from 'src/helpers/errorLogger'
 import { format } from 'date-fns'
 import { TOURNAMENT_TYPES } from 'src/constants/tournaments'
+import { BookOpenIcon, HomeIcon } from '@heroicons/react/outline'
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
@@ -35,6 +36,7 @@ export const SEARCH_TOURNAMENTS = gql`
         startDate
         maxPlayers
         playerCount
+        type
         distance
         store {
           name
@@ -615,14 +617,16 @@ const TournamentSearchPage = () => {
               </p>
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 sm:gap-12">
                 {data?.tournaments?.map((tournament) => (
-                  <div
+                  <Link
+                    to={routes.viewTournament({
+                      url: tournament.tournamentUrl,
+                      tab: 'rounds',
+                      tabOptions: 1,
+                    })}
                     key={tournament.id}
-                    onClick={() =>
-                      navigate(`/tournament/${tournament.tournamentUrl}/rounds`)
-                    }
-                    className="bg-white shadow-md flex flex-col p-4 cursor-pointer border hover:border-blue-400 col-span-1 text-center w-full h-full"
+                    className="bg-white rounded-md drop-shadow-lg flex flex-col p-4 cursor-pointer border hover:border-blue-400 col-span-1 text-center w-full h-full"
                   >
-                    <div className="cursor-pointer underline uppercase text-sm text-blue-500 hover:text-blue-300 w-auto font-semibold mb-2">
+                    <div className="cursor-pointer uppercase text-sm text-black w-auto font-semibold mb-2">
                       {tournament.name}
                     </div>
                     <div className="flex flex-col text-gray-400 text-sm h-full">
@@ -630,15 +634,35 @@ const TournamentSearchPage = () => {
                         <div className="w-6 h-6 flex font-bold">
                           <CalendarIcon />
                         </div>{' '}
-                        <span className="ml-1">
+                        <span className="ml-1 text-left">
                           {format(new Date(tournament.startDate), 'PP')}
                         </span>
                       </p>
+                      {tournament?.store?.name && (
+                        <div className="flex items-center">
+                          <div className="w-6 h-6 flex font-bold">
+                            <HomeIcon />
+                          </div>{' '}
+                          <span className="ml-1 text-left">
+                            {tournament?.store?.name}
+                          </span>
+                        </div>
+                      )}
+                      {tournament.type && (
+                        <div className="flex items-center">
+                          <div className="w-6 h-6 flex font-bold">
+                            <BookOpenIcon />
+                          </div>{' '}
+                          <span className="ml-1 text-left">
+                            {tournament?.type}
+                          </span>
+                        </div>
+                      )}
                       <p className="flex items-center">
                         <div className="w-6 h-6 flex font-bold">
                           <PlayersIcon />
                         </div>{' '}
-                        <span className="ml-1">
+                        <span className="ml-1 text-left">
                           {tournament.players?.length}/{tournament.maxPlayers}{' '}
                           Players Registered
                         </span>
@@ -648,7 +672,7 @@ const TournamentSearchPage = () => {
                           <div className="w-6 h-6 flex font-bold">
                             <LocationIcon />
                           </div>{' '}
-                          <span className="ml-1">
+                          <span className="ml-1 text-left">
                             {tournament.city}, {tournament.state},{' '}
                             {tournament.country}
                           </span>
@@ -684,7 +708,7 @@ const TournamentSearchPage = () => {
                           </div>
                         ))}
                     </div>
-                  </div>
+                  </Link>
                 ))}
               </div>
               {data?.more && (

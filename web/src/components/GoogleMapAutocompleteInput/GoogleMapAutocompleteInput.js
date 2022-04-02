@@ -3,12 +3,20 @@ import PlacesAutocomplete from 'react-places-autocomplete'
 import { getAddress } from 'src/helpers/formatAddress'
 
 const GoogleMapAutocompleteInput = ({
+  inputText = '',
   onSelectAddress = () => {},
   onChangeInput = () => {},
   placeholderText = 'Enter Address or Postal Code',
   latLngBias = { lat: 0, lng: 0 },
 }) => {
   const [address, setAddress] = React.useState('')
+
+  React.useEffect(() => {
+    if (inputText !== address) {
+      setAddress(inputText)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [inputText])
 
   const onSelect = async (data) => {
     setAddress(data)

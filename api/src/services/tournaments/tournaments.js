@@ -244,7 +244,7 @@ export const searchTournaments = async ({ input }) => {
   let today = new Date()
 
   let sqlQuery = Prisma.sql`
-    SELECT "Tournament".id, "Tournament"."name", "Tournament"."desc", "tournamentUrl", "Tournament"."city", "Tournament"."maxPlayers", "storeId", "Tournament"."locationName", "Tournament".lat, "Tournament".lng, "dateStarted", "startDate", "dateEnded", "Tournament"."createdAt", "Tournament"."updatedAt", "Tournament"."street1", "Tournament"."street2",  "Tournament"."country", "Tournament"."state", "Tournament"."zip", "timerLeftInSeconds", "timerStatus", "Tournament".active,
+    SELECT "Tournament".id, "Tournament"."name", "Tournament"."type", "Tournament"."desc", "tournamentUrl", "Tournament"."city", "Tournament"."maxPlayers", "storeId", "Tournament"."locationName", "Tournament".lat, "Tournament".lng, "dateStarted", "startDate", "dateEnded", "Tournament"."createdAt", "Tournament"."updatedAt", "Tournament"."street1", "Tournament"."street2",  "Tournament"."country", "Tournament"."state", "Tournament"."zip", "timerLeftInSeconds", "timerStatus", "Tournament".active,
     COUNT("PlayerTournamentScore"."tournamentId") AS "playerCount", COUNT(*) OVER() AS full_count,
     ${distanceQuery}
     FROM "Tournament"

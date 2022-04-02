@@ -68,37 +68,36 @@ const StoreLocatorPage = () => {
   const [didSearchLocation, setDidSearchLocation] = React.useState(false)
   const [hasBeenCalled, setHasBeenCalled] = React.useState(false)
   const [fetchingMore, setFetchingMore] = React.useState(false)
+  const [isLoadingCurrentLocation, setIsLoadingCurrentLocation] =
+    React.useState(false)
 
-  const [searchStores, { called, loading, data }] = useLazyQuery(
-    SEARCH_STORES,
-    {
-      onCompleted: (res) => {
-        setHasBeenCalled(true)
-        setPrevDistance(maxDistance)
-        if (fetchingMore) {
-          setStoreList((prev) => [...prev, ...res.storeLocator.stores])
-        } else {
-          setStoreList(res.storeLocator.stores)
-          if (!didSearchLocation) {
-            // Find first store with a location
-            const firstStore = res.storeLocator.stores.find(
-              (store) => store.lat && store.lng
-            )
+  const [searchStores, { loading, data }] = useLazyQuery(SEARCH_STORES, {
+    onCompleted: (res) => {
+      setHasBeenCalled(true)
+      setPrevDistance(maxDistance)
+      if (fetchingMore) {
+        setStoreList((prev) => [...prev, ...res.storeLocator.stores])
+      } else {
+        setStoreList(res.storeLocator.stores)
+        if (!didSearchLocation) {
+          // Find first store with a location
+          const firstStore = res.storeLocator.stores.find(
+            (store) => store.lat && store.lng
+          )
 
-            !!firstStore &&
-              setStartingLocation({ lat: firstStore.lat, lng: firstStore.lng })
-          }
+          !!firstStore &&
+            setStartingLocation({ lat: firstStore.lat, lng: firstStore.lng })
         }
-      },
-      onError: (error) => {
-        logError({
-          error,
-          log: true,
-          showToast: true,
-        })
-      },
-    }
-  )
+      }
+    },
+    onError: (error) => {
+      logError({
+        error,
+        log: true,
+        showToast: true,
+      })
+    },
+  })
 
   const [createContact, { loading: loadingContact, error }] = useMutation(
     CREATE_CONTACT_MUTATION,
@@ -222,8 +221,9 @@ const StoreLocatorPage = () => {
   }
 
   const getUserSpecificLocation = (includeOnline = false) => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
+    setIsLoadingCurrentLocation(true)
+    if (navigator?.geolocation) {
+      navigator?.geolocation?.getCurrentPosition(
         (position) => {
           const lat = position.coords.latitude
           const lng = position.coords.longitude
@@ -246,13 +246,17 @@ const StoreLocatorPage = () => {
               },
             },
           })
+
+          setIsLoadingCurrentLocation(false)
         },
         () => {
           toast.error('There was an error in getting your coordinates')
+          setIsLoadingCurrentLocation(false)
         }
       )
     } else {
       toast.error('Your browser does not support geolocation')
+      setIsLoadingCurrentLocation(false)
     }
   }
 
@@ -289,6 +293,7 @@ const StoreLocatorPage = () => {
             onSelectAddress={onSubmit}
             onChangeInput={(text) => setSearchTerm(text)}
             latLngBias={startingLocation}
+            inputText={currentSearch}
           />
           <div className="ml-2 h-auto">
             <Button
@@ -308,8 +313,8 @@ const StoreLocatorPage = () => {
           <div className="ml-2 h-auto">
             <Button
               full={false}
-              onClick={getUserSpecificLocation}
-              loading={loading}
+              onClick={() => getUserSpecificLocation()}
+              loading={loading || isLoadingCurrentLocation}
               my={0}
               px={2}
             >

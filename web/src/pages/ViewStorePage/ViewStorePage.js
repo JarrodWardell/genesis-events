@@ -33,6 +33,7 @@ const FIND_ACTIVE_STORE_BY_ID = gql`
       lng
       tournaments {
         name
+        active
         startDate
         maxPlayers
         tournamentUrl
@@ -233,8 +234,8 @@ const ViewStorePage = ({ storeId = '' }) => {
                 <SpeakerphoneIcon className="w-4 h-4 mr-2" />
                 <p className="font-bold">Upcoming Tournaments: </p>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-2">
-                {tournamentsAfterToday?.slice(0, 4).map((tournament, index) => {
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                {tournamentsAfterToday?.slice(0, 4).map((tournament) => {
                   return (
                     <Link
                       to={routes.viewTournament({
@@ -243,18 +244,18 @@ const ViewStorePage = ({ storeId = '' }) => {
                         tabOptions: 1,
                       })}
                       key={`tournament-${tournament.id}`}
-                      className="bg-gray-300 flex flex-col p-4 hover:bg-gray-400 cursor-pointer"
+                      className="flex flex-col p-4 bg-white hover:bg-gray-200 cursor-pointer rounded-md drop-shadow-md"
                     >
-                      <p className="text-gray-700 mb-3 font-bold text-center">
+                      <p className="text-gray-700 mb-1 font-bold text-center">
                         {tournament.name}
                       </p>
-                      <div className="flex mb-3">
+                      <div className="flex mb-1">
                         <CalendarIcon className="w-4 h-4 mr-2" />
                         <p className="text-gray-700">
                           {format(new Date(tournament.startDate), 'PP')}
                         </p>
                       </div>
-                      <div className="flex mb-3">
+                      <div className="flex mb-1">
                         <UserIcon className="w-4 h-4 mr-2" />
                         <p className="text-gray-700">
                           {tournament.maxPlayers - tournament.players.length}{' '}
