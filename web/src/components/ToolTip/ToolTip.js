@@ -10,7 +10,7 @@ const ToolTip = ({
     <>
       <QuestionMarkCircleIcon data-tip={text} className={iconClass} />
 
-      <ReactTooltip place={place} type="dark" effect="solid" />
+      <ReactTooltip place={place} type="dark" effect="solid" multiline />
     </>
   )
 }

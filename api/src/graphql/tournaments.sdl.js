@@ -188,6 +188,8 @@ export const schema = gql`
       @skipAuth
     tournament(id: Int!): Tournament @adminOnly
     tournamentByUrl(url: String): Tournament @skipAuth
+    tournamentLeaderboardWithoutTies(url: String): [PlayerTournamentScore!]
+      @adminOnly
     myTournaments: [Tournament!]! @skipAuth
     currentTournaments(input: SearchTournamentInput): [Tournament!]! @skipAuth
     upcomingTournaments(input: SearchTournamentInput): [Tournament!]! @skipAuth
@@ -341,6 +343,7 @@ export const schema = gql`
     updateMatchScore(input: TournamentMatchScoreInput!): Tournament!
       @requireAuth
     advanceRound(id: Int!, roundNumber: Int!): Tournament @requireAuth
+    createTieBreakerRound(id: Int!): Tournament @requireAuth
     endTournament(id: Int!): Tournament! @requireAuth
     cancelTournament(id: Int!): Tournament! @requireAuth
     leaveTournament(id: Int!): String! @requireAuth

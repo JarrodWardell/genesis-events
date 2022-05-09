@@ -8,6 +8,7 @@ import Button from '../Button/Button'
 import { logError } from 'src/helpers/errorLogger'
 import AddTournamentPlayer from '../AddTournamentPlayer/AddTournamentPlayer'
 import { XIcon } from '@heroicons/react/solid'
+import ToolTip from '../ToolTip/ToolTip'
 
 export const REMOVE_PLAYER = gql`
   mutation removePlayer($id: Int!) {
@@ -64,7 +65,7 @@ const TournamentLeaderboardTab = ({ tournament, setTournament }) => {
                 currentUser,
               }) && <th className="py-2">User Actions</th>}
           </tr>
-          {tournament?.players?.map((playerScore, index) => (
+          {tournament?.players?.map((playerScore) => (
             <tr
               key={
                 playerScore.player
@@ -80,7 +81,7 @@ const TournamentLeaderboardTab = ({ tournament, setTournament }) => {
                       playerScore.losses ||
                       playerScore.draws ||
                       playerScore.byes)
-                    ? index + 1
+                    ? playerScore.rank
                     : '-'
                   : 'Inactive'}
               </td>
@@ -96,7 +97,20 @@ const TournamentLeaderboardTab = ({ tournament, setTournament }) => {
               <td className="text-center py-2">{playerScore.draws}</td>
               <td className="text-center py-2">{playerScore.byes}</td>
               <td className="text-center py-2">{playerScore.losses}</td>
-              <td className="text-center py-2">{playerScore.score}</td>
+              <td className="text-center py-2">
+                {playerScore.score}
+                {playerScore.opponentsWinPercentage !== null && (
+                  <ToolTip
+                    text={`Rank is adjusted in comparison to users with same score based on following stats: <br /> Opponents Win Percentage: ${Math.round(
+                      playerScore.opponentsWinPercentage
+                    )}% <br /> Match Win Percentage: ${Math.round(
+                      playerScore.matchWinPercentage
+                    )}%`}
+                    iconClass="h-5 w-5 inline-block ml-2"
+                    place="left"
+                  ></ToolTip>
+                )}
+              </td>
               {!tournament.dateEnded &&
                 checkTournamentPermissions({
                   tournament,

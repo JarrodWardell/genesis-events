@@ -158,6 +158,7 @@ model Round {
   active                  Boolean    @default(true)
   startingTimerInSeconds  Int?
   roundTimerLeftInSeconds Int?
+  isTieBreakerRound       Boolean    @default(false)
   tournament              Tournament @relation(fields: [tournamentId], references: [id])
   matches                 Match[]
 }
@@ -182,15 +183,16 @@ model PlayerTournamentScore {
 }
 
 model Match {
-  id           Int                @id @default(autoincrement())
-  roundId      Int
-  createdAt    DateTime           @default(now())
-  updatedAt    DateTime           @default(now())
-  tournamentId Int
-  active       Boolean            @default(true)
-  round        Round              @relation(fields: [roundId], references: [id])
-  tournament   Tournament         @relation(fields: [tournamentId], references: [id])
-  players      PlayerMatchScore[]
+  id                Int                @id @default(autoincrement())
+  roundId           Int
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @default(now())
+  tournamentId      Int
+  active            Boolean            @default(true)
+  round             Round              @relation(fields: [roundId], references: [id])
+  isTieBreakerMatch Boolean            @default(false)
+  tournament        Tournament         @relation(fields: [tournamentId], references: [id])
+  players           PlayerMatchScore[]
 }
 
 model PlayerMatchScore {

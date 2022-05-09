@@ -69,6 +69,7 @@ export const VIEW_TOURNAMENT_FIELDS = gql`
     }
     players {
       id
+      rank
       score
       wins
       byes
@@ -76,6 +77,10 @@ export const VIEW_TOURNAMENT_FIELDS = gql`
       losses
       active
       playerName
+      matchWinPercentage
+      opponentsWinPercentage
+      tournamentWinPercentage
+      didCorrectRank
       player {
         id
         nickname

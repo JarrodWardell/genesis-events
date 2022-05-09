@@ -1,20 +1,24 @@
 export const schema = gql`
   type PlayerTournamentScore {
     id: Int
-    wins: Int!
-    losses: Int!
-    score: Float!
+    wins: Int
+    losses: Int
+    score: Float
     rank: Int
     totalScore: Float
     totalPoints: Float
     totalTournamentsPlayed: Int
+    matchWinPercentage: Float
+    opponentsWinPercentage: Float
+    tournamentWinPercentage: Float
+    didCorrectRank: Boolean
     playerName: String
     playerId: String
     tournamentId: Int!
     createdAt: DateTime!
     updatedAt: DateTime!
-    draws: Int!
-    byes: Int!
+    draws: Int
+    byes: Int
     active: Boolean!
     wonTournament: Boolean!
     player: User
