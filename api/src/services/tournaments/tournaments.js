@@ -348,6 +348,25 @@ export const tournamentLeaderboardWithoutTies = async ({ url }) => {
   }
 }
 
+function sortTieBreakerPlayers(a, b) {
+  if (b.tieBreakerWins !== a.tieBreakerWins) {
+    return b.tieBreakerWins - a.tieBreakerWins
+  }
+
+  // Compare first the opponents win percentage
+  if (b.opponentsWinPercentage !== a.opponentsWinPercentage) {
+    return b.opponentsWinPercentage - a.opponentsWinPercentage
+  }
+
+  // Compare second the match win percentage
+  if (b.matchWinPercentage !== a.matchWinPercentage) {
+    return b.matchWinPercentage - a.matchWinPercentage
+  }
+
+  // Compare third the opponents OPPONENTS win percentage (not yet done)
+  return 0
+}
+
 const leaderboardWithoutTies = async ({ tournamentId }) => {
   const tournament = await db.tournament.findUnique({
     where: { id: tournamentId },
@@ -368,27 +387,7 @@ const leaderboardWithoutTies = async ({ tournamentId }) => {
   const resolvedLeaderboard = [...leaderboard]
 
   // If there are any players with the same score, we need to resolve the ties
-  const playersNeedingResolution = []
-  let playersWithSameScore = []
-  let lastScore = null
-
-  leaderboard.forEach((player) => {
-    if (playersWithSameScore.length === 0) {
-      lastScore = player.score
-      playersWithSameScore = [player]
-    } else {
-      if (player.score === lastScore) {
-        playersWithSameScore.push(player)
-      } else {
-        if (playersWithSameScore.length > 1) {
-          playersNeedingResolution.push(playersWithSameScore)
-        }
-
-        lastScore = player.score
-        playersWithSameScore = [player]
-      }
-    }
-  })
+  const playersNeedingResolution = findUnresolvedTies(leaderboard)
 
   // For each player with the same score, we should resolve the ties
   if (playersNeedingResolution.length > 0) {
@@ -414,93 +413,147 @@ const leaderboardWithoutTies = async ({ tournamentId }) => {
 
   const sortedLeaderboard = []
 
-  // Get the players with a new rank
-  resolvedLeaderboard.forEach((player) => {
-    const [rank, didCorrectRank] =
-      sortedLeaderboard.length === 0
-        ? [1, false]
-        : compareTieBreakerStats({
-            player1: player,
-            player2: sortedLeaderboard[sortedLeaderboard.length - 1],
-          })
+  // For each player, we need to place their rank
+  // Go through all users in resolved leaderboard. If the user is not in the array, get all users with the same score
+  let lastRank = 1
 
-    sortedLeaderboard.push({
-      ...player,
-      rank,
-      didCorrectRank,
-    })
+  resolvedLeaderboard.forEach((player) => {
+    // Sort the users with the same score by their opponent win percentage, match win percentage, and then their opponent's opponent win percentage
+    // If any of the users have the same opponent win percentage, sort them by their match win percentage
+    // If any of the users have the same match win percentage, sort them by their opponent's opponent win percentage
+    // If the final sort is the same, keep rank the same for both, put didCorrectRank to false
+    if (
+      !sortedLeaderboard.find(
+        (sortedPlayer) => sortedPlayer.playerName === player.playerName
+      )
+    ) {
+      const playersWithSameScore = resolvedLeaderboard.filter(
+        (leaderboardPlayer) => leaderboardPlayer.score === player.score
+      )
+      if (playersWithSameScore.length > 1) {
+        let sortedPlayersWithSameScore = [...playersWithSameScore].sort(
+          sortTieBreakerPlayers
+        )
+
+        sortedPlayersWithSameScore.forEach((tieBreakerPlayer, index) => {
+          if (index < sortedPlayersWithSameScore.length - 1) {
+            const nextTieBreakerPlayer = sortedPlayersWithSameScore[index + 1]
+
+            if (
+              tieBreakerPlayer.tieBreakerWins ===
+                nextTieBreakerPlayer.tieBreakerWins &&
+              tieBreakerPlayer.opponentsWinPercentage ===
+                nextTieBreakerPlayer.opponentsWinPercentage &&
+              tieBreakerPlayer.matchWinPercentage ===
+                nextTieBreakerPlayer.matchWinPercentage
+            ) {
+              sortedLeaderboard.push({
+                ...tieBreakerPlayer,
+                rank: lastRank,
+                didCorrectRank: false,
+              })
+
+              if (index === sortedPlayersWithSameScore.length - 2) {
+                sortedLeaderboard.push({
+                  ...nextTieBreakerPlayer,
+                  rank: lastRank,
+                  didCorrectRank: false,
+                })
+
+                lastRank++
+              }
+            } else {
+              sortedLeaderboard.push({
+                ...tieBreakerPlayer,
+                rank: lastRank,
+                didCorrectRank: true,
+              })
+
+              lastRank++
+
+              if (index === sortedPlayersWithSameScore.length - 2) {
+                sortedLeaderboard.push({
+                  ...nextTieBreakerPlayer,
+                  rank: lastRank,
+                  didCorrectRank: true,
+                  needsTieBreaker: true,
+                })
+
+                lastRank++
+              }
+            }
+          }
+        })
+      } else {
+        sortedLeaderboard.push({
+          ...player,
+          rank: lastRank,
+          didCorrectRank: false,
+        })
+
+        lastRank++
+      }
+    }
   })
 
   return sortedLeaderboard
 }
 
-// Given a player1 and player2 with added stats, we need to resolve the tie
-const compareTieBreakerStats = ({ player1, player2 }) => {
-  let didCorrectRank = false
-  if (player2.score > player1.score) {
-    return [player2.rank + 1, false]
-  }
-
-  let returnedRank = player2.rank
-  if (player2.opponentsWinPercentage > player1.opponentsWinPercentage) {
-    returnedRank += 1
-    didCorrectRank = true
-  }
-
-  if (player2.matchWinPercentage > player1.matchWinPercentage) {
-    returnedRank += 1
-    didCorrectRank = true
-  }
-
-  return [returnedRank, didCorrectRank]
-}
-
 const resolveTieBreaker = async ({ tournamentId, players = [] }) => {
   // Formula for resolving tie breaker: https://help.battlefy.com/en/articles/3367583-swiss-tie-breaker-formats
-  const copiedPlayers = []
+  let copiedPlayers = []
 
   for (const player of players) {
-    const matchWinPercentage = await getMatchWinPercentage({
-      player,
-      tournamentId,
-    })
+    const tieBreakerWins = await getTieBreakerWins({ player, tournamentId })
 
-    const opponentsWinPercentage = await getOpponentsWinPercentage({
-      player,
-      tournamentId,
-    })
+    const matchWinPercentage = await Math.floor(
+      await getMatchWinPercentage({
+        player,
+        tournamentId,
+      })
+    )
 
-    const gameWinPercentage = await getGameWinPercentage({
-      player: player,
-      tournamentId,
-    })
+    const opponentsWinPercentage = await Math.floor(
+      await getOpponentsWinPercentage({
+        player,
+        tournamentId,
+      })
+    )
+
+    const gameWinPercentage = await Math.floor(
+      await getGameWinPercentage({
+        player: player,
+        tournamentId,
+      })
+    )
 
     copiedPlayers.push({
       ...player,
+      tieBreakerWins,
       matchWinPercentage,
       opponentsWinPercentage,
       gameWinPercentage,
     })
   }
 
-  return copiedPlayers.sort((a, b) => {
-    // Compare first the opponents win percentage
-    if (a.opponentsWinPercentage > b.opponentsWinPercentage) {
-      return -1
-    } else if (a.opponentsWinPercentage < b.opponentsWinPercentage) {
-      return 1
-    }
+  copiedPlayers = copiedPlayers.sort(sortTieBreakerPlayers)
 
-    // Compare second the match win percentage
-    if (a.matchWinPercentage > b.matchWinPercentage) {
-      return -1
-    } else if (a.matchWinPercentage < b.matchWinPercentage) {
-      return 1
-    }
+  return copiedPlayers
+}
 
-    // Compare third the opponents OPPONENTS win percentage (not yet done)
-    return 0
+const getTieBreakerWins = async ({ player, tournamentId }) => {
+  const matches = await getPlayerTournamentMatches({ player, tournamentId })
+  const tieBreakerMatches = matches.filter((match) => match.isTieBreakerMatch)
+
+  const wonTieBreakerMatches = tieBreakerMatches.filter((match) => {
+    return match.players.some((matchPlayer) => {
+      return (
+        matchPlayer.playerName === player.playerName && matchPlayer.wonMatch
+      )
+    })
   })
+
+  return wonTieBreakerMatches.length
 }
 
 const getOpponentsWinPercentage = async ({ player, tournamentId }) => {
@@ -581,6 +634,7 @@ const getPlayerTournamentMatches = async ({
   player,
   tournamentId,
   includeByes = false,
+  includeTieBreakerMatches = false,
 }) => {
   const tournament = await db.tournament.findUnique({
     where: { id: tournamentId },
@@ -597,7 +651,7 @@ const getPlayerTournamentMatches = async ({
     },
   })
 
-  const playerMatches = tournament.matches.filter((match) => {
+  let playerMatches = tournament.matches.filter((match) => {
     return (
       match.players.filter(
         (matchPlayer) => matchPlayer.playerName === player.playerName
@@ -606,9 +660,15 @@ const getPlayerTournamentMatches = async ({
   })
 
   if (!includeByes) {
-    return playerMatches.filter((match) => {
+    playerMatches = [...playerMatches].filter((match) => {
       return match.players.length > 1
     })
+  }
+
+  if (!includeTieBreakerMatches) {
+    playerMatches = [...playerMatches].filter(
+      (match) => !match.isTieBreakerMatch
+    )
   }
 
   return playerMatches
@@ -988,10 +1048,39 @@ export const advanceRound = async ({ id, roundNumber }) => {
   return tournament
 }
 
+const groupBy = (list, keyGetter) => {
+  const map = new Map()
+  list.forEach((item) => {
+    const key = keyGetter(item)
+    const collection = map.get(key)
+    if (!collection) {
+      map.set(key, [item])
+    } else {
+      collection.push(item)
+    }
+  })
+  return map
+}
+
+const findUnresolvedTies = (leaderboard = []) => {
+  const playersNeedingResolution = []
+
+  let playersGroupedByRank = groupBy(leaderboard, (player) => player.rank)
+  playersGroupedByRank.forEach((players) => {
+    if (players.length > 1) {
+      playersNeedingResolution.push(players)
+    }
+  })
+
+  return playersNeedingResolution
+}
+
 export const createTieBreakerRound = async ({ id }) => {
   const players = await leaderboardWithoutTies({ tournamentId: id })
+
   // Create matches with a new tie breaker round with players who have tied
-  const playersUnresolved = findUnresolvedTiesBasedOnRank(players)
+  // If there are any players with the same score, we need to resolve the ties
+  const playersNeedingResolution = findUnresolvedTies(players)
 
   const lastRound = await db.round.findFirst({
     where: { tournamentId: id },
@@ -1011,12 +1100,9 @@ export const createTieBreakerRound = async ({ id }) => {
   })
 
   await Promise.all(
-    await playersUnresolved.map(async (unresolvedPlayerSet) => {
-      createSingleMatch({
-        proposedMatch: {
-          player1: unresolvedPlayerSet[0],
-          player2: unresolvedPlayerSet[1],
-        },
+    await playersNeedingResolution.map(async (unresolvedPlayerSet) => {
+      await createSingleMatch({
+        proposedMatch: [unresolvedPlayerSet[0]?.id, unresolvedPlayerSet[1]?.id],
         roundId: tieBreakerRound.id,
         tournamentId: id,
         tieBreaker: true,
@@ -1028,32 +1114,6 @@ export const createTieBreakerRound = async ({ id }) => {
   return db.tournament.findUnique({
     where: { id },
   })
-}
-
-const findUnresolvedTiesBasedOnRank = (leaderboard = []) => {
-  const playersNeedingResolution = []
-  let playersWithSameRank = []
-  let lastRank = null
-
-  leaderboard.forEach((player) => {
-    if (playersWithSameRank.length === 0) {
-      lastRank = player.rank
-      playersWithSameRank = [player]
-    } else {
-      if (player.rank === lastRank) {
-        playersWithSameRank.push(player)
-      } else {
-        if (playersWithSameRank.length > 1) {
-          playersNeedingResolution.push(playersWithSameRank)
-        }
-
-        lastRank = player.rank
-        playersWithSameRank = [player]
-      }
-    }
-  })
-
-  return playersNeedingResolution
 }
 
 export const endTournament = async ({ id }) => {
@@ -1474,48 +1534,51 @@ const addPlayerMatchScore = async ({ playerMatch, matchId, match }) => {
     },
   })
 
-  let playerTournamentWhere = {
-    tournamentId: match.tournamentId,
+  // Overall score should NOT be updated if match is a tiebreaker match
+  if (!match.isTieBreakerMatch) {
+    let playerTournamentWhere = {
+      tournamentId: match.tournamentId,
+    }
+
+    if (playerMatch.userId) {
+      playerTournamentWhere.playerId = playerMatch.userId
+    } else if (playerMatch.playerName) {
+      playerTournamentWhere.playerName = playerMatch.playerName
+    }
+
+    let playerTourneyScore = await db.playerTournamentScore.findFirst({
+      where: {
+        ...playerTournamentWhere,
+      },
+    })
+
+    let updateData = {}
+    switch (playerMatch.result) {
+      case 'WIN':
+        updateData.wins = playerTourneyScore.wins + 1
+        updateData.score = playerTourneyScore.score += 1
+        break
+      case 'TIED':
+        updateData.draws = playerTourneyScore.draws + 1
+        updateData.score = playerTourneyScore.score += 0.5
+        break
+      case 'LOSS':
+        updateData.losses = playerTourneyScore.losses + 1
+        break
+      default:
+        break
+    }
+
+    await db.playerTournamentScore.update({
+      data: {
+        ...updateData,
+        updatedAt: new Date(),
+      },
+      where: {
+        id: playerTourneyScore.id,
+      },
+    })
   }
-
-  if (playerMatch.userId) {
-    playerTournamentWhere.playerId = playerMatch.userId
-  } else if (playerMatch.playerName) {
-    playerTournamentWhere.playerName = playerMatch.playerName
-  }
-
-  let playerTourneyScore = await db.playerTournamentScore.findFirst({
-    where: {
-      ...playerTournamentWhere,
-    },
-  })
-
-  let updateData = {}
-  switch (playerMatch.result) {
-    case 'WIN':
-      updateData.wins = playerTourneyScore.wins + 1
-      updateData.score = playerTourneyScore.score += 1
-      break
-    case 'TIED':
-      updateData.draws = playerTourneyScore.draws + 1
-      updateData.score = playerTourneyScore.score += 0.5
-      break
-    case 'LOSS':
-      updateData.losses = playerTourneyScore.losses + 1
-      break
-    default:
-      break
-  }
-
-  await db.playerTournamentScore.update({
-    data: {
-      ...updateData,
-      updatedAt: new Date(),
-    },
-    where: {
-      id: playerTourneyScore.id,
-    },
-  })
 
   await db.match.update({
     data: {
@@ -1842,6 +1905,8 @@ export const Tournament = {
     db.tournament.findUnique({ where: { id: root.id } }).user(),
   matches: (_obj, { root }) =>
     db.tournament.findUnique({ where: { id: root.id } }).matches(),
+  playerList: (_obj, { root }) =>
+    db.tournament.findUnique({ where: { id: root.id } }).players(),
   players: (_obj, { root }) =>
     tournamentLeaderboardWithoutTies({ url: root.tournamentUrl }),
   winners: (_obj, { root }) =>

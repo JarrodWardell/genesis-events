@@ -35,7 +35,9 @@ export const schema = gql`
     store: Store
     user: User
     matches: [Match]!
+    # Players is a sorted leaderboard with tiebreaker resolution, playersList is just the straight playersList
     players: [PlayerTournamentScore]!
+    playerList: [PlayerTournamentScore]
     winners: [PlayerTournamentScore]
     round: [Round]!
     active: Boolean!
@@ -50,7 +52,7 @@ export const schema = gql`
     dateStarted
     dateEnded
     maxPlayers
-    players {
+    playerList {
       playerId
     }
     store {

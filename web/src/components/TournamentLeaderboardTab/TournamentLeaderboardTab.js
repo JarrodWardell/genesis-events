@@ -65,7 +65,7 @@ const TournamentLeaderboardTab = ({ tournament, setTournament }) => {
                 currentUser,
               }) && <th className="py-2">User Actions</th>}
           </tr>
-          {tournament?.players?.map((playerScore) => (
+          {tournament?.players?.map((playerScore, index) => (
             <tr
               key={
                 playerScore.player
@@ -99,7 +99,11 @@ const TournamentLeaderboardTab = ({ tournament, setTournament }) => {
               <td className="text-center py-2">{playerScore.losses}</td>
               <td className="text-center py-2">
                 {playerScore.score}
-                {playerScore.opponentsWinPercentage !== null && (
+                {(playerScore.didCorrectRank ||
+                  (index !== tournament.players.length - 1 &&
+                    tournament.players[index + 1].rank !== playerScore.rank &&
+                    tournament.players[index + 1].score ===
+                      playerScore.score)) && (
                   <ToolTip
                     text={`Rank is adjusted in comparison to users with same score based on following stats: <br /> Opponents Win Percentage: ${Math.round(
                       playerScore.opponentsWinPercentage

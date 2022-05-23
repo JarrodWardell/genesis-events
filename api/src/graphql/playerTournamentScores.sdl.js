@@ -12,6 +12,7 @@ export const schema = gql`
     opponentsWinPercentage: Float
     tournamentWinPercentage: Float
     didCorrectRank: Boolean
+    tieBreakerWins: Int
     playerName: String
     playerId: String
     tournamentId: Int!

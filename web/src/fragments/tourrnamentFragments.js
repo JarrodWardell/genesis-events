@@ -9,7 +9,7 @@ export const CORE_TOURNAMENT_FIELDS = gql`
     dateEnded
     desc
     maxPlayers
-    players {
+    playerList {
       playerId
     }
     store {

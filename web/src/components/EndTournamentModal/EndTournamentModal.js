@@ -49,6 +49,15 @@ export const END_TOURNAMENT = gql`
   }
 `
 
+export const CREATE_TIE_BREAKER_ROUND = gql`
+  ${VIEW_TOURNAMENT_FIELDS}
+  mutation createTieBreakerRound($id: Int!) {
+    createTieBreakerRound: createTieBreakerRound(id: $id) {
+      ...ViewTournamentFields
+    }
+  }
+`
+
 const EndTournamentModal = ({ onClose, tournament, isOpen, setTournament }) => {
   const cancelButtonRef = useRef(null)
   const [tournamentLeaderboard, setTournamentLeaderboard] = useState([])
@@ -61,8 +70,10 @@ const EndTournamentModal = ({ onClose, tournament, isOpen, setTournament }) => {
           setTournamentLeaderboard(data?.tournamentLeaderboardWithoutTies)
 
           const playersNeedingResolution = findUnresolvedTies(
-            data?.tournamentLeaderboardWithoutTies
-          ).filter((player) => player.rank <= 4)
+            data?.tournamentLeaderboardWithoutTies.filter(
+              (player) => player.rank <= 4
+            )
+          )
 
           setPlayersWithTies(playersNeedingResolution)
         }
@@ -70,26 +81,27 @@ const EndTournamentModal = ({ onClose, tournament, isOpen, setTournament }) => {
     }
   )
 
+  const groupBy = (list, keyGetter) => {
+    const map = new Map()
+    list.forEach((item) => {
+      const key = keyGetter(item)
+      const collection = map.get(key)
+      if (!collection) {
+        map.set(key, [item])
+      } else {
+        collection.push(item)
+      }
+    })
+    return map
+  }
+
   const findUnresolvedTies = (leaderboard = []) => {
     const playersNeedingResolution = []
-    let playersWithSameRank = []
-    let lastRank = null
 
-    leaderboard.forEach((player) => {
-      if (playersWithSameRank.length === 0) {
-        lastRank = player.rank
-        playersWithSameRank = [player]
-      } else {
-        if (player.rank === lastRank) {
-          playersWithSameRank.push(player)
-        } else {
-          if (playersWithSameRank.length > 1) {
-            playersNeedingResolution.push(playersWithSameRank)
-          }
-
-          lastRank = player.rank
-          playersWithSameRank = [player]
-        }
+    let playersGroupedByRank = groupBy(leaderboard, (player) => player.rank)
+    playersGroupedByRank.forEach((players) => {
+      if (players.length > 1) {
+        playersNeedingResolution.push(players)
       }
     })
 
@@ -120,6 +132,31 @@ const EndTournamentModal = ({ onClose, tournament, isOpen, setTournament }) => {
       ],
     }
   )
+
+  const [createTieBreakerRound, { loading: loadingCreateTieBreakerRound }] =
+    useMutation(CREATE_TIE_BREAKER_ROUND, {
+      onCompleted: (data) => {
+        setTournament(data.createTieBreakerRound)
+        onClose()
+        toast.success(`Tie breaker round created!`)
+        navigate(
+          `/tournament/${tournament.tournamentUrl}/rounds/${data.createTieBreakerRound.rounds.length}`
+        )
+      },
+      onError: (error) => {
+        logError({
+          error,
+          log: true,
+          showToast: true,
+        })
+      },
+      refetchQueries: [
+        {
+          query: TOURNAMENT_BY_URL,
+          variables: { url: tournament.tournamentUrl },
+        },
+      ],
+    })
 
   useEffect(() => {
     if (isOpen) {
@@ -265,7 +302,12 @@ const EndTournamentModal = ({ onClose, tournament, isOpen, setTournament }) => {
                 </Button>
                 {playersWithTies.length > 0 && (
                   <Button
-                    onClick={() => onClose(true)}
+                    onClick={() =>
+                      createTieBreakerRound({
+                        variables: { id: tournament.id },
+                      })
+                    }
+                    loading={loadingCreateTieBreakerRound}
                     color="yellow"
                     colorWeight={500}
                     full={false}

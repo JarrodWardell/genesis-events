@@ -658,6 +658,7 @@ export type PlayerTournamentScore = {
   playerName?: Maybe<Scalars['String']>;
   rank?: Maybe<Scalars['Int']>;
   score?: Maybe<Scalars['Float']>;
+  tieBreakerWins?: Maybe<Scalars['Int']>;
   totalPoints?: Maybe<Scalars['Float']>;
   totalScore?: Maybe<Scalars['Float']>;
   totalTournamentsPlayed?: Maybe<Scalars['Int']>;
@@ -977,6 +978,7 @@ export type Tournament = {
   owner?: Maybe<User>;
   ownerId?: Maybe<Scalars['String']>;
   playerCount?: Maybe<Scalars['Int']>;
+  playerList?: Maybe<Array<Maybe<PlayerTournamentScore>>>;
   players: Array<Maybe<PlayerTournamentScore>>;
   publicRegistration?: Maybe<Scalars['Boolean']>;
   round: Array<Maybe<Round>>;
@@ -1617,6 +1619,7 @@ export type PlayerTournamentScoreResolvers<ContextType = any, ParentType extends
   playerName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   rank?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   score?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  tieBreakerWins?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   totalPoints?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   totalScore?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   totalTournamentsPlayed?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
@@ -1753,6 +1756,7 @@ export type TournamentResolvers<ContextType = any, ParentType extends ResolversP
   owner?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   ownerId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   playerCount?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  playerList?: Resolver<Maybe<Array<Maybe<ResolversTypes['PlayerTournamentScore']>>>, ParentType, ContextType>;
   players?: Resolver<Array<Maybe<ResolversTypes['PlayerTournamentScore']>>, ParentType, ContextType>;
   publicRegistration?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   round?: Resolver<Array<Maybe<ResolversTypes['Round']>>, ParentType, ContextType>;
