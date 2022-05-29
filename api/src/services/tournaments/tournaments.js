@@ -371,6 +371,15 @@ const leaderboardWithoutTies = async ({ tournamentId }) => {
   const tournament = await db.tournament.findUnique({
     where: { id: tournamentId },
     include: {
+      matches: {
+        include: {
+          players: {
+            include: {
+              user: true,
+            },
+          },
+        },
+      },
       players: {
         include: {
           player: true,
@@ -381,6 +390,8 @@ const leaderboardWithoutTies = async ({ tournamentId }) => {
       },
     },
   })
+
+  const tournamentMatches = tournament?.mathches
 
   const leaderboard = tournament.players
 
@@ -393,8 +404,8 @@ const leaderboardWithoutTies = async ({ tournamentId }) => {
   if (playersNeedingResolution.length > 0) {
     for (const players of playersNeedingResolution) {
       const copiedPlayers = await resolveTieBreaker({
-        tournamentId,
         players,
+        tournamentMatches,
       })
 
       copiedPlayers.forEach((player) => {
@@ -499,33 +510,41 @@ const leaderboardWithoutTies = async ({ tournamentId }) => {
   return sortedLeaderboard
 }
 
-const resolveTieBreaker = async ({ tournamentId, players = [] }) => {
+const resolveTieBreaker = async ({ players = [], tournamentMatches = [] }) => {
   // Formula for resolving tie breaker: https://help.battlefy.com/en/articles/3367583-swiss-tie-breaker-formats
   let copiedPlayers = []
 
   for (const player of players) {
-    const tieBreakerWins = await getTieBreakerWins({ player, tournamentId })
 
-    const matchWinPercentage = await Math.floor(
-      await getMatchWinPercentage({
+    const tieBreakerWins =
+      getTieBreakerWins({
         player,
-        tournamentId,
-      })
-    )
+        tournamentMatches,
+      }) || 0
 
-    const opponentsWinPercentage = await Math.floor(
-      await getOpponentsWinPercentage({
-        player,
-        tournamentId,
-      })
-    )
+    const matchWinPercentage =
+      Math.floor(
+        getMatchWinPercentage({
+          player,
+          tournamentMatches,
+        })
+      ) || 0.0
 
-    const gameWinPercentage = await Math.floor(
-      await getGameWinPercentage({
-        player: player,
-        tournamentId,
-      })
-    )
+    const opponentsWinPercentage =
+      Math.floor(
+        getOpponentsWinPercentage({
+          player,
+          tournamentMatches,
+        })
+      ) || 0.0
+
+    const gameWinPercentage =
+      Math.floor(
+        getGameWinPercentage({
+          player: player,
+          tournamentMatches,
+        })
+      ) || 0.0
 
     copiedPlayers.push({
       ...player,
@@ -541,8 +560,11 @@ const resolveTieBreaker = async ({ tournamentId, players = [] }) => {
   return copiedPlayers
 }
 
-const getTieBreakerWins = async ({ player, tournamentId }) => {
-  const matches = await getPlayerTournamentMatches({ player, tournamentId })
+const getTieBreakerWins = ({ player, tournamentMatches }) => {
+  const matches = getPlayerTournamentMatches({
+    player,
+    tournamentMatches,
+  })
   const tieBreakerMatches = matches.filter((match) => match.isTieBreakerMatch)
 
   const wonTieBreakerMatches = tieBreakerMatches.filter((match) => {
@@ -556,9 +578,12 @@ const getTieBreakerWins = async ({ player, tournamentId }) => {
   return wonTieBreakerMatches.length
 }
 
-const getOpponentsWinPercentage = async ({ player, tournamentId }) => {
+const getOpponentsWinPercentage = ({ player, tournamentMatches }) => {
   // Get all the players matches
-  const matches = await getPlayerTournamentMatches({ player, tournamentId })
+  const matches = getPlayerTournamentMatches({
+    player,
+    tournamentMatches,
+  })
 
   // Get list of opponents
   const opponents = matches.map((match) => {
@@ -570,9 +595,9 @@ const getOpponentsWinPercentage = async ({ player, tournamentId }) => {
   // Get the match win percentage for each opponent
   const opponentsWinPercentage = []
   for (const opponent of opponents) {
-    const opponentMatchWinPercentage = await getMatchWinPercentage({
+    const opponentMatchWinPercentage = getMatchWinPercentage({
       player: opponent[0],
-      tournamentId,
+      tournamentMatches,
     })
 
     opponentsWinPercentage.push(opponentMatchWinPercentage)
@@ -587,8 +612,11 @@ const getOpponentsWinPercentage = async ({ player, tournamentId }) => {
   // Get the opponent Game Win Percentage
 }
 
-const getMatchWinPercentage = async ({ player, tournamentId }) => {
-  const matches = await getPlayerTournamentMatches({ player, tournamentId })
+const getMatchWinPercentage = ({ player, tournamentMatches }) => {
+  const matches = getPlayerTournamentMatches({
+    player,
+    tournamentMatches,
+  })
 
   const wonMatches = matches.filter((match) => {
     return match.players.some((matchPlayer) => {
@@ -603,8 +631,11 @@ const getMatchWinPercentage = async ({ player, tournamentId }) => {
   return winPercentage
 }
 
-const getGameWinPercentage = async ({ player, tournamentId }) => {
-  const matches = await getPlayerTournamentMatches({ player, tournamentId })
+const getGameWinPercentage = ({ player, tournamentMatches }) => {
+  const matches = getPlayerTournamentMatches({
+    player,
+    tournamentMatches,
+  })
   // Matches have X games, where X is the score of both players both together
   let opponentWins = 0
   let playerWins = 0
@@ -630,28 +661,13 @@ const getGameWinPercentage = async ({ player, tournamentId }) => {
 }
 
 // Get all the matches for a player within a given tournament
-const getPlayerTournamentMatches = async ({
+const getPlayerTournamentMatches = ({
   player,
-  tournamentId,
+  tournamentMatches = [],
   includeByes = false,
   includeTieBreakerMatches = false,
 }) => {
-  const tournament = await db.tournament.findUnique({
-    where: { id: tournamentId },
-    include: {
-      matches: {
-        include: {
-          players: {
-            include: {
-              user: true,
-            },
-          },
-        },
-      },
-    },
-  })
-
-  let playerMatches = tournament.matches.filter((match) => {
+  let playerMatches = tournamentMatches.filter((match) => {
     return (
       match.players.filter(
         (matchPlayer) => matchPlayer.playerName === player.playerName
