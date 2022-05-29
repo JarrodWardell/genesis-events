@@ -391,7 +391,7 @@ const leaderboardWithoutTies = async ({ tournamentId }) => {
     },
   })
 
-  const tournamentMatches = tournament?.mathches
+  const tournamentMatches = tournament?.matches
 
   const leaderboard = tournament.players
 
@@ -442,7 +442,7 @@ const leaderboardWithoutTies = async ({ tournamentId }) => {
         (leaderboardPlayer) => leaderboardPlayer.score === player.score
       )
       if (playersWithSameScore.length > 1) {
-        let sortedPlayersWithSameScore = [...playersWithSameScore].sort(
+        const sortedPlayersWithSameScore = [...playersWithSameScore].sort(
           sortTieBreakerPlayers
         )
 
@@ -515,36 +515,31 @@ const resolveTieBreaker = async ({ players = [], tournamentMatches = [] }) => {
   let copiedPlayers = []
 
   for (const player of players) {
+    const tieBreakerWins = getTieBreakerWins({
+      player,
+      tournamentMatches,
+    })
 
-    const tieBreakerWins =
-      getTieBreakerWins({
+    const matchWinPercentage = Math.floor(
+      getMatchWinPercentage({
         player,
         tournamentMatches,
-      }) || 0
+      })
+    )
 
-    const matchWinPercentage =
-      Math.floor(
-        getMatchWinPercentage({
-          player,
-          tournamentMatches,
-        })
-      ) || 0.0
+    const opponentsWinPercentage = Math.floor(
+      getOpponentsWinPercentage({
+        player,
+        tournamentMatches,
+      })
+    )
 
-    const opponentsWinPercentage =
-      Math.floor(
-        getOpponentsWinPercentage({
-          player,
-          tournamentMatches,
-        })
-      ) || 0.0
-
-    const gameWinPercentage =
-      Math.floor(
-        getGameWinPercentage({
-          player: player,
-          tournamentMatches,
-        })
-      ) || 0.0
+    const gameWinPercentage = Math.floor(
+      getGameWinPercentage({
+        player: player,
+        tournamentMatches,
+      })
+    )
 
     copiedPlayers.push({
       ...player,
@@ -564,6 +559,7 @@ const getTieBreakerWins = ({ player, tournamentMatches }) => {
   const matches = getPlayerTournamentMatches({
     player,
     tournamentMatches,
+    includeTieBreakerMatches: true,
   })
   const tieBreakerMatches = matches.filter((match) => match.isTieBreakerMatch)
 
@@ -575,7 +571,7 @@ const getTieBreakerWins = ({ player, tournamentMatches }) => {
     })
   })
 
-  return wonTieBreakerMatches.length
+  return wonTieBreakerMatches.length || 0
 }
 
 const getOpponentsWinPercentage = ({ player, tournamentMatches }) => {
@@ -583,6 +579,7 @@ const getOpponentsWinPercentage = ({ player, tournamentMatches }) => {
   const matches = getPlayerTournamentMatches({
     player,
     tournamentMatches,
+    includeTieBreakerMatches: true,
   })
 
   // Get list of opponents
@@ -607,7 +604,7 @@ const getOpponentsWinPercentage = ({ player, tournamentMatches }) => {
     opponentsWinPercentage.reduce((acc, curr) => acc + curr, 0) /
     opponentsWinPercentage.length
 
-  return total
+  return total || 0
 
   // Get the opponent Game Win Percentage
 }
@@ -616,6 +613,7 @@ const getMatchWinPercentage = ({ player, tournamentMatches }) => {
   const matches = getPlayerTournamentMatches({
     player,
     tournamentMatches,
+    includeTieBreakerMatches: true,
   })
 
   const wonMatches = matches.filter((match) => {
@@ -628,13 +626,14 @@ const getMatchWinPercentage = ({ player, tournamentMatches }) => {
 
   const winPercentage = (wonMatches.length / matches.length) * 100
 
-  return winPercentage
+  return winPercentage || 0
 }
 
 const getGameWinPercentage = ({ player, tournamentMatches }) => {
   const matches = getPlayerTournamentMatches({
     player,
     tournamentMatches,
+    includeTieBreakerMatches: true,
   })
   // Matches have X games, where X is the score of both players both together
   let opponentWins = 0
@@ -657,7 +656,7 @@ const getGameWinPercentage = ({ player, tournamentMatches }) => {
 
   const winPercentage = (playerWins / (playerWins + opponentWins)) * 100
 
-  return winPercentage
+  return winPercentage || 0
 }
 
 // Get all the matches for a player within a given tournament
@@ -673,6 +672,11 @@ const getPlayerTournamentMatches = ({
         (matchPlayer) => matchPlayer.playerName === player.playerName
       ).length > 0
     )
+  })
+
+  // Filter out matches that are unfinished
+  playerMatches = playerMatches.filter((match) => {
+    return match.players.some((matchPlayer) => matchPlayer.wonMatch)
   })
 
   if (!includeByes) {
