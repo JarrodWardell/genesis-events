@@ -878,6 +878,7 @@ export type Round = {
   active: Scalars['Boolean'];
   createdAt: Scalars['DateTime'];
   id: Scalars['Int'];
+  isTieBreakerRound?: Maybe<Scalars['Boolean']>;
   matches: Array<Maybe<Match>>;
   roundNumber: Scalars['Int'];
   roundTimerLeftInSeconds?: Maybe<Scalars['Int']>;
@@ -1694,6 +1695,7 @@ export type RoundResolvers<ContextType = any, ParentType extends ResolversParent
   active?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  isTieBreakerRound?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   matches?: Resolver<Array<Maybe<ResolversTypes['Match']>>, ParentType, ContextType>;
   roundNumber?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   roundTimerLeftInSeconds?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;

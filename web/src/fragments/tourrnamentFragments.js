@@ -80,6 +80,7 @@ export const VIEW_TOURNAMENT_FIELDS = gql`
       matchWinPercentage
       opponentsWinPercentage
       tournamentWinPercentage
+      tieBreakerWins
       didCorrectRank
       player {
         id
@@ -109,6 +110,7 @@ export const VIEW_TOURNAMENT_FIELDS = gql`
       id
       roundNumber
       roundTimerLeftInSeconds
+      isTieBreakerRound
       matches {
         id
         players {

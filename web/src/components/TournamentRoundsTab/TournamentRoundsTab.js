@@ -3,7 +3,6 @@ import { navigate, Redirect } from '@redwoodjs/router'
 import { useMutation } from '@redwoodjs/web'
 import toast from 'react-hot-toast'
 import { checkTournamentPermissions } from 'src/helpers/tournamentHelper'
-import { TOURNAMENT_BY_URL } from 'src/pages/ViewTournamentPage/ViewTournamentPage'
 import MatchDetails from '../MatchDetails/MatchDetails'
 import TournamentNotStarted from '../TournamentNotStarted/TournamentNotStarted'
 import Button from '../Button/Button'
@@ -173,7 +172,8 @@ const TournamentRoundsTab = ({ tournament, roundNumber, setTournament }) => {
                     (round.roundNumber === roundNumber ? ' bg-gray-200' : '')
                   }
                 >
-                  Round {round.roundNumber}
+                  Round {round.roundNumber}{' '}
+                  {round.isTieBreakerRound ? '- Tiebreaker' : ''}
                 </div>
               )
             })}

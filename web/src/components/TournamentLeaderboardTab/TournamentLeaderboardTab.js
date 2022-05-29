@@ -1,7 +1,10 @@
 import { useAuth } from '@redwoodjs/auth'
 import { useMutation } from '@redwoodjs/web'
 import { toast } from '@redwoodjs/web/dist/toast'
-import { checkTournamentPermissions } from 'src/helpers/tournamentHelper'
+import {
+  checkTournamentPermissions,
+  returnTieBreakerText,
+} from 'src/helpers/tournamentHelper'
 import { TOURNAMENT_BY_URL } from 'src/pages/ViewTournamentPage/ViewTournamentPage'
 import PlayerProfileItem from '../PlayerProfileItem/PlayerProfileItem'
 import Button from '../Button/Button'
@@ -105,11 +108,7 @@ const TournamentLeaderboardTab = ({ tournament, setTournament }) => {
                     tournament.players[index + 1].score ===
                       playerScore.score)) && (
                   <ToolTip
-                    text={`Rank is adjusted in comparison to users with same score based on following stats: <br /> Opponents Win Percentage: ${Math.round(
-                      playerScore.opponentsWinPercentage
-                    )}% <br /> Match Win Percentage: ${Math.round(
-                      playerScore.matchWinPercentage
-                    )}%`}
+                    text={returnTieBreakerText(playerScore)}
                     iconClass="h-5 w-5 inline-block ml-2"
                     place="left"
                   ></ToolTip>

@@ -10,6 +10,7 @@ import { TOURNAMENT_BY_URL } from 'src/pages/ViewTournamentPage/ViewTournamentPa
 import Button from '../Button/Button'
 import LoadingIcon from '../LoadingIcon/LoadingIcon'
 import ToolTip from '../ToolTip/ToolTip'
+import { returnTieBreakerText } from 'src/helpers/tournamentHelper'
 
 export const TOURNAMENT_LEADERBOARD_WITHOUT_TIES = gql`
   query tournamentLeaderboardWithoutTies($url: String!) {
@@ -26,6 +27,7 @@ export const TOURNAMENT_LEADERBOARD_WITHOUT_TIES = gql`
       matchWinPercentage
       opponentsWinPercentage
       tournamentWinPercentage
+      tieBreakerWins
       didCorrectRank
       player {
         id
@@ -248,11 +250,7 @@ const EndTournamentModal = ({ onClose, tournament, isOpen, setTournament }) => {
                                       tournamentLeaderboard[index + 1].score ===
                                         player.score)) && (
                                     <ToolTip
-                                      text={`Rank is adjusted in comparison to users with same score based on following stats: <br /> Opponents Win Percentage: ${Math.round(
-                                        player.opponentsWinPercentage
-                                      )}% <br /> Match Win Percentage: ${Math.round(
-                                        player.matchWinPercentage
-                                      )}%`}
+                                      text={returnTieBreakerText(player)}
                                       iconClass="h-5 w-5 inline-block ml-2"
                                       place="left"
                                     ></ToolTip>

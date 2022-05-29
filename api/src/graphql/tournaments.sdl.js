@@ -145,6 +145,7 @@ export const schema = gql`
       id
       roundNumber
       roundTimerLeftInSeconds
+      isTieBreakerRound
       matches {
         id
         players {
