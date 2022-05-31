@@ -13,6 +13,8 @@ export const schema = gql`
     maxPlayers: Int!
     locationName: String!
     publicRegistration: Boolean
+    nextCutoffTournament: Tournament
+    previousCutoffTournament: Tournament
     infoUrl: String
     street1: String
     street2: String
@@ -91,6 +93,16 @@ export const schema = gql`
     timerStatus
     startingTimerInSeconds
     timerLastUpdated
+    nextCutoffTournament {
+      id
+      tournamentUrl
+      name
+    }
+    previousCutoffTournament {
+      id
+      tournamentUrl
+      name
+    }
     lat
     lng
     locationName
@@ -347,6 +359,7 @@ export const schema = gql`
       @requireAuth
     advanceRound(id: Int!, roundNumber: Int!): Tournament @requireAuth
     createTieBreakerRound(id: Int!): Tournament @requireAuth
+    createCutoffTournament(id: Int!, cutOffRank: Int!): Tournament @requireAuth
     endTournament(id: Int!): Tournament! @requireAuth
     cancelTournament(id: Int!): Tournament! @requireAuth
     leaveTournament(id: Int!): String! @requireAuth

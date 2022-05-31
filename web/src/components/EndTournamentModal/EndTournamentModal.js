@@ -142,7 +142,7 @@ const EndTournamentModal = ({ onClose, tournament, isOpen, setTournament }) => {
         onClose()
         toast.success(`Tie breaker round created!`)
         navigate(
-          `/tournament/${tournament.tournamentUrl}/rounds/${data.createTieBreakerRound.rounds.length}`
+          `/tournament/${tournament.tournamentUrl}/rounds/${data.createTieBreakerRound.round?.length}`
         )
       },
       onError: (error) => {

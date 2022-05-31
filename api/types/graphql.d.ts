@@ -289,6 +289,7 @@ export type Mutation = {
   cancelTournament: Tournament;
   createBanner: Banner;
   createContact: Contact;
+  createCutoffTournament?: Maybe<Tournament>;
   createMatch: Match;
   createPlayerMatchScore: PlayerMatchScore;
   createPlayerTournamentScore: PlayerTournamentScore;
@@ -364,6 +365,12 @@ export type MutationcreateBannerArgs = {
 
 export type MutationcreateContactArgs = {
   input: CreateContactInput;
+};
+
+
+export type MutationcreateCutoffTournamentArgs = {
+  cutOffRank: Scalars['Int'];
+  id: Scalars['Int'];
 };
 
 
@@ -976,11 +983,13 @@ export type Tournament = {
   matches: Array<Maybe<Match>>;
   maxPlayers: Scalars['Int'];
   name: Scalars['String'];
+  nextCutoffTournament?: Maybe<Tournament>;
   owner?: Maybe<User>;
   ownerId?: Maybe<Scalars['String']>;
   playerCount?: Maybe<Scalars['Int']>;
   playerList?: Maybe<Array<Maybe<PlayerTournamentScore>>>;
   players: Array<Maybe<PlayerTournamentScore>>;
+  previousCutoffTournament?: Maybe<Tournament>;
   publicRegistration?: Maybe<Scalars['Boolean']>;
   round: Array<Maybe<Round>>;
   startDate: Scalars['DateTime'];
@@ -1523,6 +1532,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   cancelTournament?: Resolver<ResolversTypes['Tournament'], ParentType, ContextType, RequireFields<MutationcancelTournamentArgs, 'id'>>;
   createBanner?: Resolver<ResolversTypes['Banner'], ParentType, ContextType, RequireFields<MutationcreateBannerArgs, 'input'>>;
   createContact?: Resolver<ResolversTypes['Contact'], ParentType, ContextType, RequireFields<MutationcreateContactArgs, 'input'>>;
+  createCutoffTournament?: Resolver<Maybe<ResolversTypes['Tournament']>, ParentType, ContextType, RequireFields<MutationcreateCutoffTournamentArgs, 'cutOffRank' | 'id'>>;
   createMatch?: Resolver<ResolversTypes['Match'], ParentType, ContextType, RequireFields<MutationcreateMatchArgs, 'input'>>;
   createPlayerMatchScore?: Resolver<ResolversTypes['PlayerMatchScore'], ParentType, ContextType, RequireFields<MutationcreatePlayerMatchScoreArgs, 'input'>>;
   createPlayerTournamentScore?: Resolver<ResolversTypes['PlayerTournamentScore'], ParentType, ContextType, RequireFields<MutationcreatePlayerTournamentScoreArgs, 'input'>>;
@@ -1755,11 +1765,13 @@ export type TournamentResolvers<ContextType = any, ParentType extends ResolversP
   matches?: Resolver<Array<Maybe<ResolversTypes['Match']>>, ParentType, ContextType>;
   maxPlayers?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  nextCutoffTournament?: Resolver<Maybe<ResolversTypes['Tournament']>, ParentType, ContextType>;
   owner?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   ownerId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   playerCount?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   playerList?: Resolver<Maybe<Array<Maybe<ResolversTypes['PlayerTournamentScore']>>>, ParentType, ContextType>;
   players?: Resolver<Array<Maybe<ResolversTypes['PlayerTournamentScore']>>, ParentType, ContextType>;
+  previousCutoffTournament?: Resolver<Maybe<ResolversTypes['Tournament']>, ParentType, ContextType>;
   publicRegistration?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   round?: Resolver<Array<Maybe<ResolversTypes['Round']>>, ParentType, ContextType>;
   startDate?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;

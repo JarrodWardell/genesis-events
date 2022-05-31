@@ -45,6 +45,16 @@ export const VIEW_TOURNAMENT_FIELDS = gql`
     dateEnded
     maxPlayers
     publicRegistration
+    nextCutoffTournament {
+      id
+      tournamentUrl
+      name
+    }
+    previousCutoffTournament {
+      id
+      tournamentUrl
+      name
+    }
     timerLeftInSeconds
     timerStatus
     startingTimerInSeconds

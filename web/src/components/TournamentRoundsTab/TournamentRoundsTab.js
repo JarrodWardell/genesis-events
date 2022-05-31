@@ -12,6 +12,7 @@ import { logError } from 'src/helpers/errorLogger'
 import { VIEW_TOURNAMENT_FIELDS } from 'src/fragments/tourrnamentFragments'
 import AddMatchForm from '../AddMatchForm/AddMatchForm'
 import EndTournamentModal from '../EndTournamentModal/EndTournamentModal'
+import CutOffModal from '../CutOffModal/CutOffModal'
 
 export const ADVANCE_ROUND = gql`
   ${VIEW_TOURNAMENT_FIELDS}
@@ -35,6 +36,8 @@ const TournamentRoundsTab = ({ tournament, roundNumber, setTournament }) => {
   const componentRef = React.useRef()
   const [started, setStarted] = React.useState(false)
   const [isEndTournamentModalOpen, setIsEndTournamentModalOpen] =
+    React.useState(false)
+  const [isCutoffRoundModalOpen, setIsCutoffRoundModalOpen] =
     React.useState(false)
   const { hasRole, currentUser } = useAuth()
 
@@ -121,7 +124,7 @@ const TournamentRoundsTab = ({ tournament, roundNumber, setTournament }) => {
     let round = grabRound()
     let scoresSubmitted = true
 
-    round.matches.forEach((match) => {
+    round.matches?.forEach((match) => {
       match.players.forEach((player) => {
         if (player.score !== 0 && !player.score >= 1 && !player.bye) {
           scoresSubmitted = false
@@ -231,31 +234,50 @@ const TournamentRoundsTab = ({ tournament, roundNumber, setTournament }) => {
           checkScoresSubmitted() &&
           checkTournamentPermissions({ hasRole, currentUser, tournament }) &&
           !tournament.dateEnded && (
-            <div className="grid w-full grid-cols-2 gap-4">
+            <div className="flex w-full gap-4">
               <Button
                 className="uppercase col-span-1"
                 color="red"
+                full
                 disabled={!checkScoresSubmitted()}
                 loading={loadingAdvanceRound}
                 onClick={() => setIsEndTournamentModalOpen(true)}
               >
                 End Tournament
               </Button>
-              <Button
-                className="uppercase col-span-1"
-                disabled={!checkScoresSubmitted()}
-                loading={loadingAdvanceRound}
-                onClick={() => {
-                  advanceRound({
-                    variables: {
-                      id: tournament.id,
-                      roundNumber: grabRound().roundNumber + 1,
-                    },
-                  })
-                }}
-              >
-                Advance to next round
-              </Button>
+              {tournament.players.length > 4 && (
+                <Button
+                  className="uppercase col-span-1"
+                  color="yellow"
+                  full
+                  disabled={!checkScoresSubmitted()}
+                  loading={loadingAdvanceRound}
+                  onClick={() => {
+                    setIsCutoffRoundModalOpen(true)
+                  }}
+                >
+                  Cut Off Round
+                </Button>
+              )}
+              {!tournament.round[tournament.round.length - 1]
+                ?.isTieBreakerRound && (
+                <Button
+                  className="uppercase col-span-1"
+                  full
+                  disabled={!checkScoresSubmitted()}
+                  loading={loadingAdvanceRound}
+                  onClick={() => {
+                    advanceRound({
+                      variables: {
+                        id: tournament.id,
+                        roundNumber: grabRound().roundNumber + 1,
+                      },
+                    })
+                  }}
+                >
+                  Advance to next round
+                </Button>
+              )}
             </div>
           )}
       </div>
@@ -263,6 +285,12 @@ const TournamentRoundsTab = ({ tournament, roundNumber, setTournament }) => {
         isOpen={isEndTournamentModalOpen}
         tournament={tournament}
         onClose={() => setIsEndTournamentModalOpen(false)}
+        setTournament={setTournament}
+      />
+      <CutOffModal
+        isOpen={isCutoffRoundModalOpen}
+        tournament={tournament}
+        onClose={() => setIsCutoffRoundModalOpen(false)}
         setTournament={setTournament}
       />
     </>

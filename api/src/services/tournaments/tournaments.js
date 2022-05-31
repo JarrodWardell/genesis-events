@@ -694,7 +694,10 @@ const getPlayerTournamentMatches = ({
   return playerMatches
 }
 
-export const createTournament = async ({ input }) => {
+export const createTournament = async ({
+  input,
+  previousCutoffTournamentId = null,
+}) => {
   var newInput = { ...input }
   delete newInput.storeId
   const tournamentUrl = await generateTournamentUrl(input.name, db)
@@ -703,6 +706,14 @@ export const createTournament = async ({ input }) => {
 
   if (storeId) {
     newInput['store'] = { connect: { id: storeId } }
+  }
+
+  if (previousCutoffTournamentId) {
+    newInput.previousCutoffTournament = {
+      connect: {
+        id: previousCutoffTournamentId,
+      },
+    }
   }
 
   try {
@@ -1134,6 +1145,59 @@ export const createTieBreakerRound = async ({ id }) => {
   return db.tournament.findUnique({
     where: { id },
   })
+}
+
+export const createCutoffTournament = async ({ id, cutOffRank = 4 }) => {
+  // Grab list of players to add to new tournament
+  const players = await leaderboardWithoutTies({ tournamentId: id })
+  const tournament = await db.tournament.findUnique({ where: { id } })
+  const playersInRank = players.filter((player) => player.rank <= cutOffRank)
+
+  try {
+    // End current tournament
+    await endTournament({ id })
+
+    const newTournament = await createTournament({
+      input: {
+        name: `${tournament.name} - Cut Off ${playersInRank.length}`,
+        startDate: new Date(),
+        maxPlayers: playersInRank.length,
+        locationName: tournament.locationName,
+        publicRegistration: false,
+        infoUrl: tournament.infoUrl,
+        street1: tournament.street1,
+        street2: tournament.street2,
+        city: tournament.city,
+        state: tournament.state,
+        zip: tournament.zip,
+        country: tournament.country,
+        storeId: tournament.storeId,
+        desc: tournament.desc,
+        type: tournament.type,
+        lat: tournament.lat,
+        lng: tournament.lng,
+      },
+      previousCutoffTournamentId: id,
+    })
+
+    // Register each player in the cut off amount in the new tournament
+    await Promise.all(
+      await playersInRank.map(async (player) => {
+        await addPlayer({
+          id: newTournament.id,
+          input: {
+            playerName: player.playerName,
+            playerId: player.playerId,
+          },
+        })
+      })
+    )
+
+    return newTournament
+  } catch (error) {
+    console.log('Tournament cut off create error', error)
+    Sentry.captureException(error)
+  }
 }
 
 export const endTournament = async ({ id }) => {
@@ -1923,6 +1987,12 @@ export const Tournament = {
     db.tournament.findUnique({ where: { id: root.id } }).store(),
   user: (_obj, { root }) =>
     db.tournament.findUnique({ where: { id: root.id } }).user(),
+  nextCutoffTournament: (_obj, { root }) =>
+    db.tournament.findUnique({ where: { id: root.id } }).nextCutoffTournament(),
+  previousCutoffTournament: (_obj, { root }) =>
+    db.tournament
+      .findUnique({ where: { id: root.id } })
+      .previousCutoffTournament(),
   matches: (_obj, { root }) =>
     db.tournament.findUnique({ where: { id: root.id } }).matches(),
   playerList: (_obj, { root }) =>
