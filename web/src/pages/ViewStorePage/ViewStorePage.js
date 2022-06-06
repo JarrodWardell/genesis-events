@@ -37,7 +37,7 @@ const FIND_ACTIVE_STORE_BY_ID = gql`
         startDate
         maxPlayers
         tournamentUrl
-        players {
+        playerList {
           id
         }
       }
@@ -258,7 +258,7 @@ const ViewStorePage = ({ storeId = '' }) => {
                       <div className="flex mb-1">
                         <UserIcon className="w-4 h-4 mr-2" />
                         <p className="text-gray-700">
-                          {tournament.maxPlayers - tournament.players.length}{' '}
+                          {tournament.maxPlayers - tournament.playerList.length}{' '}
                           Spots Available
                         </p>
                       </div>

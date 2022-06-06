@@ -6,6 +6,7 @@ export const schema = gql`
     tournamentId: Int!
     roundNumber: Int!
     active: Boolean!
+    isTieBreakerRound: Boolean
     startingTimerInSeconds: Int
     roundTimerLeftInSeconds: Int
     tournament: Tournament!

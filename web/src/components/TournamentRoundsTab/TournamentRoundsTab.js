@@ -3,7 +3,6 @@ import { navigate, Redirect } from '@redwoodjs/router'
 import { useMutation } from '@redwoodjs/web'
 import toast from 'react-hot-toast'
 import { checkTournamentPermissions } from 'src/helpers/tournamentHelper'
-import { TOURNAMENT_BY_URL } from 'src/pages/ViewTournamentPage/ViewTournamentPage'
 import MatchDetails from '../MatchDetails/MatchDetails'
 import TournamentNotStarted from '../TournamentNotStarted/TournamentNotStarted'
 import Button from '../Button/Button'
@@ -12,20 +11,13 @@ import PrintRound from '../PrintRound/PrintRound'
 import { logError } from 'src/helpers/errorLogger'
 import { VIEW_TOURNAMENT_FIELDS } from 'src/fragments/tourrnamentFragments'
 import AddMatchForm from '../AddMatchForm/AddMatchForm'
+import EndTournamentModal from '../EndTournamentModal/EndTournamentModal'
+import CutOffModal from '../CutOffModal/CutOffModal'
 
 export const ADVANCE_ROUND = gql`
   ${VIEW_TOURNAMENT_FIELDS}
   mutation advanceRound($id: Int!, $roundNumber: Int!) {
     advanceRound: advanceRound(id: $id, roundNumber: $roundNumber) {
-      ...ViewTournamentFields
-    }
-  }
-`
-
-export const END_TOURNAMENT = gql`
-  ${VIEW_TOURNAMENT_FIELDS}
-  mutation endTournament($id: Int!) {
-    endTournament: endTournament(id: $id) {
       ...ViewTournamentFields
     }
   }
@@ -43,6 +35,10 @@ const CREATE_TOURNAMENT_MATCH = gql`
 const TournamentRoundsTab = ({ tournament, roundNumber, setTournament }) => {
   const componentRef = React.useRef()
   const [started, setStarted] = React.useState(false)
+  const [isEndTournamentModalOpen, setIsEndTournamentModalOpen] =
+    React.useState(false)
+  const [isCutoffRoundModalOpen, setIsCutoffRoundModalOpen] =
+    React.useState(false)
   const { hasRole, currentUser } = useAuth()
 
   React.useEffect(() => {
@@ -69,30 +65,6 @@ const TournamentRoundsTab = ({ tournament, roundNumber, setTournament }) => {
           showToast: true,
         })
       },
-    }
-  )
-
-  const [endTournament, { loading: loadingEndTournament }] = useMutation(
-    END_TOURNAMENT,
-    {
-      onCompleted: (data) => {
-        setTournament(data.endTournament)
-        toast.success(`Tournament has ended!`)
-        navigate(`/tournament/${tournament?.tournamentUrl}/leaderboard`)
-      },
-      onError: (error) => {
-        logError({
-          error,
-          log: true,
-          showToast: true,
-        })
-      },
-      refetchQueries: [
-        {
-          query: TOURNAMENT_BY_URL,
-          variables: { url: tournament.tournamentUrl },
-        },
-      ],
     }
   )
 
@@ -152,7 +124,7 @@ const TournamentRoundsTab = ({ tournament, roundNumber, setTournament }) => {
     let round = grabRound()
     let scoresSubmitted = true
 
-    round.matches.forEach((match) => {
+    round.matches?.forEach((match) => {
       match.players.forEach((player) => {
         if (player.score !== 0 && !player.score >= 1 && !player.bye) {
           scoresSubmitted = false
@@ -185,107 +157,143 @@ const TournamentRoundsTab = ({ tournament, roundNumber, setTournament }) => {
   }
 
   return (
-    <div className="w-full">
-      <div className="w-full flex border-b border-gray-500">
-        <div className="flex sm:w-10/12 overflow-x-auto">
-          {tournament?.round?.map((round) => {
-            return (
-              <div
-                key={round.id}
-                onClick={() =>
-                  navigate(
-                    `/tournament/${tournament?.tournamentUrl}/rounds/${round.roundNumber}`
-                  )
-                }
-                className={
-                  'py-4 px-8 border-gray-100 cursor-pointer hover:bg-gray-100 sm:hover:bg-blue-500 text-gray-900 text-sm w-36 text-center sm:w-auto flex items-center' +
-                  (round.roundNumber === roundNumber ? ' bg-gray-200' : '')
-                }
-              >
-                Round {round.roundNumber}
+    <>
+      <div className="w-full">
+        <div className="w-full flex border-b border-gray-500">
+          <div className="flex sm:w-10/12 overflow-x-auto">
+            {tournament?.round?.map((round) => {
+              return (
+                <div
+                  key={round.id}
+                  onClick={() =>
+                    navigate(
+                      `/tournament/${tournament?.tournamentUrl}/rounds/${round.roundNumber}`
+                    )
+                  }
+                  className={
+                    'py-4 px-8 border-gray-100 cursor-pointer hover:bg-gray-100 sm:hover:bg-blue-500 text-gray-900 text-sm w-36 text-center sm:w-auto flex items-center' +
+                    (round.roundNumber === roundNumber ? ' bg-gray-200' : '')
+                  }
+                >
+                  Round {round.roundNumber}{' '}
+                  {round.isTieBreakerRound ? '- Tiebreaker' : ''}
+                </div>
+              )
+            })}
+          </div>
+          {checkTournamentPermissions({ hasRole, tournament, currentUser }) && (
+            <div className="flex sm:w-2/12 ml-2">
+              <ReactToPrint
+                trigger={() => (
+                  <Button className="uppercase" my={'2'}>
+                    Print Round Sheet
+                  </Button>
+                )}
+                content={() => componentRef.current}
+              />
+              <PrintRound
+                round={grabRound()}
+                tournament={tournament}
+                ref={componentRef}
+              />
+            </div>
+          )}
+        </div>
+
+        <div className="w-full overflow-x-auto">
+          <div className="grid grid-cols-12 gap-y-4 my-4 w-max sm:w-full">
+            <div className="text-gray-500 text-xs bg-gray-200 col-span-12 grid grid-cols-12 px-2">
+              <div className="py-4 col-span-1 text-center uppercase">
+                Table #
               </div>
-            )
-          })}
-        </div>
-        {checkTournamentPermissions({ hasRole, tournament, currentUser }) && (
-          <div className="flex sm:w-2/12 ml-2">
-            <ReactToPrint
-              trigger={() => (
-                <Button className="uppercase" my={'2'}>
-                  Print Round Sheet
-                </Button>
-              )}
-              content={() => componentRef.current}
-            />
-            <PrintRound
-              round={grabRound()}
-              tournament={tournament}
-              ref={componentRef}
-            />
-          </div>
-        )}
-      </div>
-
-      <div className="w-full overflow-x-auto">
-        <div className="grid grid-cols-12 gap-y-4 my-4 w-max sm:w-full">
-          <div className="text-gray-500 text-xs bg-gray-200 col-span-12 grid grid-cols-12 px-2">
-            <div className="py-4 col-span-1 text-center uppercase">Table #</div>
-            <div className="py-4 col-span-11 text-center uppercase">Result</div>
-          </div>
-          {renderRound()}
-          <AddMatchForm
-            onSubmit={(data) => {
-              createTournamentMatch({
-                variables: {
-                  input: {
-                    tournamentId: tournament.id,
-                    roundId: grabRound().id,
-                    proposedMatch: data.filter((player) => !!player),
-                  },
-                },
-              })
-            }}
-            tournament={tournament}
-            loading={loadingCreateMatch}
-          />
-        </div>
-      </div>
-
-      {tournament.round[tournament.round.length - 1]?.roundNumber ===
-        grabRound()?.roundNumber &&
-        checkScoresSubmitted() &&
-        checkTournamentPermissions({ hasRole, currentUser, tournament }) &&
-        !tournament.dateEnded && (
-          <div className="grid w-full grid-cols-2 gap-4">
-            <Button
-              className="uppercase col-span-1"
-              color="red"
-              disabled={!checkScoresSubmitted()}
-              loading={loadingAdvanceRound || loadingEndTournament}
-              onClick={() =>
-                endTournament({ variables: { id: tournament.id } })
-              }
-            >
-              End Tournament
-            </Button>
-            <Button
-              className="uppercase col-span-1"
-              disabled={!checkScoresSubmitted()}
-              loading={loadingAdvanceRound || loadingEndTournament}
-              onClick={() => {
-                advanceRound({
+              <div className="py-4 col-span-11 text-center uppercase">
+                Result
+              </div>
+            </div>
+            {renderRound()}
+            <AddMatchForm
+              onSubmit={(data) => {
+                createTournamentMatch({
                   variables: {
-                    id: tournament.id,
-                    roundNumber: grabRound().roundNumber + 1,
+                    input: {
+                      tournamentId: tournament.id,
+                      roundId: grabRound().id,
+                      proposedMatch: data.filter((player) => !!player),
+                    },
                   },
                 })
               }}
-            >
-              Advance to next round
-            </Button>
+              tournament={tournament}
+              loading={loadingCreateMatch}
+            />
           </div>
-        )}
-    </div>
+        </div>
+
+        {tournament.round[tournament.round.length - 1]?.roundNumber ===
+          grabRound()?.roundNumber &&
+          checkScoresSubmitted() &&
+          checkTournamentPermissions({ hasRole, currentUser, tournament }) &&
+          !tournament.dateEnded && (
+            <div className="flex w-full gap-4">
+              <Button
+                className="uppercase col-span-1"
+                color="red"
+                full
+                disabled={!checkScoresSubmitted()}
+                loading={loadingAdvanceRound}
+                onClick={() => setIsEndTournamentModalOpen(true)}
+              >
+                End Tournament
+              </Button>
+              {tournament.players.length > 4 && (
+                <Button
+                  className="uppercase col-span-1"
+                  color="yellow"
+                  full
+                  disabled={!checkScoresSubmitted()}
+                  loading={loadingAdvanceRound}
+                  onClick={() => {
+                    setIsCutoffRoundModalOpen(true)
+                  }}
+                >
+                  Cut Off Round
+                </Button>
+              )}
+              {!tournament.round[tournament.round.length - 1]
+                ?.isTieBreakerRound && (
+                <Button
+                  className="uppercase col-span-1"
+                  full
+                  disabled={!checkScoresSubmitted()}
+                  loading={loadingAdvanceRound}
+                  onClick={() => {
+                    advanceRound({
+                      variables: {
+                        id: tournament.id,
+                        roundNumber: grabRound().roundNumber + 1,
+                      },
+                    })
+                  }}
+                >
+                  Advance to next round
+                </Button>
+              )}
+            </div>
+          )}
+      </div>
+      <EndTournamentModal
+        isOpen={isEndTournamentModalOpen}
+        tournament={tournament}
+        onClose={() => setIsEndTournamentModalOpen(false)}
+        setTournament={setTournament}
+      />
+      <CutOffModal
+        isOpen={isCutoffRoundModalOpen}
+        tournament={tournament}
+        onClose={() => setIsCutoffRoundModalOpen(false)}
+        setTournament={setTournament}
+      />
+    </>
   )
 }
 

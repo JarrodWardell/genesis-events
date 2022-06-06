@@ -17,7 +17,12 @@ import { ReactComponent as HomeIcon } from 'src/components/Icons/HomeIcon.svg'
 import { ReactComponent as TrophyIcon } from 'src/components/Icons/TrophyIcon.svg'
 import Truncate from 'react-truncate-html'
 import LoadingIcon from 'src/components/LoadingIcon/LoadingIcon'
-import { AtSymbolIcon, ShareIcon } from '@heroicons/react/solid'
+import {
+  ArrowLeftIcon,
+  ArrowRightIcon,
+  AtSymbolIcon,
+  ShareIcon,
+} from '@heroicons/react/solid'
 import { BookOpenIcon } from '@heroicons/react/outline'
 import { VIEW_TOURNAMENT_FIELDS } from 'src/fragments/tourrnamentFragments'
 
@@ -265,6 +270,40 @@ const ViewTournamentPage = ({ url, tab, tabOptions }) => {
                       </span>
                     ))}
                   </span>
+                </div>
+              )}
+              {tournament.nextCutoffTournament && (
+                <div className="flex items-center font-bold ">
+                  <div className="w-6 h-6 flex justify-center items-center">
+                    <ArrowRightIcon />
+                  </div>{' '}
+                  <Link
+                    className="text-blue-500 hover:text-blue-400"
+                    to={routes.viewTournament({
+                      url: tournament.nextCutoffTournament?.tournamentUrl,
+                      tab: 'leaderboard',
+                      tabOptions: 1,
+                    })}
+                  >
+                    {tournament.nextCutoffTournament.name}
+                  </Link>
+                </div>
+              )}
+              {tournament.previousCutoffTournament && (
+                <div className="flex items-center font-bold ">
+                  <div className="w-6 h-6 flex justify-center items-center">
+                    <ArrowLeftIcon />
+                  </div>{' '}
+                  <Link
+                    className="text-blue-500 hover:text-blue-400"
+                    to={routes.viewTournament({
+                      url: tournament.previousCutoffTournament?.tournamentUrl,
+                      tab: 'leaderboard',
+                      tabOptions: 1,
+                    })}
+                  >
+                    {tournament.previousCutoffTournament.name}
+                  </Link>
                 </div>
               )}
 

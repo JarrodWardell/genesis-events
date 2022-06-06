@@ -18,7 +18,7 @@ const TournamentItem = ({ tournament, full = false, index }) => {
     tournamentUrl,
     startDate,
     maxPlayers,
-    players,
+    playerList,
     desc,
     street1,
     locationName,
@@ -70,7 +70,7 @@ const TournamentItem = ({ tournament, full = false, index }) => {
                 <PlayersIcon />
               </div>{' '}
               <span className="ml-1">
-                {players?.length}/{maxPlayers} Players Registered
+                {playerList?.length}/{maxPlayers} Players Registered
               </span>
             </div>
             {tournament.street1 && (
@@ -146,7 +146,7 @@ const TournamentItem = ({ tournament, full = false, index }) => {
               <PlayersIcon />
             </div>{' '}
             <span className="ml-1">
-              {players?.length}/{maxPlayers} Players Registered
+              {playerList?.length}/{maxPlayers} Players Registered
             </span>
           </div>
           <div className="flex items-center">

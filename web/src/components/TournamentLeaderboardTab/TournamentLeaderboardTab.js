@@ -1,13 +1,17 @@
 import { useAuth } from '@redwoodjs/auth'
 import { useMutation } from '@redwoodjs/web'
 import { toast } from '@redwoodjs/web/dist/toast'
-import { checkTournamentPermissions } from 'src/helpers/tournamentHelper'
+import {
+  checkTournamentPermissions,
+  returnTieBreakerText,
+} from 'src/helpers/tournamentHelper'
 import { TOURNAMENT_BY_URL } from 'src/pages/ViewTournamentPage/ViewTournamentPage'
 import PlayerProfileItem from '../PlayerProfileItem/PlayerProfileItem'
 import Button from '../Button/Button'
 import { logError } from 'src/helpers/errorLogger'
 import AddTournamentPlayer from '../AddTournamentPlayer/AddTournamentPlayer'
 import { XIcon } from '@heroicons/react/solid'
+import ToolTip from '../ToolTip/ToolTip'
 
 export const REMOVE_PLAYER = gql`
   mutation removePlayer($id: Int!) {
@@ -80,7 +84,7 @@ const TournamentLeaderboardTab = ({ tournament, setTournament }) => {
                       playerScore.losses ||
                       playerScore.draws ||
                       playerScore.byes)
-                    ? index + 1
+                    ? playerScore.rank
                     : '-'
                   : 'Inactive'}
               </td>
@@ -96,7 +100,20 @@ const TournamentLeaderboardTab = ({ tournament, setTournament }) => {
               <td className="text-center py-2">{playerScore.draws}</td>
               <td className="text-center py-2">{playerScore.byes}</td>
               <td className="text-center py-2">{playerScore.losses}</td>
-              <td className="text-center py-2">{playerScore.score}</td>
+              <td className="text-center py-2">
+                {playerScore.score}
+                {(playerScore.didCorrectRank ||
+                  (index !== tournament.players.length - 1 &&
+                    tournament.players[index + 1].rank !== playerScore.rank &&
+                    tournament.players[index + 1].score ===
+                      playerScore.score)) && (
+                  <ToolTip
+                    text={returnTieBreakerText(playerScore)}
+                    iconClass="h-5 w-5 inline-block ml-2"
+                    place="left"
+                  ></ToolTip>
+                )}
+              </td>
               {!tournament.dateEnded &&
                 checkTournamentPermissions({
                   tournament,

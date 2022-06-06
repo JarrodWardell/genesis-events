@@ -13,6 +13,8 @@ export const schema = gql`
     maxPlayers: Int!
     locationName: String!
     publicRegistration: Boolean
+    nextCutoffTournament: Tournament
+    previousCutoffTournament: Tournament
     infoUrl: String
     street1: String
     street2: String
@@ -35,7 +37,9 @@ export const schema = gql`
     store: Store
     user: User
     matches: [Match]!
+    # Players is a sorted leaderboard with tiebreaker resolution, playersList is just the straight playersList
     players: [PlayerTournamentScore]!
+    playerList: [PlayerTournamentScore]
     winners: [PlayerTournamentScore]
     round: [Round]!
     active: Boolean!
@@ -50,7 +54,7 @@ export const schema = gql`
     dateStarted
     dateEnded
     maxPlayers
-    players {
+    playerList {
       playerId
     }
     store {
@@ -89,6 +93,16 @@ export const schema = gql`
     timerStatus
     startingTimerInSeconds
     timerLastUpdated
+    nextCutoffTournament {
+      id
+      tournamentUrl
+      name
+    }
+    previousCutoffTournament {
+      id
+      tournamentUrl
+      name
+    }
     lat
     lng
     locationName
@@ -143,6 +157,7 @@ export const schema = gql`
       id
       roundNumber
       roundTimerLeftInSeconds
+      isTieBreakerRound
       matches {
         id
         players {
@@ -188,6 +203,8 @@ export const schema = gql`
       @skipAuth
     tournament(id: Int!): Tournament @adminOnly
     tournamentByUrl(url: String): Tournament @skipAuth
+    tournamentLeaderboardWithoutTies(url: String): [PlayerTournamentScore!]
+      @adminOnly
     myTournaments: [Tournament!]! @skipAuth
     currentTournaments(input: SearchTournamentInput): [Tournament!]! @skipAuth
     upcomingTournaments(input: SearchTournamentInput): [Tournament!]! @skipAuth
@@ -341,6 +358,8 @@ export const schema = gql`
     updateMatchScore(input: TournamentMatchScoreInput!): Tournament!
       @requireAuth
     advanceRound(id: Int!, roundNumber: Int!): Tournament @requireAuth
+    createTieBreakerRound(id: Int!): Tournament @requireAuth
+    createCutoffTournament(id: Int!, cutOffRank: Int!): Tournament @requireAuth
     endTournament(id: Int!): Tournament! @requireAuth
     cancelTournament(id: Int!): Tournament! @requireAuth
     leaveTournament(id: Int!): String! @requireAuth

@@ -95,3 +95,35 @@ export const timeSinceTournament = (tournamentStartDate = new Date()) => {
 
   return dateDistance
 }
+
+export const returnTieBreakerText = (tournamentPlayer) => {
+  const {
+    tieBreakerWins,
+    opponentsWinPercentage,
+    matchWinPercentage,
+    gameWinPercentage,
+  } = tournamentPlayer
+
+  let text =
+    'Rank is adjusted in comparison to users with same score based on following stats:'
+
+  if (tieBreakerWins > 0) {
+    text += `<br />Tie Breaker Wins: ${tieBreakerWins}`
+  }
+
+  if (opponentsWinPercentage > 0) {
+    text += `<br />Opponents Win Percentage: ${Math.round(
+      opponentsWinPercentage
+    )}%`
+  }
+
+  if (matchWinPercentage > 0) {
+    text += `<br />Match Win Percentage: ${Math.round(matchWinPercentage)}%`
+  }
+
+  if (gameWinPercentage > 0) {
+    text += `<br />Game Win Percentage: ${Math.round(gameWinPercentage)}%`
+  }
+
+  return text
+}

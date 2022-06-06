@@ -9,7 +9,7 @@ export const CORE_TOURNAMENT_FIELDS = gql`
     dateEnded
     desc
     maxPlayers
-    players {
+    playerList {
       playerId
     }
     store {
@@ -45,6 +45,16 @@ export const VIEW_TOURNAMENT_FIELDS = gql`
     dateEnded
     maxPlayers
     publicRegistration
+    nextCutoffTournament {
+      id
+      tournamentUrl
+      name
+    }
+    previousCutoffTournament {
+      id
+      tournamentUrl
+      name
+    }
     timerLeftInSeconds
     timerStatus
     startingTimerInSeconds
@@ -69,6 +79,7 @@ export const VIEW_TOURNAMENT_FIELDS = gql`
     }
     players {
       id
+      rank
       score
       wins
       byes
@@ -76,6 +87,11 @@ export const VIEW_TOURNAMENT_FIELDS = gql`
       losses
       active
       playerName
+      matchWinPercentage
+      opponentsWinPercentage
+      tournamentWinPercentage
+      tieBreakerWins
+      didCorrectRank
       player {
         id
         nickname
@@ -104,6 +120,7 @@ export const VIEW_TOURNAMENT_FIELDS = gql`
       id
       roundNumber
       roundTimerLeftInSeconds
+      isTieBreakerRound
       matches {
         id
         players {

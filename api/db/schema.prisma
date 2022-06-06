@@ -111,42 +111,45 @@ model UserPicture {
 }
 
 model Tournament {
-  id                     Int                     @id @default(autoincrement())
-  name                   String
-  tournamentUrl          String                  @unique
-  startDate              DateTime
-  dateStarted            DateTime?
-  dateEnded              DateTime?
-  maxPlayers             Int
-  locationName           String
-  infoUrl                String?
-  street1                String?
-  street2                String?
-  city                   String?
-  country                String?
-  state                  String?
-  zip                    String?
-  lat                    Float?
-  lng                    Float?
-  storeId                String?
-  ownerId                String?
-  createdAt              DateTime                @default(now())
-  updatedAt              DateTime                @default(now())
-  userId                 String?
-  desc                   String?
-  active                 Boolean                 @default(true)
-  startingTimerInSeconds Int?
-  timerLeftInSeconds     Int?
-  timerStatus            TimerStatus?
-  timerLastUpdated       DateTime?
-  publicRegistration     Boolean                 @default(true)
-  type                   String?
-  owner                  User?                   @relation("TournamentOwner", fields: [ownerId], references: [id])
-  store                  Store?                  @relation(fields: [storeId], references: [id])
-  user                   User?                   @relation(fields: [userId], references: [id])
-  matches                Match[]
-  players                PlayerTournamentScore[]
-  round                  Round[]
+  id                         Int                     @id @default(autoincrement())
+  name                       String
+  tournamentUrl              String                  @unique
+  startDate                  DateTime
+  dateStarted                DateTime?
+  dateEnded                  DateTime?
+  maxPlayers                 Int
+  nextCutoffTournament       Tournament?             @relation("TournamentCutOff")
+  previousCutoffTournament   Tournament?             @relation("TournamentCutOff", fields: [previousCutoffTournamentId], references: [id])
+  previousCutoffTournamentId Int?                    @unique
+  locationName               String
+  infoUrl                    String?
+  street1                    String?
+  street2                    String?
+  city                       String?
+  country                    String?
+  state                      String?
+  zip                        String?
+  lat                        Float?
+  lng                        Float?
+  storeId                    String?
+  ownerId                    String?
+  createdAt                  DateTime                @default(now())
+  updatedAt                  DateTime                @default(now())
+  userId                     String?
+  desc                       String?
+  active                     Boolean                 @default(true)
+  startingTimerInSeconds     Int?
+  timerLeftInSeconds         Int?
+  timerStatus                TimerStatus?
+  timerLastUpdated           DateTime?
+  publicRegistration         Boolean                 @default(true)
+  type                       String?
+  owner                      User?                   @relation("TournamentOwner", fields: [ownerId], references: [id])
+  store                      Store?                  @relation(fields: [storeId], references: [id])
+  user                       User?                   @relation(fields: [userId], references: [id])
+  matches                    Match[]
+  players                    PlayerTournamentScore[]
+  round                      Round[]
 }
 
 model Round {
@@ -158,6 +161,7 @@ model Round {
   active                  Boolean    @default(true)
   startingTimerInSeconds  Int?
   roundTimerLeftInSeconds Int?
+  isTieBreakerRound       Boolean    @default(false)
   tournament              Tournament @relation(fields: [tournamentId], references: [id])
   matches                 Match[]
 }
@@ -182,15 +186,16 @@ model PlayerTournamentScore {
 }
 
 model Match {
-  id           Int                @id @default(autoincrement())
-  roundId      Int
-  createdAt    DateTime           @default(now())
-  updatedAt    DateTime           @default(now())
-  tournamentId Int
-  active       Boolean            @default(true)
-  round        Round              @relation(fields: [roundId], references: [id])
-  tournament   Tournament         @relation(fields: [tournamentId], references: [id])
-  players      PlayerMatchScore[]
+  id                Int                @id @default(autoincrement())
+  roundId           Int
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @default(now())
+  tournamentId      Int
+  active            Boolean            @default(true)
+  round             Round              @relation(fields: [roundId], references: [id])
+  isTieBreakerMatch Boolean            @default(false)
+  tournament        Tournament         @relation(fields: [tournamentId], references: [id])
+  players           PlayerMatchScore[]
 }
 
 model PlayerMatchScore {
