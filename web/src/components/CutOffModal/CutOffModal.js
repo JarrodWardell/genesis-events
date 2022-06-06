@@ -116,7 +116,6 @@ const CutOffModal = ({ onClose, tournament, isOpen, setTournament }) => {
     const newCutoff = parseInt(e.target.value)
     setCutOffRank(newCutoff)
 
-    console.log(leaderboardData)
     if (leaderboardData?.tournamentLeaderboardWithoutTies) {
       setTournamentLeaderboard(
         leaderboardData?.tournamentLeaderboardWithoutTies
@@ -137,6 +136,7 @@ const CutOffModal = ({ onClose, tournament, isOpen, setTournament }) => {
     {
       onCompleted: (data) => {
         toast.success('Created new cut off tournament')
+        setTournament(data.createCutoffTournament)
         navigate(
           `/tournament/${data.createCutoffTournament?.tournamentUrl}/rounds`
         )
