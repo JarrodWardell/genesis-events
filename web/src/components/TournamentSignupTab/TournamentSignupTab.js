@@ -2,6 +2,7 @@ import { useAuth } from '@redwoodjs/auth'
 import { navigate, routes } from '@redwoodjs/router'
 import { useMutation } from '@redwoodjs/web'
 import toast from 'react-hot-toast'
+import { VIEW_TOURNAMENT_FIELDS } from 'src/fragments/tourrnamentFragments'
 import { logError } from 'src/helpers/errorLogger'
 import { TOURNAMENT_BY_URL } from 'src/pages/ViewTournamentPage/ViewTournamentPage'
 import Button from '../Button/Button'
@@ -9,8 +10,11 @@ import { FacebookIcon } from '../Icons/Facebook'
 import { TwitterIcon } from '../Icons/Twitter'
 
 export const REGISTER_TOURNAMENT = gql`
+  ${VIEW_TOURNAMENT_FIELDS}
   mutation registerForTournament($id: Int!) {
-    registerForTournament: registerForTournament(id: $id)
+    registerForTournament: registerForTournament(id: $id) {
+      ...ViewTournamentFields
+    }
   }
 `
 
@@ -20,14 +24,15 @@ export const LEAVE_TOURNAMENT = gql`
   }
 `
 
-const TournamentSignupTab = ({ tournament }) => {
+const TournamentSignupTab = ({ tournament, setTournament }) => {
   const { currentUser, hasRole } = useAuth()
   const [registerForTournament, { loading }] = useMutation(
     REGISTER_TOURNAMENT,
     {
-      onCompleted: () => {
+      onCompleted: (data) => {
+        setTournament(data.registerForTournament)
         toast.success('Successfully Registered for Tournament')
-        navigate(`/tournament/${tournament.tournamentUrl}/rounds`)
+        navigate(`/tournament/${tournament.tournamentUrl}/leaderboard`)
       },
       onError: (error) => {
         logError({
@@ -268,6 +273,7 @@ const TournamentSignupTab = ({ tournament }) => {
             registerForTournament({ variables: { id: tournament.id } })
           }
           loading={loading}
+          disabled={loading}
           full={false}
           className="w-1/2 sm:w-1/4"
         >

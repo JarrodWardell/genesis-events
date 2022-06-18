@@ -844,77 +844,84 @@ export const updateTournament = async ({ id, input }) => {
 export const registerForTournament = async ({ id }) => {
   let currentUser = context.currentUser
 
-  const tournament = await db.tournament.findUnique({
-    where: { id },
-  })
+  try {
+    const tournament = await db.tournament.findUnique({
+      where: { id },
+    })
 
-  if (!tournament.publicRegistration) {
-    throw new UserInputError(
-      'Registration can only be made by admins for this tournament. Please contact the organizer.'
-    )
-  }
+    if (!tournament.publicRegistration) {
+      throw new UserInputError(
+        'Registration can only be made by admins for this tournament. Please contact the organizer.'
+      )
+    }
 
-  let previousPlayers = await db.playerTournamentScore.findFirst({
-    where: { playerId: currentUser.user.id, tournamentId: id },
-  })
+    let previousPlayers = await db.playerTournamentScore.findFirst({
+      where: { playerId: currentUser.user.id, tournamentId: id },
+    })
 
-  if (previousPlayers) {
-    throw new UserInputError(
-      'Player with that Player ID already registered for this tournament. Please ensure you have not already registered.'
-    )
-  }
+    if (previousPlayers) {
+      throw new UserInputError(
+        'Player with that Player ID already registered for this tournament. Please ensure you have not already registered.'
+      )
+    }
 
-  await db.playerTournamentScore.create({
-    data: {
-      player: {
-        connect: { id: currentUser.user.id },
-      },
-      tournament: {
-        connect: { id },
-      },
-    },
-  })
-
-  const player = await db.user.findUnique({
-    where: { id: currentUser.user.id },
-  })
-
-  let ownerEmail = ''
-  if (tournament.storeId) {
-    const store = await db.store.findUnique({
-      where: {
-        id: tournament.storeId,
+    await db.playerTournamentScore.create({
+      data: {
+        player: {
+          connect: { id: currentUser.user.id },
+        },
+        tournament: {
+          connect: { id },
+        },
       },
     })
 
-    ownerEmail = store.email
-  } else {
-    const owner = await db.user.findUnique({
-      where: {
-        id: tournament.ownerId,
-      },
+    const player = await db.user.findUnique({
+      where: { id: currentUser.user.id },
     })
 
-    ownerEmail = owner.email
+    let ownerEmail = ''
+    if (tournament.storeId) {
+      const store = await db.store.findUnique({
+        where: {
+          id: tournament.storeId,
+        },
+      })
+
+      ownerEmail = store.email
+    } else {
+      const owner = await db.user.findUnique({
+        where: {
+          id: tournament.ownerId,
+        },
+      })
+
+      ownerEmail = owner.email
+    }
+
+    let html = `${newPlayerRegisteredEO({ tournament, player }).html}`
+    await sendEmail({
+      to: ownerEmail,
+      subject: `GEO: New Player Registered for: ${tournament.name}`,
+      html,
+      text: `New Player Registered for: ${tournament.name}`,
+    })
+
+    html = `${newPlayerRegisteredPlayer({ tournament, player }).html}`
+    await sendEmail({
+      to: player.email,
+      subject: `GEO: Thanks for Registering for: ${tournament.name}`,
+      html,
+      text: `Thanks for Registering for:: ${tournament.name}`,
+    })
+
+    const updatedTournament = await db.tournament.findUnique({ where: { id } })
+
+    return updatedTournament
+  } catch (error) {
+    console.log(error)
+    Sentry.captureException(error)
   }
-
-  let html = `${newPlayerRegisteredEO({ tournament, player }).html}`
-  await sendEmail({
-    to: ownerEmail,
-    subject: `GEO: New Player Registered for: ${tournament.name}`,
-    html,
-    text: `New Player Registered for: ${tournament.name}`,
-  })
-
-  html = `${newPlayerRegisteredPlayer({ tournament, player }).html}`
-  await sendEmail({
-    to: player.email,
-    subject: `GEO: Thanks for Registering for: ${tournament.name}`,
-    html,
-    text: `Thanks for Registering for:: ${tournament.name}`,
-  })
-
-  return 'Successfully Signed up for Tournament'
 }
 
 export const addPlayer = async ({ id, input }) => {
@@ -1580,8 +1587,20 @@ const changePlayerInMatch = async ({ playerMatch, givenBye = false }) => {
 }
 
 export const deleteTournamentMatch = async ({ id }) => {
-  const match = await db.match.findUnique({ where: { id: id } })
-  await rollBackScores({ match })
+  const match = await db.match.findUnique({
+    where: { id: id },
+    include: { players: true },
+  })
+
+  // Do not roll back match unless scores were inputted
+  if (
+    match.players[0]?.score > 0 ||
+    match.players[1]?.score > 0 ||
+    match.players[0]?.bye
+  ) {
+    await rollBackScores({ match })
+  }
+
   const tournamentId = match.tournamentId
 
   await db.playerMatchScore.deleteMany({

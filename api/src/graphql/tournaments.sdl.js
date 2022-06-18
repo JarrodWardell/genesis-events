@@ -348,7 +348,7 @@ export const schema = gql`
       @requireAuth
     addPlayer(id: Int!, input: AddPlayerInput!): Tournament! @requireAuth
     deleteTournament(id: Int!): Tournament! @adminOnly
-    registerForTournament(id: Int!): String! @requireAuth
+    registerForTournament(id: Int!): Tournament! @requireAuth
     startTournament(id: Int!): Tournament! @requireAuth
     updateTimer(input: TimerInput!): Tournament! @requireAuth
     deleteTournamentMatch(id: Int!): Tournament! @requireAuth

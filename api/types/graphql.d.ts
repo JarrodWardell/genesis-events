@@ -315,7 +315,7 @@ export type Mutation = {
   deleteUserUserRole: UserUserRole;
   endTournament: Tournament;
   leaveTournament: Scalars['String'];
-  registerForTournament: Scalars['String'];
+  registerForTournament: Tournament;
   removePlayer: Scalars['String'];
   seedSingleTournament?: Maybe<Tournament>;
   seedTournaments: Array<Maybe<Tournament>>;
@@ -1558,7 +1558,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   deleteUserUserRole?: Resolver<ResolversTypes['UserUserRole'], ParentType, ContextType, RequireFields<MutationdeleteUserUserRoleArgs, 'id'>>;
   endTournament?: Resolver<ResolversTypes['Tournament'], ParentType, ContextType, RequireFields<MutationendTournamentArgs, 'id'>>;
   leaveTournament?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationleaveTournamentArgs, 'id'>>;
-  registerForTournament?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationregisterForTournamentArgs, 'id'>>;
+  registerForTournament?: Resolver<ResolversTypes['Tournament'], ParentType, ContextType, RequireFields<MutationregisterForTournamentArgs, 'id'>>;
   removePlayer?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationremovePlayerArgs, 'id'>>;
   seedSingleTournament?: Resolver<Maybe<ResolversTypes['Tournament']>, ParentType, ContextType, RequireFields<MutationseedSingleTournamentArgs, 'id'>>;
   seedTournaments?: Resolver<Array<Maybe<ResolversTypes['Tournament']>>, ParentType, ContextType, Partial<MutationseedTournamentsArgs>>;

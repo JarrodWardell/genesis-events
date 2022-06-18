@@ -14,6 +14,7 @@ const Button = ({
   py = 2,
   px = 4,
   colorWeight = 700,
+  ...props
 }) => {
   const buttonClasses = classNames(
     'flex',
@@ -41,6 +42,7 @@ const Button = ({
 
   return (
     <button
+      {...props}
       type={type}
       className={buttonClasses}
       onClick={onClick}
