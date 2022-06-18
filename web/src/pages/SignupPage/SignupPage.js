@@ -769,15 +769,13 @@ const SignupPage = ({ type }) => {
       }
     } else if (step === 3) {
       return (
-        <form onSubmit={onSubmit}>
-          <PasswordCheck
-            loading={loading || createUserLoading}
-            onSubmit={onSubmit}
-            submitText={'Sign Up'}
-            onBack={() => setStep(2)}
-            backButtonText={'Back'}
-          />
-        </form>
+        <PasswordCheck
+          loading={loading || createUserLoading}
+          onSubmit={onSubmit}
+          submitText={'Sign Up'}
+          onBack={() => setStep(2)}
+          backButtonText={'Back'}
+        />
       )
     }
   }
