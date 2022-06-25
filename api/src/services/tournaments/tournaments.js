@@ -1105,7 +1105,18 @@ const findUnresolvedTies = (leaderboard = []) => {
 
   let playersGroupedByRank = groupBy(leaderboard, (player) => player.rank)
   playersGroupedByRank.forEach((players) => {
-    if (players.length > 1) {
+    // If there are more than 1 player in that rank and some of the players in the rank have played a match, then add them to the list of players needing resolution
+    if (
+      players.length > 1 &&
+      players.every(
+        (player) =>
+          player.wins > 0 ||
+          player.losses > 0 ||
+          player.byes > 0 ||
+          player.ties > 0 ||
+          player.score > 0
+      )
+    ) {
       playersNeedingResolution.push(players)
     }
   })
