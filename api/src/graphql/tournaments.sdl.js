@@ -55,6 +55,7 @@ export const schema = gql`
     dateEnded
     maxPlayers
     playerList {
+      active
       playerId
     }
     store {

@@ -10,6 +10,7 @@ export const CORE_TOURNAMENT_FIELDS = gql`
     desc
     maxPlayers
     playerList {
+      active
       playerId
     }
     store {

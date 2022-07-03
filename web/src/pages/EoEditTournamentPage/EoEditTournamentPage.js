@@ -14,6 +14,7 @@ export const TOURNAMENT_BY_URL_SIMPLE = gql`
       publicRegistration
       players {
         playerId
+        active
       }
       locationName
       lat

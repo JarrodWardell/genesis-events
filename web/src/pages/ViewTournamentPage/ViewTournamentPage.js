@@ -197,7 +197,8 @@ const ViewTournamentPage = ({ url, tab, tabOptions }) => {
                   <PlayersIcon />
                 </div>{' '}
                 <span className="ml-1">
-                  {players?.length}/{maxPlayers} Players Registered
+                  {players?.filter((player) => player.active).length}/
+                  {maxPlayers} Players Registered
                 </span>
               </div>
               <div className="flex items-center">

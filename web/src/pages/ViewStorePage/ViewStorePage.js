@@ -38,6 +38,7 @@ const FIND_ACTIVE_STORE_BY_ID = gql`
         maxPlayers
         tournamentUrl
         playerList {
+          active
           id
         }
       }

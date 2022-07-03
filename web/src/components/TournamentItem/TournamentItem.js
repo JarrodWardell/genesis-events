@@ -70,7 +70,8 @@ const TournamentItem = ({ tournament, full = false, index }) => {
                 <PlayersIcon />
               </div>{' '}
               <span className="ml-1">
-                {playerList?.length}/{maxPlayers} Players Registered
+                {playerList?.filter((player) => player.active).length}/
+                {maxPlayers} Players Registered
               </span>
             </div>
             {tournament.street1 && (
@@ -146,7 +147,8 @@ const TournamentItem = ({ tournament, full = false, index }) => {
               <PlayersIcon />
             </div>{' '}
             <span className="ml-1">
-              {playerList?.length}/{maxPlayers} Players Registered
+              {playerList?.filter((player) => player.active).length}/
+              {maxPlayers} Players Registered
             </span>
           </div>
           <div className="flex items-center">

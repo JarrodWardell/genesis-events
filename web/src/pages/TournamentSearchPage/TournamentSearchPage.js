@@ -49,6 +49,7 @@ export const SEARCH_TOURNAMENTS = gql`
           }
         }
         players {
+          active
           id
         }
         lat
@@ -663,8 +664,12 @@ const TournamentSearchPage = () => {
                           <PlayersIcon />
                         </div>{' '}
                         <span className="ml-1 text-left">
-                          {tournament.players?.length}/{tournament.maxPlayers}{' '}
-                          Players Registered
+                          {
+                            tournament.players?.filter(
+                              (player) => player.active
+                            ).length
+                          }
+                          /{tournament.maxPlayers} Players Registered
                         </span>
                       </p>
                       {tournament.street1 && (

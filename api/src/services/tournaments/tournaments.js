@@ -412,7 +412,12 @@ const leaderboardWithoutTies = async ({ tournamentId }) => {
         // If the player is already in the leaderboard, we need to replace it
         const index = resolvedLeaderboard.findIndex(
           (leaderboardPlayer) =>
-            leaderboardPlayer.playerName === player.playerName
+            (leaderboardPlayer.playerName === player.playerName &&
+              !!player.playerName &&
+              !!leaderboardPlayer.playerName) ||
+            (leaderboardPlayer.playerId === player.playerId &&
+              !!player.playerId &&
+              !!leaderboardPlayer.playerId)
         )
 
         if (index !== -1) {
@@ -435,7 +440,10 @@ const leaderboardWithoutTies = async ({ tournamentId }) => {
     // If the final sort is the same, keep rank the same for both, put didCorrectRank to false
     if (
       !sortedLeaderboard.find(
-        (sortedPlayer) => sortedPlayer.playerName === player.playerName
+        (sortedPlayer) =>
+          (sortedPlayer.playerName === player.playerName &&
+            player.playerName) ||
+          (sortedPlayer.playerId === player.playerId && player.playerId)
       )
     ) {
       const playersWithSameScore = resolvedLeaderboard.filter(
@@ -867,6 +875,7 @@ export const registerForTournament = async ({ id }) => {
 
     await db.playerTournamentScore.create({
       data: {
+        playerName: currentUser.user.nickname,
         player: {
           connect: { id: currentUser.user.id },
         },
@@ -1086,25 +1095,21 @@ export const advanceRound = async ({ id, roundNumber }) => {
   return tournament
 }
 
-const groupBy = (list, keyGetter) => {
-  const map = new Map()
-  list.forEach((item) => {
-    const key = keyGetter(item)
-    const collection = map.get(key)
-    if (!collection) {
-      map.set(key, [item])
-    } else {
-      collection.push(item)
-    }
-  })
-  return map
-}
+const groupBy = (items, key) =>
+  items.reduce(
+    (result, item) => ({
+      ...result,
+      [item[key]]: [...(result[item[key]] || []), item],
+    }),
+    {}
+  )
 
 const findUnresolvedTies = (leaderboard = []) => {
   const playersNeedingResolution = []
 
-  let playersGroupedByRank = groupBy(leaderboard, (player) => player.rank)
-  playersGroupedByRank.forEach((players) => {
+  let playersGroupedByRank = groupBy(leaderboard, 'score')
+
+  Object.values(playersGroupedByRank).forEach((players) => {
     // If there are more than 1 player in that rank and some of the players in the rank have played a match, then add them to the list of players needing resolution
     if (
       players.length > 1 &&

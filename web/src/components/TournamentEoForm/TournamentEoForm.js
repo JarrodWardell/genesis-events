@@ -348,8 +348,10 @@ const TournamentEOForm = ({ tournament }) => {
                     return 'A minimum of 2 players is required for a tournament'
                   }
 
-                  if (tournament?.players?.length > value) {
-                    console.log('i validate')
+                  if (
+                    tournament?.players?.filter((player) => player.active)
+                      .length > value
+                  ) {
                     return 'There are more players registered than this amount'
                   }
                 },
