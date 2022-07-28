@@ -6,12 +6,12 @@ GEO (Genesis Event Organizer - https://geo.genesisbattleofchampions.com/) is a t
 Geo is built using Redwood.js (https://redwoodjs.com/) using primarily, React, Prisma, and Graphql with a NodeJS backend. This repo is not setup currently with Typescript, and testing/storybooking is limited.
 
 ## Setup
-Install Prisma
-Setup your Postgres database
-Setup a firebase account with Authentication
-Setup your Mailgun account and grab the API Key from there
-Install Dependencies
-Take a look at `env.example` for an idea of which env variables you'll need to provide
+- Install Prisma
+- Setup your Postgres database
+- Setup a firebase account with Authentication
+- Setup your Mailgun account and grab the API Key from there
+- Install Dependencies
+- Take a look at `env.example` for an idea of which env variables you'll need to provide
 
 ## Deployment
 GEO is currently deployed on Netlify (https://www.netlify.com/) with the Database being hosted on Railway (https://railway.app/). We also use Firebase for authentication across the various environments.
