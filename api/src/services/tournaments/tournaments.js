@@ -444,7 +444,7 @@ const leaderboardWithoutTies = async ({ tournamentId }) => {
     // Sort the users with the same score by their opponent win percentage, match win percentage, and then their opponent's opponent win percentage
     // If any of the users have the same opponent win percentage, sort them by their match win percentage
     // If any of the users have the same match win percentage, sort them by their opponent's opponent win percentage
-    // If the final sort is the same, keep rank the same for both, put didCorrectRank to false
+    // If the final sort is the same, keep rank the same for both, put didCorrectRank to false -- ????
     if (
       !sortedLeaderboard.find(
         (sortedPlayer) =>
